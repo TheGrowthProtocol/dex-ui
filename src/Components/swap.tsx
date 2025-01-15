@@ -136,12 +136,8 @@ const Swap: React.FC<{}> = () => {
               setAmount={(amount) => setAmountOut(Number(amount))}
               setSelectedToken={(token: TOKEN) => setSelectedToken1(token)}
             />
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
-              <Button variant="contained" color="primary">
-                <Typography variant="body1">
-                  Swap
-                </Typography>
-              </Button>
+            <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <Button variant={"outlined"} color="primary" className="switch-field-button" />
             </Box>
             <Coinfield2
               value={amountIn.toString()}

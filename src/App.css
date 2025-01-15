@@ -184,7 +184,32 @@ body {
   background: var(--background-color);
   padding: 16px 23px;
   border-radius: var(--border-radius);
-  margin-bottom: 16px;
+  margin-bottom: 0px;
+}
+.switch-field-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('./assets/images/repeat.svg');
+  background-size: 32px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.switch-field-button {
+  border: none !important;
+  cursor: pointer;
+  height: 32px !important;
+  width: 32px !important;
+  padding: 0px !important;
+  min-width: 32px !important;
+  margin-bottom: -10px !important;
+  margin-top: -10px !important;
+}
+.switch-field-button:hover {
+  background: transparent !important;
 }
 
 .liquidity-pool-summary {
