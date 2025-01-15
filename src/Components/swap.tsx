@@ -39,7 +39,7 @@ const Swap: React.FC<{}> = () => {
   useEffect(() => {
     console.log(amountOut);
     setCoinfield2Amount();
-  },[amountOut]);
+  }, [amountOut]);
 
   const getTokenDecimals = async (tokenContract: Contract) => {
     try {
@@ -52,28 +52,39 @@ const Swap: React.FC<{}> = () => {
 
   const setCoinfield2Amount = async () => {
     try {
-      if(!selectedToken1.address || !selectedToken2.address || !signer) {
-         throw new Error("Error fetching token details");
+      if (!selectedToken1.address || !selectedToken2.address || !signer) {
+        throw new Error("Error fetching token details");
       }
       const network = await provider.getNetwork();
       const routerAddress = chains.routerAddress.get(network.chainId);
-      const routerContract = new Contract(routerAddress, IUniswapV2Router02.abi, signer);
-      const token1Contract = new Contract(selectedToken1.address, ERC20.abi, signer);
+      const routerContract = new Contract(
+        routerAddress,
+        IUniswapV2Router02.abi,
+        signer
+      );
+      const token1Contract = new Contract(
+        selectedToken1.address,
+        ERC20.abi,
+        signer
+      );
       const token1Decimals = await getTokenDecimals(token1Contract);
 
-
-      const token2Contract = new Contract(selectedToken2.address, ERC20.abi, signer);
+      const token2Contract = new Contract(
+        selectedToken2.address,
+        ERC20.abi,
+        signer
+      );
       const token2Decimals = await getTokenDecimals(token2Contract);
       const values_out = await routerContract.getAmountsOut(
         ethers.utils.parseUnits(String(amountOut), token1Decimals),
         [selectedToken1.address, selectedToken2.address]
       );
-      const amount_out = values_out[1]*10**(-token2Decimals);
+      const amount_out = values_out[1] * 10 ** -token2Decimals;
       setAmountIn(Number(amount_out));
     } catch (error: any) {
       enqueueSnackbar(error.message, { variant: "error" });
     }
-  }
+  };
 
   // TODO: Add logic to selectedToken1 and selectedToken2
   /**useEffect(() => {
@@ -136,8 +147,18 @@ const Swap: React.FC<{}> = () => {
               setAmount={(amount) => setAmountOut(Number(amount))}
               setSelectedToken={(token: TOKEN) => setSelectedToken1(token)}
             />
-            <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
-              <Button variant={"outlined"} color="primary" className="switch-field-button" />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                variant={"outlined"}
+                color="primary"
+                className="switch-field-button"
+              />
             </Box>
             <Coinfield2
               value={amountIn.toString()}
@@ -164,10 +185,15 @@ const Swap: React.FC<{}> = () => {
           </div>
         </Box>
       </Box>
-      <Button variant="contained" color="primary" onClick={handleSwap} className="gradient-button swap-button">
-      <div className="button-angled-clip">
-      <Typography className={"gradient-text"}>Swap Tokens</Typography>
-      </div>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSwap}
+        className="gradient-button swap-button"
+      >
+        <div className="button-angled-clip">
+          <Typography className={"gradient-text"}>Swap Tokens</Typography>
+        </div>
       </Button>
     </>
   );

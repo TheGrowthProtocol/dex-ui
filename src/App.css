@@ -304,3 +304,26 @@ body {
 .MuiTabs-indicator {
   display: none;
 }
+
+.pool-tabs {
+  margin-bottom: 16px !important;
+  background: var(--background-color) !important;
+  border-radius: 40px!important;
+  padding: 1px !important;
+  width: fit-content;
+}
+
+.pool-tab-button {
+  text-transform: none !important;
+  width: 153px !important;
+  height: 32px !important;
+  padding: 8px 32px 8px 32px !important;
+  border-radius: 40px !important;
+  background: var(--background-color) !important;
+  color: var(--secondary-color) !important;
+}
+
+.pool-tab-button.Mui-selected {
+  background: var(--primary-color) !important;
+  color: var(--background-color) !important;
+}

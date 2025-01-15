@@ -22,7 +22,6 @@ import CustomizedMenus from "./styledMenu";
 import { MenuItemProps } from "../interfaces";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -71,16 +70,15 @@ const CustomTabPanel = (props: TabPanelProps) => {
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
-}
+};
 
 const a11yProps = (index: number) => {
   return {
+    className: "pool-tab-button",
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
   };
-}
-
-
+};
 
 const menuItems: MenuItemProps[] = [
   { label: "Remove Liquidity", onClick: () => {} },
@@ -191,90 +189,89 @@ const PoolsList: React.FC = () => {
 
   const fetchAllPools = async () => {
     try {
-        if (!window.ethereum) {
-          throw new Error("Metamask not installed");
-        }
-        // Connect to provider
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const factory = new ethers.Contract(
-          POOL_FACTORY_ADDRESS,
-          POOL_FACTORY_ABI.abi,
-          provider
-        );
-  
-        // Get all pools
-        const poolCount = await factory.allPairsLength();
-        const poolsData = await Promise.all(
-          Array.from({ length: Number(poolCount) }, async (_, i) => {
-            // Get pair address
-            const pairAddress = await factory.allPairs(i);
-            const pairContract = new ethers.Contract(
-              pairAddress,
-              PAIR_ABI.abi,
-              provider
-            );
-  
-            // Get tokens
-            const token0Address = await pairContract.token0();
-            const token1Address = await pairContract.token1();
-            const [token0Symbol, token1Symbol] = await Promise.all([
-              getTokenSymbol(token0Address, provider),
-              getTokenSymbol(token1Address, provider),
-            ]);
-  
-            // Get reserves
-            const reserves = await pairContract.getReserves();
-            const [reserve0, reserve1] = [reserves[0], reserves[1]];
-  
-            // Get token prices
-            const [price0, price1] = await Promise.all([
-              getTokenPrice(token0Symbol),
-              getTokenPrice(token1Symbol),
-            ]);
+      if (!window.ethereum) {
+        throw new Error("Metamask not installed");
+      }
+      // Connect to provider
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const factory = new ethers.Contract(
+        POOL_FACTORY_ADDRESS,
+        POOL_FACTORY_ABI.abi,
+        provider
+      );
 
-            // Get volume (Note: You'll need to implement your own volume tracking as
-            // Uniswap V2 doesn't track volume directly)
-            const volume = await getVolume24h(pairAddress, provider);
+      // Get all pools
+      const poolCount = await factory.allPairsLength();
+      const poolsData = await Promise.all(
+        Array.from({ length: Number(poolCount) }, async (_, i) => {
+          // Get pair address
+          const pairAddress = await factory.allPairs(i);
+          const pairContract = new ethers.Contract(
+            pairAddress,
+            PAIR_ABI.abi,
+            provider
+          );
 
-            // Calculate TVL
-            const tvl = parseFloat(formatEther(reserve0)) * price0 + 
+          // Get tokens
+          const token0Address = await pairContract.token0();
+          const token1Address = await pairContract.token1();
+          const [token0Symbol, token1Symbol] = await Promise.all([
+            getTokenSymbol(token0Address, provider),
+            getTokenSymbol(token1Address, provider),
+          ]);
+
+          // Get reserves
+          const reserves = await pairContract.getReserves();
+          const [reserve0, reserve1] = [reserves[0], reserves[1]];
+
+          // Get token prices
+          const [price0, price1] = await Promise.all([
+            getTokenPrice(token0Symbol),
+            getTokenPrice(token1Symbol),
+          ]);
+
+          // Get volume (Note: You'll need to implement your own volume tracking as
+          // Uniswap V2 doesn't track volume directly)
+          const volume = await getVolume24h(pairAddress, provider);
+
+          // Calculate TVL
+          const tvl =
+            parseFloat(formatEther(reserve0)) * price0 +
             parseFloat(formatEther(reserve1)) * price1;
 
-             // Calculate APR
-            const apr = calculateAPR(formatEther(volume), tvl.toString());
+          // Calculate APR
+          const apr = calculateAPR(formatEther(volume), tvl.toString());
 
-            // Calculate liquidity (using both reserves)
-            const liquidity = ethers.BigNumber.from(
-              Math.floor(
-                Math.sqrt(
-                  parseFloat(formatEther(reserve0)) *
-                    parseFloat(formatEther(reserve1))
-                )
-              ).toString()
-            );
-  
-            
-  
-            return {
-              id: pairAddress,
-              token0Address,
-              token1Address,
-              token0Symbol,
-              token1Symbol,
-              liquidity: formatEther(liquidity),
-              volume24h: formatEther(volume),
-              tvl: tvl.toString(),
-              apr: apr.toString(),
-            };
-          })
-        );
-  
-        setAllPools(poolsData);
-      } catch (error) {
-        console.error("Error fetching pools:", error);
-      } finally {
-        setLoading(false);
-      }
+          // Calculate liquidity (using both reserves)
+          const liquidity = ethers.BigNumber.from(
+            Math.floor(
+              Math.sqrt(
+                parseFloat(formatEther(reserve0)) *
+                  parseFloat(formatEther(reserve1))
+              )
+            ).toString()
+          );
+
+          return {
+            id: pairAddress,
+            token0Address,
+            token1Address,
+            token0Symbol,
+            token1Symbol,
+            liquidity: formatEther(liquidity),
+            volume24h: formatEther(volume),
+            tvl: tvl.toString(),
+            apr: apr.toString(),
+          };
+        })
+      );
+
+      setAllPools(poolsData);
+    } catch (error) {
+      console.error("Error fetching pools:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -291,82 +288,82 @@ const PoolsList: React.FC = () => {
   }
 
   return (
-    <Paper className={classes.root}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange}>
-          <Tab label="All Pools" {...a11yProps(0)} />
-          <Tab label="My Pools" {...a11yProps(1)} />
-        </Tabs>
+    <Box className={`${classes.root} tabpanel-container`}>
+      <Box className="tabpanel-content">
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs value={value} onChange={handleChange} className="pool-tabs">
+            <Tab label="All Pools" {...a11yProps(0)} />
+            <Tab label="My Pools" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={value} index={0}>
+          <TableContainer className={classes.tableContainer}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pools</TableCell>
+                  <TableCell align="right">APR</TableCell>
+                  <TableCell align="right">TVL</TableCell>
+                  <TableCell align="right">Volume</TableCell>
+                  <TableCell align="right"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {allPools.map((pool) => (
+                  <TableRow key={pool.id} hover>
+                    <TableCell component="th" scope="row">
+                      <Typography variant="body1">
+                        {pool.token0Symbol}/{pool.token1Symbol}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">{pool.apr}</TableCell>
+                    <TableCell align="right">{pool.tvl}</TableCell>
+                    <TableCell align="right">{pool.volume24h}</TableCell>
+                    <TableCell align="right">
+                      <CustomizedMenus menuItems={menuItems} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <TableContainer className={classes.tableContainer}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Pool</TableCell>
+                  <TableCell align="right">Liquidity</TableCell>
+                  <TableCell align="right">Token 1</TableCell>
+                  <TableCell align="right">Token 2</TableCell>
+                  <TableCell align="right"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {myPools.map((pool) => (
+                  <TableRow key={pool.id} hover>
+                    <TableCell component="th" scope="row">
+                      <Typography variant="body1">
+                        {pool.token0Symbol}/{pool.token1Symbol}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      ${formatNumber(pool.liquidity)}
+                    </TableCell>
+                    <TableCell align="right">{pool.token0Share}</TableCell>
+                    <TableCell align="right">{pool.token1Share}</TableCell>
+                    <TableCell align="right">
+                      <CustomizedMenus menuItems={menuItems} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CustomTabPanel>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-      <TableContainer className={classes.tableContainer}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Pools</TableCell>
-                <TableCell align="right">APR</TableCell>
-                <TableCell align="right">TVL</TableCell>
-                <TableCell align="right">Volume</TableCell>
-                <TableCell align="right"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {allPools.map((pool) => (
-                <TableRow key={pool.id} hover>
-                  <TableCell component="th" scope="row">
-                    <Typography variant="body1">
-                      {pool.token0Symbol}/{pool.token1Symbol}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    { pool.apr}
-                  </TableCell>
-                  <TableCell align="right">{pool.tvl}</TableCell>
-                  <TableCell align="right">{pool.volume24h}</TableCell>
-                  <TableCell align="right">
-                    <CustomizedMenus menuItems={menuItems}/>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <TableContainer className={classes.tableContainer}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Pool</TableCell>
-                <TableCell align="right">Liquidity</TableCell>
-                <TableCell align="right">Token 1</TableCell>
-                <TableCell align="right">Token 2</TableCell>
-                <TableCell align="right"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {myPools.map((pool) => (
-                <TableRow key={pool.id} hover>
-                  <TableCell component="th" scope="row">
-                    <Typography variant="body1">
-                      {pool.token0Symbol}/{pool.token1Symbol}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    ${formatNumber(pool.liquidity)}
-                  </TableCell>
-                  <TableCell align="right">{pool.token0Share}</TableCell>
-                  <TableCell align="right">{pool.token1Share}</TableCell>
-                  <TableCell align="right">
-                    <CustomizedMenus menuItems={menuItems}/>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </CustomTabPanel>
-    </Paper>
+    </Box>
   );
 };
 
@@ -418,28 +415,28 @@ const getTokenPrice = async (tokenSymbol: string): Promise<number> => {
 const DAILY_FEES_PERCENT = 0.003; // 0.3% fee per trade
 const DAYS_PER_YEAR = 365;
 const calculateAPR = (volume24h: string, tvl: string): string => {
-    try {
-      // Convert strings to numbers
-      const dailyVolume = parseFloat(volume24h);
-      const totalValueLocked = parseFloat(tvl);
-  
-      if (totalValueLocked <= 0) return "0";
-  
-      // Calculate daily fees earned
-      const dailyFees = dailyVolume * DAILY_FEES_PERCENT;
-  
-      // Project to yearly fees
-      const yearlyFees = dailyFees * DAYS_PER_YEAR;
-  
-      // Calculate APR
-      const apr = (yearlyFees / totalValueLocked) * 100;
-  
-      // Return formatted APR with 2 decimal places
-      return apr.toFixed(2);
-    } catch (error) {
-      console.error("Error calculating APR:", error);
-      return "0";
-    }
-  };
+  try {
+    // Convert strings to numbers
+    const dailyVolume = parseFloat(volume24h);
+    const totalValueLocked = parseFloat(tvl);
+
+    if (totalValueLocked <= 0) return "0";
+
+    // Calculate daily fees earned
+    const dailyFees = dailyVolume * DAILY_FEES_PERCENT;
+
+    // Project to yearly fees
+    const yearlyFees = dailyFees * DAYS_PER_YEAR;
+
+    // Calculate APR
+    const apr = (yearlyFees / totalValueLocked) * 100;
+
+    // Return formatted APR with 2 decimal places
+    return apr.toFixed(2);
+  } catch (error) {
+    console.error("Error calculating APR:", error);
+    return "0";
+  }
+};
 
 export default PoolsList;
