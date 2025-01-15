@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Grid, Typography, Box, useTheme } from "@material-ui/core";
 import logo from "../assets/logo.svg";
+import ConnectWalletButton from "./connectWalletButton";
 
 const Header: React.FC<{}> = () => {
   const theme = useTheme();
@@ -24,16 +25,17 @@ const Header: React.FC<{}> = () => {
       </Grid>
       <Grid item xs={12} md={8} lg={8}>
         <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center">
-          {menuItems.map((item) => (
+          { /* menuItems.map((item) => (
             <a key={item.name} href={item.link} className="header-menu-item">
               {item.name}
             </a>
-          ))}
+          ))} */}
           <Button className={"gradient-button header-contact-button"}>
             <div className="button-angled-clip">
               <Typography className={"gradient-text"}>Contact Us</Typography>
             </div>
           </Button>
+          <ConnectWalletButton />
         </Box>
       </Grid>
     </Grid>

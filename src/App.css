@@ -186,6 +186,20 @@ body {
   border-radius: var(--border-radius);
   margin-bottom: 0px;
 }
+.coin-field-input input{
+  text-align: end;
+  font-size: 24px;
+  color: var(--secondary-color);
+}
+
+.coin-field-input::after {
+  border: none !important;
+}
+
+.coin-field-input-value {
+  color: var(--secondary-color);
+}
+
 .switch-field-button::before {
   content: "";
   position: absolute;
@@ -210,6 +224,13 @@ body {
 }
 .switch-field-button:hover {
   background: transparent !important;
+}
+
+.swap-button {
+  margin-top: 32px !important;
+  width:200px !important;
+  height:32px !important;
+  text-transform: none !important;
 }
 
 .liquidity-pool-summary {

@@ -144,7 +144,7 @@ const Swap: React.FC<{}> = () => {
               setAmount={(amount) => setAmountIn(Number(amount))}
               setSelectedToken={(token: TOKEN) => setSelectedToken2(token)}
             />
-            <Box
+            {/*<Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
@@ -160,13 +160,15 @@ const Swap: React.FC<{}> = () => {
                   Price Impact: $ 1.14 (-2.26%)
                 </Typography>
               </Box>
-            </Box>
+            </Box>*/}
           </div>
         </Box>
       </Box>
       <ConnectWalletButton />
-      <Button variant="contained" color="primary" onClick={handleSwap}>
-        Swap
+      <Button variant="contained" color="primary" onClick={handleSwap} className="gradient-button swap-button">
+      <div className="button-angled-clip">
+      <Typography className={"gradient-text"}>Swap Tokens</Typography>
+      </div>
       </Button>
     </>
   );

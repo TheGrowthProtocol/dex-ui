@@ -205,8 +205,9 @@ const Coinfield2: React.FC<COINFIELD> = ({
             placeholder="0.0"
             onChange={handleTokenAmountChange}
             value={value}
+            className="coin-field-input"
           />
-          <Typography variant="h6">0.00</Typography>
+          <Typography variant="subtitle1" align="right" className="coin-field-input-value">$0.00</Typography>
         </Box>
       </Box>
       <Coindialog
