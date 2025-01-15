@@ -164,7 +164,6 @@ const Swap: React.FC<{}> = () => {
           </div>
         </Box>
       </Box>
-      <ConnectWalletButton />
       <Button variant="contained" color="primary" onClick={handleSwap} className="gradient-button swap-button">
       <div className="button-angled-clip">
       <Typography className={"gradient-text"}>Swap Tokens</Typography>

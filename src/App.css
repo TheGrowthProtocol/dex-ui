@@ -77,6 +77,12 @@ body {
   margin: auto;
 }
 
+.connect-wallet-button {
+  width: 264px;
+  height: 32px;
+  text-transform: none !important;
+  margin-left: 16px !important;
+}
 .header {
   padding-right: 120px;
   padding-left: 120px;
@@ -130,6 +136,10 @@ body {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: -1;
+}
+
+.main-content-area {
+  margin-top: 24px;
 }
 
 .tab-header {

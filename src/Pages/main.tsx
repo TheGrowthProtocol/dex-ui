@@ -44,7 +44,7 @@ const Main = () => {
   return (
     <Grid container>
       <Grid item xs={12} md={12}>
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%" }} className="main-content-area">
           <Box>
             <Tabs
               value={value}
