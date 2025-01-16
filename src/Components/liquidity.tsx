@@ -141,16 +141,19 @@ const Liquidity: React.FC<{}> = () => {
           <Box
             display="flex"
             flexDirection="column"
-            className="coin-field-container"
+            className="coin-field-container coin-field-pair-block"
           >
             <Typography variant="subtitle2">Select Token Pair</Typography>
-            <Box display="flex">
+            <Box display="flex" className="coin-field-pair-container">
               <Button
                 variant="contained"
                 onClick={() => setOpenToken1Dialog(true)}
-                endIcon={<KeyboardArrowDownIcon />}
+                endIcon={<KeyboardArrowDownIcon color="primary" />}
+                className="coin-field-button"
               >
-                {liquidityState.token1.symbol || "Select Token"}
+                <Typography className={"gradient-text"}>
+                  {liquidityState.token1.symbol || "Select Token"}
+                </Typography>
               </Button>
               <Coindialog
                 tokens={tokens}
@@ -158,13 +161,16 @@ const Liquidity: React.FC<{}> = () => {
                 handleClose={handleToken1DialogClose}
                 onTokenSelect={handleToken1Select}
               />
-              <Typography variant="h6">+</Typography>
+              <Typography variant="h6" className="coin-field-pair-plus">+</Typography>
               <Button
                 variant="contained"
                 onClick={() => setOpenToken2Dialog(true)}
-                endIcon={<KeyboardArrowDownIcon />}
+                endIcon={<KeyboardArrowDownIcon color="primary" />}
+                className="coin-field-button"
               >
-                {liquidityState.token2.symbol || "Select Token"} 
+                <Typography className={"gradient-text"}>
+                  {liquidityState.token2.symbol || "Select Token"} 
+                </Typography>
               </Button>
               <Coindialog
                 tokens={tokens}
@@ -205,7 +211,7 @@ const Liquidity: React.FC<{}> = () => {
               onAmountChange={handleTokenAmount2}
             />
           </Box>
-          <Box
+          { /* <Box
             className="liquidity-pool-summary"
             sx={{
               display: "flex",
@@ -225,7 +231,7 @@ const Liquidity: React.FC<{}> = () => {
               <Typography variant="subtitle1">3.28%</Typography>
               <Typography variant="subtitle1">Share of Pool</Typography>
             </Box>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
       <Button
