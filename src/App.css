@@ -403,6 +403,11 @@ body {
   color: var(--background-color) !important;
 }
 
+.pool-card {
+  margin-bottom: 16px !important;
+  border-radius: var(--border-radius) !important;
+}
+
 /* Coin Dialog */
 
 .coin-dialog .MuiDialog-paper  {
@@ -471,7 +476,7 @@ body {
   align-items: center;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 600px) {
   .main-container {
     padding-left: 16px !important;
     padding-right: 16px !important;
@@ -480,5 +485,17 @@ body {
   .header {
     padding-left: 16px !important;
     padding-right: 16px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-container {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+
+  .header {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
   }
 }

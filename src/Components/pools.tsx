@@ -11,14 +11,20 @@ import {
   Box,
   Tabs,
   Tab,
+  useMediaQuery,
+  Grid,
+  Card,
+  CardContent,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { ethers } from "ethers";
 import { formatEther } from "@ethersproject/units";
 import POOL_FACTORY_ABI from "../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../build/IUniswapV2Pair.json";
 import CustomizedMenus from "./styledMenu";
 import { MenuItemProps } from "../interfaces";
+import CoinNoIcon from "./coinNoIcon";
+import CoinPairIcons from "./coinPairIcons";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +72,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && children}
     </div>
   );
 };
@@ -90,6 +96,8 @@ const PoolsList: React.FC = () => {
   const [allPools, setAllPools] = useState<Pool[]>([]);
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState(0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -296,36 +304,100 @@ const PoolsList: React.FC = () => {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <TableContainer className={classes.tableContainer}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pools</TableCell>
-                  <TableCell align="right">APR</TableCell>
-                  <TableCell align="right">TVL</TableCell>
-                  <TableCell align="right">Volume</TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {allPools.map((pool) => (
-                  <TableRow key={pool.id} hover>
-                    <TableCell component="th" scope="row">
-                      <Typography variant="body1">
-                        {pool.token0Symbol}/{pool.token1Symbol}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">{pool.apr}</TableCell>
-                    <TableCell align="right">{pool.tvl}</TableCell>
-                    <TableCell align="right">{pool.volume24h}</TableCell>
-                    <TableCell align="right">
-                      <CustomizedMenus menuItems={menuItems} />
-                    </TableCell>
+          {isMobile && (
+            <Box>
+              {allPools.map((pool) => (
+                <Card key={pool.id} className="pool-card">
+                  <CardContent className="pool-card__content">
+                    {/* Pool Pair */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                      className="pool-card__header"
+                    >
+                      <Box
+                        sx={{ display: "flex", flexDirection: "row" }}
+                        className="pool-card__pair"
+                      >
+                        <Box className="pool-card__icons">
+                          <CoinPairIcons  />
+                        </Box>
+                        <Typography variant="h6" className="pool-card__symbols">
+                          {pool.token0Symbol}/{pool.token1Symbol}
+                        </Typography>
+                      </Box>
+                      <Box className="pool-card__menu">
+                        <CustomizedMenus menuItems={menuItems} />
+                      </Box>
+                    </Box>
+
+                    {/* Stats Grid */}
+                    <Grid container spacing={2} className="pool-card__stats">
+                      <Grid item xs={4} className="pool-card__stat">
+                        <Typography className="pool-card__stat-label">
+                          APR
+                        </Typography>
+                        <Typography className="pool-card__stat-value">
+                          {pool.apr}%
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4} className="pool-card__stat">
+                        <Typography className="pool-card__stat-label">
+                          TVL
+                        </Typography>
+                        <Typography className="pool-card__stat-value">
+                          ${pool.tvl}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4} className="pool-card__stat">
+                        <Typography className="pool-card__stat-label">
+                          Volume 24h
+                        </Typography>
+                        <Typography className="pool-card__stat-value">
+                          ${pool.volume24h}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          )}
+          {!isMobile && (
+            <TableContainer className={classes.tableContainer}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Pools</TableCell>
+                    <TableCell align="right">APR</TableCell>
+                    <TableCell align="right">TVL</TableCell>
+                    <TableCell align="right">Volume</TableCell>
+                    <TableCell align="right"></TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {allPools.map((pool) => (
+                    <TableRow key={pool.id} hover>
+                      <TableCell component="th" scope="row">
+                        <Typography variant="body1">
+                          {pool.token0Symbol}/{pool.token1Symbol}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">{pool.apr}</TableCell>
+                      <TableCell align="right">{pool.tvl}</TableCell>
+                      <TableCell align="right">{pool.volume24h}</TableCell>
+                      <TableCell align="right">
+                        <CustomizedMenus menuItems={menuItems} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <TableContainer className={classes.tableContainer}>

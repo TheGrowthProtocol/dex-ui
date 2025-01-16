@@ -42,3 +42,8 @@ export interface MenuItemProps {
     label: string;
     onClick: () => void;
   }
+
+export interface CoinPairIconsProps {
+    coin1Image?: string;
+    coin2Image?: string;
+  }
