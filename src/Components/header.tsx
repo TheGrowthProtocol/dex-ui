@@ -1,18 +1,10 @@
 import React from "react";
-import { Button, Grid, Typography, Box, useTheme } from "@material-ui/core";
+import { Grid, Box, useTheme } from "@material-ui/core";
 import logo from "../assets/logo.svg";
 import ConnectWalletButton from "./connectWalletButton";
 
 const Header: React.FC<{}> = () => {
   const theme = useTheme();
-  const menuItems = [
-    { name: "Dex", link: "/dex" },
-    { name: "Faucet", link: "/faucet" },
-    { name: "dApps", link: "/dapps" },
-    { name: "Docs", link: "/docs" },
-    { name: "Blogs", link: "/blogs" },
-    { name: "Block Explorer", link: "/block-explorer" },
-  ];
   return (
     <Grid
       container
@@ -37,11 +29,6 @@ const Header: React.FC<{}> = () => {
           justifyContent={{ xs: "center", md: "flex-end" }}
           alignItems="center"
         >
-          {/* menuItems.map((item) => (
-            <a key={item.name} href={item.link} className="header-menu-item">
-              {item.name}
-            </a>
-          ))} */}
           <ConnectWalletButton />
         </Box>
       </Grid>

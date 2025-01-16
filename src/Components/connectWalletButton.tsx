@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { Typography } from "@material-ui/core";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 
 const TGP_NETWORK = {
   chainId: "0x17c99", // Convert 97433 to hex
@@ -151,14 +150,18 @@ const ConnectWalletButton = () => {
   };
 
   return (
-    <Button className={"gradient-button connect-wallet-button"} onClick={isConnected ? handleDisconnect : handleConnect}>
-            <div className="button-angled-clip">
-              <Typography className={"gradient-text"}>{isConnected
-        ? `Connected: ${shortenAddress(walletAddress)}`
-        : "  Connect Wallet"}</Typography>
-            </div>
-          </Button>
-
+    <Button
+      className={"gradient-button connect-wallet-button"}
+      onClick={isConnected ? handleDisconnect : handleConnect}
+    >
+      <div className="button-angled-clip">
+        <Typography className={"gradient-text"}>
+          {isConnected
+            ? `Connected: ${shortenAddress(walletAddress)}`
+            : "  Connect Wallet"}
+        </Typography>
+      </div>
+    </Button>
   );
 };
 

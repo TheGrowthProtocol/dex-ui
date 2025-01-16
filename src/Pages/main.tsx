@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Typography, Box, Tab, Tabs } from "@material-ui/core";
+import { Grid, Box, Tab, Tabs } from "@material-ui/core";
 
 import Swap from "../Components/swap";
 import Liquidity from "../Components/liquidity";
@@ -22,7 +22,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <>{ children }</>}
+      {value === index && <>{children}</>}
     </div>
   );
 };
@@ -53,7 +53,11 @@ const Main = () => {
               textColor="primary"
             >
               <Tab label="Swap" {...a11yProps(0)} className="tab-header" />
-              <Tab label="Add Liquidity" {...a11yProps(1)} className="tab-header" />
+              <Tab
+                label="Add Liquidity"
+                {...a11yProps(1)}
+                className="tab-header"
+              />
               <Tab label="Pools" {...a11yProps(2)} className="tab-header" />
               <Tab label="Staking" {...a11yProps(3)} className="tab-header" />
             </Tabs>
@@ -64,8 +68,8 @@ const Main = () => {
           <CustomTabPanel value={value} index={1}>
             <Liquidity />
           </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
-              <PoolsList />
+          <CustomTabPanel value={value} index={2}>
+            <PoolsList />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
             <Staking />

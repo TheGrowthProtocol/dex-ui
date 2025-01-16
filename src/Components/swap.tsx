@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, Typography } from "@material-ui/core";
 import Coinfield1 from "../Components/coinfield1";
 import Coinfield2 from "../Components/coinfield2";
-import { Contract, ethers, utils } from "ethers";
+import { Contract, ethers } from "ethers";
 import ERC20 from "../build/ERC20.json";
 import IUniswapV2Router02 from "../build/IUniswapV2Router02.json";
 import { TOKEN } from "../interfaces";
@@ -35,9 +35,7 @@ const Swap: React.FC<{}> = () => {
     }
   }, []);
 
-  // TODO: Add logic to amount of token selled and price impact calculation
   useEffect(() => {
-    console.log(amountOut);
     setCoinfield2Amount();
   }, [amountOut]);
 
