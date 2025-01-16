@@ -131,171 +131,7 @@ const Liquidity: React.FC<{}> = () => {
 
   // Function to add liquidity pool
   const handleAddLiquidityPool =  () => {
-    /*try {
-      if (!liquidityState.token1.address || !liquidityState.token2.address) {
-        throw new Error("No selected token addresses.");
-      }
-
-      // Get network and contract setup
-      const { routerContract, account } = await setupContracts();
-
-      // Get token details and amounts
-      const {
-        token1Contract,
-        token2Contract,
-        amountIn1,
-        amountIn2,
-        amount1Min,
-        amount2Min,
-        deadline
-      } = await prepareTokenDetails();
-
-      // Approve tokens
-      await approveTokens(token1Contract, token2Contract, routerContract, amountIn1, amountIn2);
-
-      // Add liquidity
-      await executeLiquidityTransaction(routerContract, {
-        token1Address: liquidityState.token1.address,
-        token2Address: liquidityState.token2.address,
-        amountIn1,
-        amountIn2,
-        amount1Min,
-        amount2Min,
-        account,
-        deadline
-      });
-
-    } catch (error) {
-      console.error("Failed to add liquidity:", error);
-      // Here you might want to show an error notification to the user
-    }*/
     dispatch(addLiquidity());
-  };
-
-  // Helper functions
-  const setupContracts = async () => {
-    const network = await provider.getNetwork();
-    const routerAddress = chains.routerAddress.get(network.chainId);
-    const routerContract = new Contract(routerAddress, IUniswapV2Router02.abi, signer);
-    const account = await signer.getAddress();
-    
-    return { routerContract, account };
-  };
-
-  const getTokenDecimals = async (tokenContract: Contract) => {
-    try {
-      return await tokenContract.decimals();
-    } catch (error) {
-      console.warn("No decimals function for token, defaulting to 0:", error);
-      return 0;
-    }
-  };
-
-  /**
-   * Prepares the token details for the liquidity transaction
-   * @description This function prepares the token details for the liquidity transaction based on the selected token pair and the selected network.
-   * @returns {Object} - The token details for the liquidity transaction.
-   */
-  const prepareTokenDetails = async () => {
-    if (!liquidityState.token1.address || !liquidityState.token2.address) {
-      throw new Error("No selected token addresses.");
-    }
-
-    const token1Contract = new Contract(liquidityState.token1.address, ERC20.abi, signer);
-    const token2Contract = new Contract(liquidityState.token2.address, ERC20.abi, signer);
-
-    const [token1Decimals, token2Decimals] = await Promise.all([
-      getTokenDecimals(token1Contract),
-      getTokenDecimals(token2Contract)
-    ]);
-
-    const amountIn1 = ethers.utils.parseUnits(liquidityState.amount1, token1Decimals);
-    const amountIn2 = ethers.utils.parseUnits(liquidityState.amount2, token2Decimals);
-    const amount1Min = ethers.utils.parseUnits(liquidityState.amount1Min, token1Decimals);
-    const amount2Min = ethers.utils.parseUnits(liquidityState.amount2Min, token2Decimals);
-    
-    const deadline = ethers.BigNumber.from(Math.floor(Date.now() / 1000) + 200000);
-
-    return {
-      token1Contract,
-      token2Contract,
-      amountIn1,
-      amountIn2,
-      amount1Min,
-      amount2Min,
-      deadline
-    };
-  };
-
-  const approveTokens = async (
-    token1Contract: Contract,
-    token2Contract: Contract,
-    routerContract: Contract,
-    amountIn1: ethers.BigNumber,
-    amountIn2: ethers.BigNumber
-  ) => {
-    await Promise.all([
-      token1Contract.approve(routerContract.address, amountIn1),
-      token2Contract.approve(routerContract.address, amountIn2)
-    ]);
-  };
-
-  interface LiquidityParams {
-    token1Address: string;
-    token2Address: string;
-    amountIn1: ethers.BigNumber;
-    amountIn2: ethers.BigNumber;
-    amount1Min: ethers.BigNumber;
-    amount2Min: ethers.BigNumber;
-    account: string;
-    deadline: ethers.BigNumber;
-  }
-
-  
-  /**
-   * Executes the liquidity transaction
-   * @description This function handles the liquidity transaction based on the selected token pair and the selected network.
-   * @param routerContract - The router contract instance.
-   * @param params - The parameters for the liquidity transaction.
-   */
-  const executeLiquidityTransaction = async (routerContract: Contract, params: LiquidityParams) => {
-    const wethAddress = await routerContract.WCERES();
-    
-    if (params.token1Address === wethAddress) {
-      // ETH + Token
-      await routerContract.addLiquidityCERES(
-        params.token2Address,
-        params.amountIn2,
-        params.amount2Min,
-        params.amount1Min,
-        params.account,
-        params.deadline,
-        { value: params.amountIn1 }
-      );
-    } else if (params.token2Address === wethAddress) {
-      // Token + ETH
-      await routerContract.addLiquidityCERES(
-        params.token1Address,
-        params.amountIn1,
-        params.amount1Min,
-        params.amount2Min,
-        params.account,
-        params.deadline,
-        { value: params.amountIn2 }
-      );
-    } else {
-      // Token + Token
-      await routerContract.addLiquidity(
-        params.token1Address,
-        params.token2Address,
-        params.amountIn1,
-        params.amountIn2,
-        params.amount1Min,
-        params.amount2Min,
-        params.account,
-        params.deadline
-      );
-    }
   };
 
   return (
@@ -337,7 +173,7 @@ const Liquidity: React.FC<{}> = () => {
                 onTokenSelect={handleToken2Select}
               />
             </Box>
-          </Box>
+          </Box>    
           <Box
             display={"flex"}
             flexDirection={"column"}
@@ -351,6 +187,18 @@ const Liquidity: React.FC<{}> = () => {
               selectedToken={liquidityState.token1}
               onAmountChange={handleTokenAmount1}
             />
+            <Box
+              className="liquidity-token-divider"
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Box
+                className="liquidity-token-divider-plus"
+              />
+            </Box> 
             <TokenInputField
               tokens={tokens}
               selectedToken={liquidityState.token2}

@@ -47,12 +47,12 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
 
       if (tokenSymbol === "WCERS") {
         const balance = await provider.getBalance(address);
-        const formattedBalance = ethers.utils.formatEther(balance); // Assuming 18 decimals for CERES
+        const formattedBalance = Number(ethers.utils.formatEther(balance)).toFixed(2); // Assuming 18 decimals for CERES
         setBalance(formattedBalance);
       } else {
         const tokenContract = new Contract(tokenAddress, ERC20.abi, provider);
         const balance = await tokenContract.balanceOf(address);
-        const formattedBalance = ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals for the token
+        const formattedBalance = Number(ethers.utils.formatUnits(balance, 18)).toFixed(2); // Assuming 18 decimals for the token
         setBalance(formattedBalance);
       }
     } catch (error) {
@@ -68,16 +68,16 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Input type="text" placeholder="0.0" onChange={onAmountChange} />
-        <Typography variant="h6">0.00</Typography>
+        <Input type="text" placeholder="0.0" onChange={onAmountChange}  className="token-input-field"/>
+        <Typography variant="subtitle1" className="token-input-field-value">$0.00</Typography>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography className="liquidity-token-symbol gradient-text">
           {selectedToken.symbol}
         </Typography>
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
-          <AccountBalanceWalletIcon />
-          <Typography variant="h6">{balance}</Typography>
+        <Box sx={{ display: "flex", flexDirection: "row" , alignItems: "center"}} className="token-input-field-balance-container">
+          <AccountBalanceWalletIcon fontSize="small" />
+          <Typography variant="subtitle1" className="token-input-field-balance">{balance}</Typography>
         </Box>
       </Box>
     </Box>
