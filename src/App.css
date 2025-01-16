@@ -256,6 +256,10 @@ body {
   text-transform: none !important;
 }
 
+.token-symbol {
+  margin-left: 8px !important;
+}
+
 .token-input-field {
   text-align: start;
   font-size: 24px !important;
@@ -460,7 +464,7 @@ body {
 .coin-noicon-placeholder {
   width: 24px;
   height: 24px;
-  background: var(--background-color);
+  background: #1A1A1A;
   border-radius: 24px;
   display: flex;
   justify-content: center;

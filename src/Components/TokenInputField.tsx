@@ -5,6 +5,7 @@ import { TokenInputFieldProps } from "../interfaces";
 import { ethers, Contract } from "ethers";
 
 import ERC20 from "../build/ERC20.json";
+import CoinNoIcon from "./coinNoIcon";
 
 const TokenInputField: React.FC<TokenInputFieldProps> = ({
   tokens,
@@ -72,9 +73,12 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
         <Typography variant="subtitle1" className="token-input-field-value">$0.00</Typography>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography className="liquidity-token-symbol gradient-text">
-          {selectedToken.symbol}
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "row" , alignItems: "center"}}>
+          <CoinNoIcon />
+          <Typography className="token-symbol gradient-text">
+            {selectedToken.symbol}
+          </Typography>
+        </Box>
         <Box sx={{ display: "flex", flexDirection: "row" , alignItems: "center"}} className="token-input-field-balance-container">
           <AccountBalanceWalletIcon fontSize="small" />
           <Typography variant="subtitle1" className="token-input-field-balance">{balance}</Typography>

@@ -15,6 +15,7 @@ import { addLiquidity, initializeProvider } from "../store/liquidity/liquidityTh
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../store/store';
 import { setToken1, setToken2, setAmount1, setAmount2, setAmount1Min, setAmount2Min } from "../store/liquidity/liquiditySlice";
+import CoinNoIcon from "./coinNoIcon";
 
 const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -151,7 +152,8 @@ const Liquidity: React.FC<{}> = () => {
                 endIcon={<KeyboardArrowDownIcon color="primary" />}
                 className="coin-field-button"
               >
-                <Typography className={"gradient-text"}>
+                <CoinNoIcon />
+                <Typography className={"gradient-text token-symbol"}>
                   {liquidityState.token1.symbol || "Select Token"}
                 </Typography>
               </Button>
@@ -168,7 +170,8 @@ const Liquidity: React.FC<{}> = () => {
                 endIcon={<KeyboardArrowDownIcon color="primary" />}
                 className="coin-field-button"
               >
-                <Typography className={"gradient-text"}>
+                <CoinNoIcon />
+                <Typography className={"token-symbol gradient-text"}>
                   {liquidityState.token2.symbol || "Select Token"} 
                 </Typography>
               </Button>

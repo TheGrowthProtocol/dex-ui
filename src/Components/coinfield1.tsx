@@ -10,6 +10,7 @@ import { useSnackbar } from "notistack";
 
 import ERC20 from "../build/ERC20.json";
 import WCERES from "../build/WCERES.json";
+import CoinNoIcon from "./coinNoIcon";
 
 const Coinfield1: React.FC<COINFIELD> = ({
   setSelectedToken,
@@ -182,7 +183,8 @@ const Coinfield1: React.FC<COINFIELD> = ({
             endIcon={<KeyboardArrowDownIcon color="primary" />}
             className="coin-field-button"
           >
-            <Typography className={"gradient-text"}>
+            <CoinNoIcon />
+            <Typography className={"token-symbol gradient-text"}>
               {selectedToken1.symbol || "Select Token"}
             </Typography>
           </Button>
