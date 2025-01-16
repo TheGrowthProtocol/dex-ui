@@ -7,6 +7,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Input,
 } from "@material-ui/core";
 import { COINDIALOG } from "../interfaces";
 
@@ -33,18 +34,13 @@ const Coindialog: React.FC<COINDIALOG> = ({
         {"Select a Coin"}
       </DialogTitle>
       <Box sx={{ padding: 2 }} className="coin-dialog__input-container">
-        <Typography 
-          variant="subtitle1" 
-          className="coin-dialog__input-label"
-        >
-          Token Address
-        </Typography>
-        <input
+        <Input
           type="text"
           value={tokenAddress}
           onChange={(e) => setTokenAddress(e.target.value)}
           className="coin-dialog__input"
-          style={{ width: "100%", padding: "8px", marginBottom: "16px" }}
+          placeholder="Search for a token"
+          fullWidth
         />
       </Box>
       <List className="coin-dialog__list">

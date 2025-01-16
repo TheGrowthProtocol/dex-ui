@@ -179,7 +179,7 @@ body {
 
 .coin-field-button {
   background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%);
-  border-radius: 20px !important;
+  border-radius: 24px !important;
   text-transform: none !important;
 }
 
@@ -373,7 +373,7 @@ body {
 .pool-tabs {
   margin-bottom: 16px !important;
   background: var(--background-color) !important;
-  border-radius: 40px !important;
+  border-radius: 24px !important;
   padding: 1px !important;
   width: fit-content;
   min-height: 32px !important;
@@ -384,7 +384,7 @@ body {
   width: 153px !important;
   height: 32px !important;
   padding: 8px 32px 8px 32px !important;
-  border-radius: 40px !important;
+  border-radius: 24px !important;
   background: var(--background-color) !important;
   color: var(--secondary-color) !important;
   min-height: 32px !important;
@@ -394,3 +394,44 @@ body {
   background: var(--primary-color) !important;
   color: var(--background-color) !important;
 }
+
+/* Coin Dialog */
+
+.coin-dialog .MuiDialog-paper  {
+  background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%);
+  border-radius: var(--border-radius);
+  padding: 24px !important;
+}
+
+.coin-dialog__title {
+  color: var(--primary-color) !important;
+}
+
+.coin-dialog__input {
+  color: var(--primary-color) !important;
+  background: var(--background-color) !important;
+  border-radius: var(--border-radius) !important;
+  padding: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.coin-dialog__input::after {
+  border: none !important;
+}
+
+.coin-dialog__input::before {
+  border: none !important;
+}
+
+.coin-dialog__list {
+  padding: 16px !important;
+  background: var(--background-color) !important;
+  border-radius: var(--border-radius) !important;
+}
+
+.coin-dialog__list-item {
+  background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%)!important;
+  border-radius: 24px !important;
+  margin-bottom: 8px !important;
+}
+
