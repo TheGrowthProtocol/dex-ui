@@ -199,6 +199,10 @@ body {
   margin-bottom: 0px;
 }
 
+.coin-field-container-title {
+  margin-bottom: 16px;
+}
+
 .coin-field-input input {
   text-align: end;
   font-size: 24px;
@@ -405,6 +409,7 @@ body {
 
 .coin-dialog__title {
   color: var(--primary-color) !important;
+  padding: 0 !important;
 }
 
 .coin-dialog__input {
@@ -423,6 +428,15 @@ body {
   border: none !important;
 }
 
+.coin-dialog__tokens-container-title {
+  margin-left: 8px !important;
+}
+
+.coin-dialog__tokens-container {
+  margin-bottom: 16px !important;
+  color: var(--primary-color) !important;
+}
+
 .coin-dialog__list {
   padding: 16px !important;
   background: var(--background-color) !important;
@@ -435,3 +449,20 @@ body {
   margin-bottom: 8px !important;
 }
 
+.coin-dialog__list-item-text {
+  text-transform: uppercase;
+}
+
+.coin-dialog__list-item-icon {
+  min-width: 32px !important;
+}
+
+.coin-noicon-placeholder {
+  width: 24px;
+  height: 24px;
+  background: var(--background-color);
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

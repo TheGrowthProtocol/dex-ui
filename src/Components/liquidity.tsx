@@ -185,7 +185,7 @@ const Liquidity: React.FC<{}> = () => {
             flexDirection={"column"}
             className="coin-field-container"
           >
-            <Box display="flex" justifyContent="space-between">
+            <Box display="flex" justifyContent="space-between" className="coin-field-container-title">
               <Typography variant="body2">Deposit Amounts</Typography>
             </Box>
             <TokenInputField
