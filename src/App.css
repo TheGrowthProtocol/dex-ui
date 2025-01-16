@@ -311,6 +311,7 @@ body {
   border-radius: 40px!important;
   padding: 1px !important;
   width: fit-content;
+  min-height: 32px !important;
 }
 
 .pool-tab-button {
@@ -321,6 +322,7 @@ body {
   border-radius: 40px !important;
   background: var(--background-color) !important;
   color: var(--secondary-color) !important;
+  min-height: 32px !important;
 }
 
 .pool-tab-button.Mui-selected {
