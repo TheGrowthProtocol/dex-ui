@@ -470,3 +470,15 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+@media (max-width: 900px) {
+  .main-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .header {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
