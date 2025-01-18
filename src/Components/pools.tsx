@@ -179,9 +179,9 @@ const PoolsList: React.FC = () => {
             token1Address,
             token0Symbol,
             token1Symbol,
-            token0Share: formatEther(token0Share),
-            token1Share: formatEther(token1Share),
-            liquidity: formatEther(liquidity),
+            token0Share: Number(formatEther(token0Share)).toFixed(2),
+            token1Share: Number(formatEther(token1Share)).toFixed(2),
+            liquidity: Number(formatEther(liquidity)).toFixed(2),
           };
         })
       );
@@ -382,9 +382,12 @@ const PoolsList: React.FC = () => {
                   {allPools.map((pool) => (
                     <TableRow key={pool.id} hover>
                       <TableCell component="th" scope="row">
-                        <Typography variant="body1">
-                          {pool.token0Symbol}/{pool.token1Symbol}
-                        </Typography>
+                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                          <CoinPairIcons  />
+                          <Typography variant="body1">
+                            {pool.token0Symbol}/{pool.token1Symbol}
+                          </Typography>
+                        </Box>
                       </TableCell>
                       <TableCell align="right">{pool.apr}</TableCell>
                       <TableCell align="right">{pool.tvl}</TableCell>
@@ -400,6 +403,69 @@ const PoolsList: React.FC = () => {
           )}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
+        {isMobile && (
+          <Box>
+          {myPools.map((pool) => (
+            <Card key={pool.id} className="pool-card">
+              <CardContent className="pool-card__content">
+                {/* Pool Pair */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                  className="pool-card__header"
+                >
+                  <Box
+                    sx={{ display: "flex", flexDirection: "row" }}
+                    className="pool-card__pair"
+                  >
+                    <Box className="pool-card__icons">
+                      <CoinPairIcons  />
+                    </Box>
+                    <Typography variant="h6" className="pool-card__symbols">
+                      {pool.token0Symbol}/{pool.token1Symbol}
+                    </Typography>
+                  </Box>
+                  <Box className="pool-card__menu">
+                    <CustomizedMenus menuItems={menuItems} />
+                  </Box>
+                </Box>
+
+                {/* Stats Grid */}
+                <Grid container spacing={2} className="pool-card__stats">
+                  <Grid item xs={4} className="pool-card__stat">
+                    <Typography className="pool-card__stat-label">
+                      Liquidity
+                    </Typography>
+                    <Typography className="pool-card__stat-value">
+                    ${formatNumber(pool.liquidity)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} className="pool-card__stat">
+                    <Typography className="pool-card__stat-label">
+                      Token 1
+                    </Typography>
+                    <Typography className="pool-card__stat-value">
+                      ${pool.token0Share}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} className="pool-card__stat">
+                    <Typography className="pool-card__stat-label">
+                      Token 2
+                    </Typography>
+                    <Typography className="pool-card__stat-value">
+                      ${pool.token1Share}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+        )}
+        {!isMobile && (
           <TableContainer className={classes.tableContainer}>
             <Table stickyHeader>
               <TableHead>
@@ -415,9 +481,12 @@ const PoolsList: React.FC = () => {
                 {myPools.map((pool) => (
                   <TableRow key={pool.id} hover>
                     <TableCell component="th" scope="row">
-                      <Typography variant="body1">
-                        {pool.token0Symbol}/{pool.token1Symbol}
-                      </Typography>
+                      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <CoinPairIcons  />
+                        <Typography variant="body1">
+                          {pool.token0Symbol}/{pool.token1Symbol}
+                        </Typography>
+                      </Box>
                     </TableCell>
                     <TableCell align="right">
                       ${formatNumber(pool.liquidity)}
@@ -430,8 +499,9 @@ const PoolsList: React.FC = () => {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
-          </TableContainer>
+              </Table>
+            </TableContainer>
+          )}
         </CustomTabPanel>
       </Box>
     </Box>
