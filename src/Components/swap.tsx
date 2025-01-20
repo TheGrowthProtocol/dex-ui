@@ -10,6 +10,8 @@ import * as chains from "../constants/chains";
 import ConnectWalletButton from "../Components/connectWalletButton";
 import { useSnackbar } from "notistack";
 
+import { useWallet } from "../Hooks/useWallet";
+
 const Swap: React.FC<{}> = () => {
   const [amountIn, setAmountIn] = useState(0);
   const [amountOut, setAmountOut] = useState(0);
@@ -24,20 +26,23 @@ const Swap: React.FC<{}> = () => {
   const [provider, setProvider] = useState<any>(null);
   const [signer, setSigner] = useState<any>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const { isConnected } = useWallet();
+
   useEffect(() => {
-    if (window.ethereum) {
+    /*if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
       const signer = provider.getSigner();
       setSigner(signer);
     } else {
       console.error("MetaMask is not installed!");
-    }
+    }*/
   }, []);
 
   useEffect(() => {
     setCoinfield2Amount();
   }, [amountOut]);
+
 
   const getTokenDecimals = async (tokenContract: Contract) => {
     try {
@@ -78,7 +83,7 @@ const Swap: React.FC<{}> = () => {
         [selectedToken1.address, selectedToken2.address]
       );
       const amount_out = values_out[1] * 10 ** -token2Decimals;
-      setAmountIn(Number(amount_out));
+      setAmountIn(Number(amount_out.toFixed(2)));
     } catch (error: any) {
       enqueueSnackbar(error.message, { variant: "error" });
     }
@@ -183,16 +188,23 @@ const Swap: React.FC<{}> = () => {
           </div>
         </Box>
       </Box>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSwap}
-        className="gradient-button swap-button"
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }} className="swap-button-container">
+        {isConnected && (
+          <Button
+            variant="contained"
+          color="primary"
+          onClick={handleSwap}
+          className="gradient-button swap-button"
       >
         <div className="button-angled-clip">
-          <Typography className={"gradient-text"}>Swap Tokens</Typography>
-        </div>
-      </Button>
+            <Typography className={"gradient-text"}>Swap Tokens</Typography>
+          </div>
+          </Button>
+        )}
+        {!isConnected && (
+          <ConnectWalletButton />
+        )}
+      </Box>
     </>
   );
 };

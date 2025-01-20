@@ -9,6 +9,7 @@ export interface COINFIELD {
     setSelectedToken: (token: TOKEN) => void;
     setAmount: (amount: string) => void;
     value: string;
+    //tokens: TOKEN[];
 }
 
 export interface COINDIALOG {
@@ -22,6 +23,7 @@ export interface TokenInputFieldProps {
     tokens: TOKEN[];
     selectedToken: TOKEN;
     onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    isDisplayBalance: boolean;
   }
 
   export interface LiquidityState {
@@ -46,4 +48,10 @@ export interface MenuItemProps {
 export interface CoinPairIconsProps {
     coin1Image?: string;
     coin2Image?: string;
+  }
+
+  export interface TokenState {
+    tokens: TOKEN[];
+    loading: boolean;
+    error: string | null;
   }

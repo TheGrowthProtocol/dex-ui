@@ -249,8 +249,11 @@ body {
   background: transparent !important;
 }
 
-.swap-button {
+.swap-button-container {
   margin-top: 32px !important;
+}
+
+.swap-button {
   width: 200px !important;
   height: 32px !important;
   text-transform: none !important;
@@ -322,10 +325,13 @@ body {
   color: var(--secondary-color);
 }
 
+.liquidity-button-container {
+  margin-top: 32px !important;
+}
+
 .liquidity-add-button {
   width: 220px;
   height: 32px;
-  margin-top: 32px !important;
 }
 
 .gradient-text {

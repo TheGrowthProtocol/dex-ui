@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { Button, Typography } from "@material-ui/core";
+import { useWallet } from "../Hooks/useWallet";
+import { useSnackbar } from "notistack";
+import { useNetwork } from "../Hooks/useNetwork";
 
 const TGP_NETWORK = {
   chainId: "0x17c99", // Convert 97433 to hex
@@ -15,10 +18,11 @@ const TGP_NETWORK = {
 };
 
 const ConnectWalletButton = () => {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [walletAddress, setWalletAddress] = useState<string>("");
+  const { isConnected, address, loading, error, connectWallet, disconnect } = useWallet();
+  const { isConnected: isNetworkConnected} = useNetwork();
+  const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
+  /**useEffect(() => {
     checkConnection();
     return () => {
       if (window.ethereum) {
@@ -28,14 +32,14 @@ const ConnectWalletButton = () => {
         );
       }
     };
-  }, []);
+  }, []);**/
 
   /**
    * Checks if the user's wallet is already connected by attempting to get
    * the signer's address. If an address is found, updates the connection
    * state and wallet address.
    */
-  const checkConnection = async () => {
+  /*const checkConnection = async () => {
     try {
       if (window.ethereum) {
         // First check if we're already on the correct network
@@ -61,13 +65,13 @@ const ConnectWalletButton = () => {
       console.error("Error checking connection", error);
       setIsConnected(false);
     }
-  };
+  };*/
 
   /**
    * Handles the accounts changed event by updating the connection state
    * and wallet address.
    */
-  const handleAccountsChanged = async (accounts: string[]) => {
+  /*const handleAccountsChanged = async (accounts: string[]) => {
     if (accounts.length === 0) {
       setIsConnected(false);
       setWalletAddress("");
@@ -75,13 +79,13 @@ const ConnectWalletButton = () => {
       setWalletAddress(accounts[0]);
       setIsConnected(true);
     }
-  };
+  };*/
 
   /**
    * Handles the connection to the user's wallet by requesting the user's
    * address and updating the connection state and wallet address.
    */
-  const handleConnect = async () => {
+  /*const handleConnect = async () => {
     try {
       if (!window.ethereum) {
         throw new Error(
@@ -129,16 +133,16 @@ const ConnectWalletButton = () => {
       console.error("Error connecting wallet", error);
       setIsConnected(false);
     }
-  };
+  };*/
 
   /**
    * Handles the disconnection from the user's wallet by resetting the
    * connection state and wallet address.
    */
-  const handleDisconnect = () => {
+  /*const handleDisconnect = () => {
     setIsConnected(false);
     setWalletAddress("");
-  };
+  };*/
 
   /**
    * Shortens the user's wallet address to a more readable format by
@@ -148,17 +152,24 @@ const ConnectWalletButton = () => {
     if (!address) return "";
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
+  if(error) {
+    enqueueSnackbar(error, { variant: "error" }); 
+  }
+
+  const getButtonText = () => {
+    if (loading) return "Connecting...";
+    if (isConnected && address && isNetworkConnected) return `Connected: ${shortenAddress(address)}`;
+    return "Connect Wallet";
+  };
 
   return (
     <Button
       className={"gradient-button connect-wallet-button"}
-      onClick={isConnected ? handleDisconnect : handleConnect}
+      onClick={isConnected ? disconnect : connectWallet}
     >
       <div className="button-angled-clip">
         <Typography className={"gradient-text"}>
-          {isConnected
-            ? `Connected: ${shortenAddress(walletAddress)}`
-            : "  Connect Wallet"}
+          {getButtonText()}
         </Typography>
       </div>
     </Button>

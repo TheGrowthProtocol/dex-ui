@@ -11,15 +11,16 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
   tokens,
   selectedToken,
   onAmountChange,
+  isDisplayBalance
 }) => {
 
     const [balance, setBalance] = useState<string>("0.0");
 
     useEffect(() => {
-        if (selectedToken.name !== "") {
+        if (selectedToken.name !== "" && isDisplayBalance) {
             fetchBalance();
           }
-    }, [selectedToken])
+    }, [selectedToken, isDisplayBalance])
   /**
    * Fetches the balance of the connected wallet and updates the state.
    */
@@ -73,16 +74,20 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
         <Typography variant="subtitle1" className="token-input-field-value">$0.00</Typography>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
+        { selectedToken.name !== "" && (
         <Box sx={{ display: "flex", flexDirection: "row" , alignItems: "center"}}>
           <CoinNoIcon />
           <Typography className="token-symbol gradient-text">
             {selectedToken.symbol}
           </Typography>
         </Box>
+        )}
+        {isDisplayBalance && (
         <Box sx={{ display: "flex", flexDirection: "row" , alignItems: "center"}} className="token-input-field-balance-container">
           <AccountBalanceWalletIcon fontSize="small" />
           <Typography variant="subtitle1" className="token-input-field-balance">{balance}</Typography>
         </Box>
+        )}
       </Box>
     </Box>
   );

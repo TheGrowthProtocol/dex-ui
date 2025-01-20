@@ -34,12 +34,12 @@ const App = () => {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
+      <SnackbarProvider maxSnack={3}>
         <Header />
         <div className="main-container">
-        <SnackbarProvider maxSnack={3}>
           <Main />
-        </SnackbarProvider>
         </div>
+        </SnackbarProvider>
       </ThemeProvider>
     </div>
   );

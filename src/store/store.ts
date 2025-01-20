@@ -1,9 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import liquidityReducer from './liquidity/liquiditySlice';
+import tokenReducer from './tokens/tokenSlice';
+import walletReducer from './wallet/walletSlice';
+import networkReducer from './network/networkSlice';
 
 export const store = configureStore({
   reducer: {
     liquidity: liquidityReducer,
+    tokens: tokenReducer,
+    wallet: walletReducer,
+    network: networkReducer,
   },
 });
 

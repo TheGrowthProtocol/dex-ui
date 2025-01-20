@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Box, Tab, Tabs } from "@material-ui/core";
 
 import Swap from "../Components/swap";
 import Liquidity from "../Components/liquidity";
 import PoolsList from "../Components/pools";
 import Staking from "../Components/staking";
+
+/**
+ * @description redux state
+ */
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../store/store';
+import { fetchTokens } from '../store/tokens/tokenThunks'; 
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -36,10 +44,22 @@ function a11yProps(index: number) {
 
 const Main = () => {
   const [value, setValue] = useState(0);
+  const dispatch = useDispatch<AppDispatch>();
+  const { tokens, loading, error } = useSelector((state: RootState) => state.tokens);
+
+  // @description fetch tokens
+  useEffect(() => {
+    dispatch(fetchTokens());
+  }, [dispatch]);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;  
+
+  console.log(tokens);
 
   return (
     <Grid container>

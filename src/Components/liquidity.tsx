@@ -16,82 +16,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../store/store';
 import { setToken1, setToken2, setAmount1, setAmount2, setAmount1Min, setAmount2Min } from "../store/liquidity/liquiditySlice";
 import CoinNoIcon from "./coinNoIcon";
+import { useWallet } from "../Hooks/useWallet";
+import ConnectWalletButton from "./connectWalletButton";
 
 const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
   const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
-  const [tokens, setTokens] = useState<TOKEN[]>([]); // Initialize as an empty array
-
-  const [provider, setProvider] = useState<any>(null);
-  const [signer, setSigner] = useState<any>(null);
-
   const liquidityState = useSelector((state: RootState) => state.liquidity);
+  const { isConnected: isWalletConnected } = useWallet(); 
 
-  const TGP_NETWORK = {
-    chainId: "0x17c99", // Convert 97433 to hex
-    chainName: "TGP Testnet",
-    rpcUrls: ["https://subnets.avax.network/tgp/testnet/rpc"],
-    nativeCurrency: {
-      name: "CERES",
-      symbol: "CERES",
-      decimals: 18,
-    },
-    blockExplorerUrls: ["https://subnets-test.avax.network/tgp"],
-  };
-
-  useEffect(() => {
-    fetchTokens();
-  }, []);
-
-  useEffect(() => {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(provider);
-      const signer = provider.getSigner();
-      setSigner(signer);
-    } else {
-      console.error("MetaMask is not installed!");
-    }
-  }, []);
+  const { tokens } = useSelector((state: RootState) => state.tokens);
 
   console.log(liquidityState);
-  /**
-   * Fetches token information from the blockchain using the specified network
-   * and updates the state with the fetched tokens.
-   */
-  const fetchTokens = async () => {
-    console.log(TGP_NETWORK.rpcUrls[0]);
-    try {
-      if (!window.ethereum) {
-        console.error("MetaMask is not installed!");
-        return;
-      }
 
-      const provider = new ethers.providers.JsonRpcProvider(
-        TGP_NETWORK.rpcUrls[0]
-      );
-      const network = provider.getNetwork();
-      const chainId = (await network).chainId;
-      const fetchedTokens = await Promise.all(
-        COINS.get(chainId).map(async (coinObject: any) => {
-          const address = coinObject.address;
-          const tokenContract = new Contract(
-            address,
-            coinObject.name == "WCERES" ? WCERES.abi : ERC20.abi,
-            provider
-          );
-          const name = await tokenContract.name();
-          const symbol = await tokenContract.symbol();
-          return { name, symbol, address };
-        })
-      );
-      console.log(fetchedTokens);
-      setTokens(fetchedTokens);
-    } catch (error) {
-      console.error("Error fetching tokens:", error);
-    }
-  };
 
   // Function to close the dialog
   const handleToken1DialogClose = () => {
@@ -195,6 +133,7 @@ const Liquidity: React.FC<{}> = () => {
               tokens={tokens}
               selectedToken={liquidityState.token1}
               onAmountChange={handleTokenAmount1}
+              isDisplayBalance={isWalletConnected}
             />
             <Box
               className="liquidity-token-divider"
@@ -212,6 +151,7 @@ const Liquidity: React.FC<{}> = () => {
               tokens={tokens}
               selectedToken={liquidityState.token2}
               onAmountChange={handleTokenAmount2}
+              isDisplayBalance={isWalletConnected}
             />
           </Box>
           { /* <Box
@@ -237,15 +177,24 @@ const Liquidity: React.FC<{}> = () => {
           </Box> */}
         </Box>
       </Box>
-      <Button
-        className={"gradient-button liquidity-add-button"}
-        onClick={handleAddLiquidityPool}
-        disabled={!liquidityState.token1.address || !liquidityState.token2.address}
-      >
-        <div className="button-angled-clip">
-          <Typography className={"gradient-text"}>Add Liquidity</Typography>
-        </div>
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }} className="liquidity-button-container">
+        {isWalletConnected && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={"gradient-button liquidity-add-button"}
+            onClick={handleAddLiquidityPool}
+            disabled={!liquidityState.token1.address || !liquidityState.token2.address}
+          >
+            <div className="button-angled-clip">
+              <Typography className={"gradient-text"}>Add Liquidity</Typography>
+            </div>
+          </Button>
+        )}
+        {!isWalletConnected && (
+          <ConnectWalletButton />
+        )}
+      </Box>
     </>
   );
 };
