@@ -9,7 +9,7 @@ export interface COINFIELD {
     setSelectedToken: (token: TOKEN) => void;
     setAmount: (amount: string) => void;
     value: string;
-    //tokens: TOKEN[];
+    selectedToken: TOKEN;
 }
 
 export interface COINDIALOG {

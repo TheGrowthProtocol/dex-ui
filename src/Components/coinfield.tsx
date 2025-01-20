@@ -2,15 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  Dialog,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemText,
   Typography,
   Input,
 } from "@material-ui/core";
-import COINS from "../constants/coins";
 import { ethers, Contract } from "ethers";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
@@ -19,31 +13,29 @@ import Coindialog from "./coindialog";
 import { useSnackbar } from "notistack";
 
 import ERC20 from "../build/ERC20.json";
-import WCERES from "../build/WCERES.json";
 import CoinNoIcon from "./coinNoIcon";
 import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
 
-const Coinfield2: React.FC<COINFIELD> = ({
+const Coinfield: React.FC<COINFIELD> = ({
   setSelectedToken,
   setAmount,
   value,
+  selectedToken
 }) => {
-  const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
-  const [selectedToken2, setSelectedToken2] = useState<TOKEN>({
-    name: "",
-    symbol: "",
-  });
+  const [openTokenDialog, setOpenTokenDialog] = useState(false);
   const [balance, setBalance] = useState("0.00"); // State to store the balance
   const { enqueueSnackbar } = useSnackbar();
   const { tokens } = useSelector((state: RootState) => state.tokens);
   const {isConnected: isWalletConnected} = useSelector((state: RootState) => state.wallet);
 
   useEffect(() => {
-    if (selectedToken2.address && isWalletConnected) {
+    console.log(selectedToken);
+    if (selectedToken.address && isWalletConnected) {
       fetchBalance();
     }
-  }, [selectedToken2, isWalletConnected]);
+  }, [selectedToken, isWalletConnected]);
+  
 
   /**
    * Fetches the balance of the connected wallet and updates the state.
@@ -61,10 +53,10 @@ const Coinfield2: React.FC<COINFIELD> = ({
 
       // Fetch the selected token's contract
       const tokenAddress = tokens.find(
-        (token) => token.name === selectedToken2.name
+        (token) => token.name === selectedToken.name
       )?.address;
       const tokenSymbol = tokens.find(
-        (token) => token.name === selectedToken2.name
+        (token) => token.name === selectedToken.name
       )?.symbol;
       if (!tokenAddress) {
         console.error("Selected token address not found!");
@@ -86,18 +78,17 @@ const Coinfield2: React.FC<COINFIELD> = ({
     }
   };
 
-  const handleToken2DialogOpen = () => {
-    setOpenToken2Dialog(true);
+  const handleTokenDialogOpen = () => {
+    setOpenTokenDialog(true);
   };
 
-  const handleToken2DialogClose = () => {
-    setOpenToken2Dialog(false);
+  const handleTokenDialogClose = () => {
+    setOpenTokenDialog(false);
   };
 
-  const handleToken2Select = (token: TOKEN) => {
-    setSelectedToken2(token);
+  const handleTokenSelect = (token: TOKEN) => {
     setSelectedToken(token);
-    handleToken2DialogClose();
+    handleTokenDialogClose();
   };
 
   // Function to handle changing the input field
@@ -135,13 +126,13 @@ const Coinfield2: React.FC<COINFIELD> = ({
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Button
             variant="contained"
-            onClick={handleToken2DialogOpen}
+            onClick={handleTokenDialogOpen}
             endIcon={<KeyboardArrowDownIcon color="primary" />}
             className="coin-field-button"
           >
             <CoinNoIcon />
             <Typography className={"token-symbol gradient-text"}>
-              {selectedToken2.symbol || "Select Token"}
+              {selectedToken.symbol || "Select Token"}
             </Typography>
 
           </Button>
@@ -165,19 +156,19 @@ const Coinfield2: React.FC<COINFIELD> = ({
             onChange={handleTokenAmountChange}
             value={value}
             className="coin-field-input"
-            disabled={!selectedToken2.symbol} // Disable the input if no token is selected
+            disabled={!selectedToken.symbol} // Disable the input if no token is selected
           />
           <Typography variant="subtitle1" align="right" className="coin-field-input-value">$0.00</Typography>
         </Box>
       </Box>
       <Coindialog
         tokens={tokens}
-        isOpen={openToken2Dialog}
-        handleClose={handleToken2DialogClose}
-        onTokenSelect={handleToken2Select}
+        isOpen={openTokenDialog}
+        handleClose={handleTokenDialogClose}
+        onTokenSelect={handleTokenSelect}
       />
     </Box>
   );
 };
 
-export default Coinfield2;
+export default Coinfield;

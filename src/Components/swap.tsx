@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Box, Button, Typography } from "@material-ui/core";
-import Coinfield1 from "../Components/coinfield1";
-import Coinfield2 from "../Components/coinfield2";
+import Coinfield from "../Components/coinfield";
 import { TOKEN } from "../interfaces";
 import ConnectWalletButton from "../Components/connectWalletButton";
 import { useSnackbar } from "notistack";
@@ -34,9 +33,9 @@ const Swap: React.FC<{}> = () => {
   };
 
   // TODO: Add logic to token1 and token2
-  /**useEffect(() => {
-
-    },[])**/
+  useEffect(() => {
+    console.log(token1, token2);
+  }, [token1, token2]);
 
   const handleSwap = () => {
     dispatch(swap());
@@ -48,15 +47,17 @@ const Swap: React.FC<{}> = () => {
     dispatch(setAmount1(amount2));
   };
 
+
   return (
     <>
       <Box className="tabpanel-container" sx={{ p: 3 }}>
         <Box className="tabpanel-content">
           <div className="swap-container">
-            <Coinfield1
+            <Coinfield
               value={amount1.toString()}
               setAmount={(amount) => dispatch(setAmount1(Number(amount)))}
               setSelectedToken={(token: TOKEN) => dispatch(setToken1(token))}
+              selectedToken={token1}
             />
             <Box
               sx={{
@@ -72,10 +73,11 @@ const Swap: React.FC<{}> = () => {
                 onClick={handleSwitch}
               />
             </Box>
-            <Coinfield2
+            <Coinfield
               value={amount2.toString()}
               setAmount={(amount) => dispatch(setAmount2(Number(amount)))}
               setSelectedToken={(token: TOKEN) => dispatch(setToken2(token))}
+              selectedToken={token2}
             />
             {/*<Box
               sx={{
