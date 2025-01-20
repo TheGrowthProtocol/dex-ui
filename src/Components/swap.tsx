@@ -32,11 +32,6 @@ const Swap: React.FC<{}> = () => {
     }
   };
 
-  // TODO: Add logic to token1 and token2
-  useEffect(() => {
-    console.log(token1, token2);
-  }, [token1, token2]);
-
   const handleSwap = () => {
     dispatch(swap());
   };
