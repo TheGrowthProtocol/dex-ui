@@ -16,7 +16,14 @@ const Swap: React.FC<{}> = () => {
   const { isConnected } = useWallet();
   const { token1, token2, amount1, amount2, loading } = useSelector((state: RootState) => state.swap);
   const dispatch = useDispatch<AppDispatch>();
+  const tokens = useSelector((state: RootState) => state.tokens.tokens);
 
+  useEffect(() => {
+    if(tokens.length > 0) {
+      dispatch(setToken1(tokens[0]));
+      dispatch(setToken2(tokens[1]));
+    }
+  }, [tokens]);
 
   useEffect(() => {
     if (amount1 > 0) {

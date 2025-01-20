@@ -30,7 +30,6 @@ const Coinfield: React.FC<COINFIELD> = ({
   const {isConnected: isWalletConnected} = useSelector((state: RootState) => state.wallet);
 
   useEffect(() => {
-    console.log(selectedToken);
     if (selectedToken.address && isWalletConnected) {
       fetchBalance();
     }
