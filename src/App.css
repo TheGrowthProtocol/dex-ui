@@ -84,6 +84,10 @@ body {
   margin-left: 16px !important;
 }
 
+.disconnect-wallet-button {
+  text-transform: none !important;
+}
+
 .header {
   padding-right: 120px;
   padding-left: 120px;

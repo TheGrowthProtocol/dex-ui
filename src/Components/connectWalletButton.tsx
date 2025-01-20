@@ -30,6 +30,7 @@ const ConnectWalletButton: React.FC<{}> = () => {
   if(isConnected && address && isNetworkConnected) {   
     return (
       <Button
+        className="disconnect-wallet-button"
         variant="text"
         onClick={disconnect}
       >
