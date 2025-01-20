@@ -110,6 +110,13 @@ body {
   text-transform: none !important;
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .main-container {
   position: relative;
   height: 95vh;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Box, Tab, Tabs } from "@material-ui/core";
+import { Grid, Box, Tab, Tabs, CircularProgress } from "@material-ui/core";
 
 import Swap from "../Components/swap";
 import Liquidity from "../Components/liquidity";
@@ -59,7 +59,9 @@ const Main = () => {
     setValue(newValue);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="loading-container">
+    <CircularProgress />
+  </div>;
   if (error) return <div>Error: {error}</div>;  
 
   console.log(tokens);

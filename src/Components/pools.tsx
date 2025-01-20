@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   CircularProgress,
   Box,
@@ -298,7 +293,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
 
   if (loading) {
     return (
-      <Box className={classes.loading}>
+      <Box className="loading-container">
         <CircularProgress />
       </Box>
     );
