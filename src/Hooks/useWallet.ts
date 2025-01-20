@@ -31,16 +31,16 @@ export const useWallet = () => {
     } catch (error) {
       dispatch(connectWalletFailure(error instanceof Error ? error.message : 'Failed to connect wallet'));
     }
-  }, [dispatch]);
+  }, [dispatch, connectNetwork]);
 
   const disconnect = useCallback(() => {
     dispatch(disconnectWallet());
     disconnectNetwork();
-  }, [dispatch]);
+  }, [dispatch, disconnectNetwork]);
 
   const displayBalance = useCallback(() => {
     console.log("displayBalance");
-  }, [dispatch]);
+  }, [dispatch, connectNetwork]);
 
   return {
     isConnected,

@@ -30,21 +30,24 @@ const Swap: React.FC<{}> = () => {
       dispatch(setToken1(tokens[0]));
       dispatch(setToken2(tokens[1]));
     }
-  }, [tokens]);
+  }, [tokens, dispatch]);
+
+  
 
   useEffect(() => {
+    const setCoinfield2Amount = async () => {
+      try {
+        dispatch(getAmount2());
+      } catch (error: any) {
+        enqueueSnackbar(error.message, { variant: "error" });
+      }
+    };
     if (amount1 > 0) {
       setCoinfield2Amount();
     }
-  }, [amount1]);
+  }, [amount1, dispatch, enqueueSnackbar]);
 
-  const setCoinfield2Amount = async () => {
-    try {
-      dispatch(getAmount2());
-    } catch (error: any) {
-      enqueueSnackbar(error.message, { variant: "error" });
-    }
-  };
+
 
   const handleSwap = () => {
     dispatch(swap());

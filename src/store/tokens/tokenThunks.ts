@@ -28,7 +28,7 @@ export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async () => {
         const fetchedTokens = await Promise.all(
                 COINS.get(chainId).map(async (coinObject: any) => {
                     const address = coinObject.address;
-                    const tokenContract = new Contract(address, coinObject.name == "WCERES" ? WCERES.abi : ERC20.abi, provider);
+                    const tokenContract = new Contract(address, coinObject.name === "WCERES" ? WCERES.abi : ERC20.abi, provider);
                     const name = await tokenContract.name();
                     const symbol = await tokenContract.symbol();
                     return { name, symbol, address };

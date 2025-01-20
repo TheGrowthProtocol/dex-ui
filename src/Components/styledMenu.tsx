@@ -2,7 +2,6 @@ import React, { forwardRef, useState } from "react";
 import { alpha, styled } from "@material-ui/core/styles";
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from "@material-ui/core/MenuItem";
-import RemoveIcon from "@material-ui/icons/Remove";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { MenuItemProps } from "../interfaces";

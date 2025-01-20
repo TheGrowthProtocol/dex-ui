@@ -7,24 +7,7 @@ import * as chains from '../../constants/chains';
 import { TOKEN } from '../../interfaces';
 
 const ERC20 = require('../../build/ERC20.json');
-
-export const initializeProvider = createAsyncThunk(
-  'liquidity/initializeProvider',
-  async (_, { dispatch }) => {
-    try {
-      if (!window.ethereum) {
-        throw new Error('MetaMask is not installed!');
-      }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      // Skip setting provider in Redux since it's not serializable
-      // We can access it through window.ethereum when needed
-      return { provider, signer };
-    } catch (error) {
-      throw error;
-    }
-  }
-);
+const WCERES = require('../../build/WCERES.json');
 
 export const addLiquidity = createAsyncThunk(
   'liquidity/addLiquidity',
@@ -153,8 +136,8 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
       throw new Error("No selected token addresses.");
     }
 
-    const token1Contract = new Contract(token1.address, ERC20.abi, signer);
-    const token2Contract = new Contract(token2.address, ERC20.abi, signer);
+    const token1Contract = new Contract(token1.address, token1.name === "WCERES" ? WCERES.abi : ERC20.abi, signer);
+    const token2Contract = new Contract(token2.address, token2.name === "WCERES" ? WCERES.abi : ERC20.abi, signer);
 
     const [token1Decimals, token2Decimals] = await Promise.all([
       getTokenDecimals(token1Contract),
