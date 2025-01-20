@@ -15,7 +15,7 @@ import { getAmount2, swap } from "../store/swap/swapThunks";
 const Swap: React.FC<{}> = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { isConnected } = useWallet();
-  const { token1, token2, amount1, amount2, loading, error } = useSelector((state: RootState) => state.swap);
+  const { token1, token2, amount1, amount2, loading } = useSelector((state: RootState) => state.swap);
   const dispatch = useDispatch<AppDispatch>();
 
 
@@ -42,6 +42,12 @@ const Swap: React.FC<{}> = () => {
     dispatch(swap());
   };
 
+  const handleSwitch = () => {
+    dispatch(setToken1(token2));
+    dispatch(setToken2(token1));
+    dispatch(setAmount1(amount2));
+  };
+
   return (
     <>
       <Box className="tabpanel-container" sx={{ p: 3 }}>
@@ -63,6 +69,7 @@ const Swap: React.FC<{}> = () => {
                 variant={"outlined"}
                 color="primary"
                 className="switch-field-button"
+                onClick={handleSwitch}
               />
             </Box>
             <Coinfield2

@@ -23,7 +23,7 @@ const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
   const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
-  const { token1, token2 } = useSelector((state: RootState) => state.liquidity);
+  const { token1, token2, loading } = useSelector((state: RootState) => state.liquidity);
   const { tokens } = useSelector((state: RootState) => state.tokens);
   const { isConnected: isWalletConnected } = useWallet();
 
@@ -201,7 +201,9 @@ const Liquidity: React.FC<{}> = () => {
             disabled={!token1.address || !token2.address}
           >
             <div className="button-angled-clip">
-              <Typography className={"gradient-text"}>Add Liquidity</Typography>
+              <Typography className={"gradient-text"}>
+                {loading ? "Adding..." : "Add Liquidity"}
+              </Typography>
             </div>
           </Button>
         )}
