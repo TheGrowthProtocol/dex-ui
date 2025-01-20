@@ -325,7 +325,7 @@ const PoolsList: React.FC = () => {
                         <Box className="pool-card__icons">
                           <CoinPairIcons  />
                         </Box>
-                        <Typography variant="h6" className="pool-card__symbols">
+                        <Typography variant="h6" className="pool-card__symbols gradient-text">
                           {pool.token0Symbol}/{pool.token1Symbol}
                         </Typography>
                       </Box>
@@ -384,7 +384,7 @@ const PoolsList: React.FC = () => {
                       <TableCell component="th" scope="row">
                         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                           <CoinPairIcons  />
-                          <Typography variant="body1">
+                          <Typography variant="body1" className="gradient-text">
                             {pool.token0Symbol}/{pool.token1Symbol}
                           </Typography>
                         </Box>

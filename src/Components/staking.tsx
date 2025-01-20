@@ -269,7 +269,6 @@ const Staking: React.FC<{}> = () => {
 
   return (
     <div>
-      <h1>Staking</h1>
       <Paper className={classes.root}>
         <TableContainer className={classes.tableContainer}>
           <Table stickyHeader>
