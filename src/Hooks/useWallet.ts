@@ -9,18 +9,6 @@ import {
 import { RootState } from '../store/store';
 import { useNetwork } from './useNetwork';
 
-const TGP_NETWORK = {
-    chainId: "0x17c99", // Convert 97433 to hex
-    chainName: "TGP Testnet",
-    rpcUrls: ["https://subnets.avax.network/tgp/testnet/rpc"],
-    nativeCurrency: {
-      name: "CERES",
-      symbol: "CERES",
-      decimals: 18,
-    },
-    blockExplorerUrls: ["https://subnets-test.avax.network/tgp"],
-  };
-
 export const useWallet = () => {
   const dispatch = useDispatch();
   const { isConnected, address, loading, error } = useSelector(
@@ -50,6 +38,10 @@ export const useWallet = () => {
     disconnectNetwork();
   }, [dispatch]);
 
+  const displayBalance = useCallback(() => {
+    console.log("displayBalance");
+  }, [dispatch]);
+
   return {
     isConnected,
     address,
@@ -57,5 +49,6 @@ export const useWallet = () => {
     error,
     connectWallet,
     disconnect,
+    displayBalance
   };
 };

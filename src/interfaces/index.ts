@@ -39,6 +39,15 @@ export interface TokenInputFieldProps {
     signer: any;
   }
 
+  export interface SwapState {
+    token1: TOKEN;
+    token2: TOKEN;
+    amount1: number;
+    amount2: number;
+    loading: boolean;
+    error: string | null;
+    }
+
   // Add new interface for menu items
 export interface MenuItemProps {
     label: string;
