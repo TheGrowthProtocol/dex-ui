@@ -17,27 +17,40 @@ const ConnectWalletButton: React.FC<{}> = () => {
     if (!address) return "";
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
-  
+
   if(error) {
     enqueueSnackbar(error, { variant: "error" }); 
   }
 
   const getButtonText = () => {
     if (loading) return "Connecting...";
-    if (isConnected && address && isNetworkConnected) return `Connected: ${shortenAddress(address)}`;
     return "Connect Wallet";
   };
+
+  if(isConnected && address && isNetworkConnected) {   
+    return (
+      <Button
+        variant="text"
+        onClick={disconnect}
+      >
+          <Typography className={"gradient-text"}>
+              Wallet Address: {shortenAddress(address)}
+          </Typography>
+      </Button>
+    );
+  }
 
   return (
     <Button
       className={"gradient-button connect-wallet-button"}
-      onClick={isConnected ? disconnect : connectWallet}
+      onClick={connectWallet}
     >
       <div className="button-angled-clip">
         <Typography className={"gradient-text"}>
           {getButtonText()}
         </Typography>
       </div>
+
     </Button>
   );
 };

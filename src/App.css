@@ -78,7 +78,7 @@ body {
 }
 
 .connect-wallet-button {
-  width: 264px;
+  width: 174px;
   height: 32px;
   text-transform: none !important;
   margin-left: 16px !important;
@@ -332,6 +332,7 @@ body {
 .liquidity-add-button {
   width: 220px;
   height: 32px;
+  text-transform: none !important;
 }
 
 .gradient-text {
@@ -413,7 +414,29 @@ body {
   margin-bottom: 16px !important;
   border-radius: var(--border-radius) !important;
 }
+.pool-card__stat {
+  color: var(--primary-color) !important;
+}
 
+.pools-table__head .pools-table__cell {
+  background: none !important;
+  color: var(--primary-color) !important;
+}
+.pools-table__body {
+  background: var(--background-color) !important;
+  border-radius: var(--border-radius) !important;
+  padding: 16px !important;
+  margin-top: 16px !important;
+}
+.pools-table__body .pools-table__row {
+  margin-top: 16px !important;
+  background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%);
+  border-radius: calc(3 * var(--border-radius)) !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
 /* Coin Dialog */
 
 .coin-dialog .MuiDialog-paper  {

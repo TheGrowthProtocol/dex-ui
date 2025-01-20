@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button } from "@material-ui/core";
+import { Box, Typography, Button, Grid } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN } from "../interfaces";
 import Coindialog from "./coindialog";
 import TokenInputField from "./TokenInputField";
-import {
-  addLiquidity,
-} from "../store/liquidity/liquidityThunks";
+import { addLiquidity } from "../store/liquidity/liquidityThunks";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import {
@@ -23,7 +21,9 @@ const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
   const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
-  const { token1, token2, loading } = useSelector((state: RootState) => state.liquidity);
+  const { token1, token2, loading } = useSelector(
+    (state: RootState) => state.liquidity
+  );
   const { tokens } = useSelector((state: RootState) => state.tokens);
   const { isConnected: isWalletConnected } = useWallet();
 
@@ -81,91 +81,92 @@ const Liquidity: React.FC<{}> = () => {
   };
 
   return (
-    <>
-      <Box className="tabpanel-container" sx={{ p: 3 }}>
-        <Box className="tabpanel-content">
-          <Box
-            display="flex"
-            flexDirection="column"
-            className="coin-field-container coin-field-pair-block"
-          >
-            <Typography variant="subtitle2">Select Token Pair</Typography>
-            <Box display="flex" className="coin-field-pair-container">
-              <Button
-                variant="contained"
-                onClick={() => setOpenToken1Dialog(true)}
-                endIcon={<KeyboardArrowDownIcon color="primary" />}
-                className="coin-field-button"
-              >
-                <CoinNoIcon />
-                <Typography className={"gradient-text token-symbol"}>
-                  {token1.symbol || "Select Token"}
-                </Typography>
-              </Button>
-              <Coindialog
-                tokens={tokens}
-                isOpen={openToken1Dialog}
-                handleClose={handleToken1DialogClose}
-                onTokenSelect={handleToken1Select}
-              />
-              <Typography variant="h6" className="coin-field-pair-plus">
-                +
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={() => setOpenToken2Dialog(true)}
-                endIcon={<KeyboardArrowDownIcon color="primary" />}
-                className="coin-field-button"
-              >
-                <CoinNoIcon />
-                <Typography className={"token-symbol gradient-text"}>
-                  {token2.symbol || "Select Token"}
-                </Typography>
-              </Button>
-              <Coindialog
-                tokens={tokens}
-                isOpen={openToken2Dialog}
-                handleClose={handleToken2DialogClose}
-                onTokenSelect={handleToken2Select}
-              />
-            </Box>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            className="coin-field-container"
-          >
+    <Grid container>
+      <Grid item xs={12} md={12} lg={8}>
+        <Box className="tabpanel-container" sx={{ p: 3 }}>
+          <Box className="tabpanel-content">
             <Box
               display="flex"
-              justifyContent="space-between"
-              className="coin-field-container-title"
+              flexDirection="column"
+              className="coin-field-container coin-field-pair-block"
             >
-              <Typography variant="body2">Deposit Amounts</Typography>
+              <Typography variant="subtitle2">Select Token Pair</Typography>
+              <Box display="flex" className="coin-field-pair-container">
+                <Button
+                  variant="contained"
+                  onClick={() => setOpenToken1Dialog(true)}
+                  endIcon={<KeyboardArrowDownIcon color="primary" />}
+                  className="coin-field-button"
+                >
+                  <CoinNoIcon />
+                  <Typography className={"gradient-text token-symbol"}>
+                    {token1.symbol || "Select Token"}
+                  </Typography>
+                </Button>
+                <Coindialog
+                  tokens={tokens}
+                  isOpen={openToken1Dialog}
+                  handleClose={handleToken1DialogClose}
+                  onTokenSelect={handleToken1Select}
+                />
+                <Typography variant="h6" className="coin-field-pair-plus">
+                  +
+                </Typography>
+                <Button
+                  variant="contained"
+                  onClick={() => setOpenToken2Dialog(true)}
+                  endIcon={<KeyboardArrowDownIcon color="primary" />}
+                  className="coin-field-button"
+                >
+                  <CoinNoIcon />
+                  <Typography className={"token-symbol gradient-text"}>
+                    {token2.symbol || "Select Token"}
+                  </Typography>
+                </Button>
+                <Coindialog
+                  tokens={tokens}
+                  isOpen={openToken2Dialog}
+                  handleClose={handleToken2DialogClose}
+                  onTokenSelect={handleToken2Select}
+                />
+              </Box>
             </Box>
-            <TokenInputField
-              tokens={tokens}
-              selectedToken={token1}
-              onAmountChange={handleTokenAmount1}
-              isDisplayBalance={isWalletConnected}
-            />
             <Box
-              className="liquidity-token-divider"
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
+              display={"flex"}
+              flexDirection={"column"}
+              className="coin-field-container"
             >
-              <Box className="liquidity-token-divider-plus" />
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                className="coin-field-container-title"
+              >
+                <Typography variant="body2">Deposit Amounts</Typography>
+              </Box>
+              <TokenInputField
+                tokens={tokens}
+                selectedToken={token1}
+                onAmountChange={handleTokenAmount1}
+                isDisplayBalance={isWalletConnected}
+              />
+              <Box
+                className="liquidity-token-divider"
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <Box className="liquidity-token-divider-plus" />
+              </Box>
+              <TokenInputField
+                tokens={tokens}
+                selectedToken={token2}
+                onAmountChange={handleTokenAmount2}
+                isDisplayBalance={isWalletConnected}
+              />
             </Box>
-            <TokenInputField
-              tokens={tokens}
-              selectedToken={token2}
-              onAmountChange={handleTokenAmount2}
-              isDisplayBalance={isWalletConnected}
-            />
-          </Box>
-          {/* <Box
+            {/* <Box
             className="liquidity-pool-summary"
             sx={{
               display: "flex",
@@ -186,30 +187,35 @@ const Liquidity: React.FC<{}> = () => {
               <Typography variant="subtitle1">Share of Pool</Typography>
             </Box>
           </Box> */}
+          </Box>
         </Box>
-      </Box>
-      <Box
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-        className="liquidity-button-container"
-      >
-        {isWalletConnected && (
-          <Button
-            variant="contained"
-            color="primary"
-            className={"gradient-button liquidity-add-button"}
-            onClick={handleAddLiquidityPool}
-            disabled={!token1.address || !token2.address}
-          >
-            <div className="button-angled-clip">
-              <Typography className={"gradient-text"}>
-                {loading ? "Adding..." : "Add Liquidity"}
-              </Typography>
-            </div>
-          </Button>
-        )}
-        {!isWalletConnected && <ConnectWalletButton />}
-      </Box>
-    </>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          className="liquidity-button-container"
+        >
+          {isWalletConnected && (
+            <Button
+              variant="contained"
+              color="primary"
+              className={"gradient-button liquidity-add-button"}
+              onClick={handleAddLiquidityPool}
+              disabled={!token1.address || !token2.address}
+            >
+              <div className="button-angled-clip">
+                <Typography className={"gradient-text"}>
+                  {loading ? "Adding..." : "Add Liquidity"}
+                </Typography>
+              </div>
+            </Button>
+          )}
+          {!isWalletConnected && <ConnectWalletButton />}
+        </Box>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -377,38 +377,44 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
             </Box>
           )}
           {!isMobile && (
-            <TableContainer className={classes.tableContainer}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Pools</TableCell>
-                    <TableCell align="right">APR</TableCell>
-                    <TableCell align="right">TVL</TableCell>
-                    <TableCell align="right">Volume</TableCell>
-                    <TableCell align="right"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+            <TableContainer className='pools-table'>
+              <Box className='pools-table__container'>
+                <Box className='pools-table__header'>
+                  <Box className='pools-table__row' sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box className='pools-table__cell' sx={{ flex: '2' }}>Pools</Box>
+                    <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>APR</Box>
+                    <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>TVL</Box>
+                    <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Volume</Box>
+                    <Box className='pools-table__cell' sx={{ flex: '0.5', textAlign: 'right' }}></Box>
+                  </Box>
+                </Box>
+
+                <Box className='pools-table__body'>
                   {allPools.map((pool) => (
-                    <TableRow key={pool.id} hover>
-                      <TableCell component="th" scope="row">
-                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                          <CoinPairIcons  />
-                          <Typography variant="body1" className="gradient-text">
+                    <Box key={pool.id} className='pools-table__row' sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      
+                    }}>
+                      <Box className='pools-table__cell' sx={{ flex: '2' }}>
+                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
+                          <CoinPairIcons />
+                          <Typography variant="body1" className="gradient-text pools-table__symbols">
                             {pool.token0Symbol}/{pool.token1Symbol}
                           </Typography>
                         </Box>
-                      </TableCell>
-                      <TableCell align="right">{pool.apr}</TableCell>
-                      <TableCell align="right">{pool.tvl}</TableCell>
-                      <TableCell align="right">{pool.volume24h}</TableCell>
-                      <TableCell align="right">
+                      </Box>
+                      <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>{pool.apr}</Box>
+                      <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.tvl}</Box>
+                      <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.volume24h}</Box>
+                      <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
                         <CustomizedMenus menuItems={menuItems} />
-                      </TableCell>
-                    </TableRow>
+                      </Box>
+                    </Box>
                   ))}
-                </TableBody>
-              </Table>
+                </Box>
+              </Box>
             </TableContainer>
           )}
         </CustomTabPanel>
@@ -434,7 +440,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                     <Box className="pool-card__icons">
                       <CoinPairIcons  />
                     </Box>
-                    <Typography variant="h6" className="pool-card__symbols">
+                    <Typography variant="h6" className="pool-card__symbols gradient-text">
                       {pool.token0Symbol}/{pool.token1Symbol}
                     </Typography>
                   </Box>
@@ -476,41 +482,45 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         </Box>
         )}
         {!isMobile && isWalletConnected && (
-          <TableContainer className={classes.tableContainer}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pool</TableCell>
-                  <TableCell align="right">Liquidity</TableCell>
-                  <TableCell align="right">Token 1</TableCell>
-                  <TableCell align="right">Token 2</TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+            <TableContainer className='pools-table'>
+            <Box className='pools-table__container'>
+              <Box className='pools-table__header'>
+                <Box className='pools-table__row' sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box className='pools-table__cell' sx={{ flex: '2' }}>Pools</Box>
+                  <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Liquidity</Box>
+                  <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Token 1</Box>
+                  <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Token 2</Box>
+                  <Box className='pools-table__cell' sx={{ flex: '0.5', textAlign: 'right' }}></Box>
+                </Box>
+              </Box>
+
+              <Box className='pools-table__body'>
                 {myPools.map((pool) => (
-                  <TableRow key={pool.id} hover>
-                    <TableCell component="th" scope="row">
-                      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <CoinPairIcons  />
-                        <Typography variant="body1">
+                  <Box key={pool.id} className='pools-table__row' sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    
+                  }}>
+                    <Box className='pools-table__cell' sx={{ flex: '2' }}>
+                      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
+                        <CoinPairIcons />
+                        <Typography variant="body1" className="gradient-text pools-table__symbols">
                           {pool.token0Symbol}/{pool.token1Symbol}
                         </Typography>
                       </Box>
-                    </TableCell>
-                    <TableCell align="right">
-                      ${formatNumber(pool.liquidity)}
-                    </TableCell>
-                    <TableCell align="right">{pool.token0Share}</TableCell>
-                    <TableCell align="right">{pool.token1Share}</TableCell>
-                    <TableCell align="right">
+                    </Box>
+                    <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>${formatNumber(pool.liquidity)}</Box>
+                    <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.token0Share}</Box>
+                    <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.token1Share}</Box>
+                    <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
                       <CustomizedMenus menuItems={menuItems} />
-                    </TableCell>
-                  </TableRow>
+                    </Box>
+                  </Box>
                 ))}
-              </TableBody>
-              </Table>
-            </TableContainer>
+              </Box>
+            </Box>
+          </TableContainer>
           )}
           {!isWalletConnected && (
             <Box display="flex" justifyContent="space-between" alignItems="center" height="100%">

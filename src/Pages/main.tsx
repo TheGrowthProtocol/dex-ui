@@ -66,7 +66,7 @@ const Main = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} md={12}>
+      <Grid item xs={12} md={12} lg={8}>
         <Box sx={{ width: "100%" }} className="main-content-area">
           <Box>
             <Tabs
@@ -81,7 +81,7 @@ const Main = () => {
                 {...a11yProps(1)}
                 className="tab-header"
               />
-              <Tab label="Pools" {...a11yProps(2)} className="tab-header" />
+              <Tab label="Liquidity Pools" {...a11yProps(2)} className="tab-header" />
               <Tab label="Staking" {...a11yProps(3)} className="tab-header" />
             </Tabs>
           </Box>
