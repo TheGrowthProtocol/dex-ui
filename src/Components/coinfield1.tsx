@@ -24,8 +24,6 @@ const Coinfield1: React.FC<COINFIELD> = ({
     name: "",
     symbol: "",
   });
-  const [tokenAddress, setTokenAddress] = useState<string>("");
-  //const [tokens, setTokens] = useState<TOKEN[]>([]); // Initialize as an empty array
   const [balance, setBalance] = useState("0.00"); // State to store the balance
   const { enqueueSnackbar } = useSnackbar();
 
@@ -59,6 +57,7 @@ const Coinfield1: React.FC<COINFIELD> = ({
       const tokenSymbol = tokens.find(
         (token) => token.name === selectedToken1.name
       )?.symbol;
+      
       if (!tokenAddress) {
         console.error("Selected token address not found!");
         return;

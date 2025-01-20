@@ -23,8 +23,9 @@ import POOL_FACTORY_ABI from "../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../build/IUniswapV2Pair.json";
 import CustomizedMenus from "./styledMenu";
 import { MenuItemProps } from "../interfaces";
-import CoinNoIcon from "./coinNoIcon";
 import CoinPairIcons from "./coinPairIcons";
+import { useWallet } from "../Hooks/useWallet";
+import ConnectWalletButton from "./connectWalletButton";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 
 const useStyles = makeStyles((theme) => ({
@@ -85,12 +86,13 @@ const a11yProps = (index: number) => {
   };
 };
 
-const menuItems: MenuItemProps[] = [
-  { label: "Remove Liquidity", onClick: () => {} },
-  { label: "Add Liquidity", onClick: () => {} },
-];
 
-const PoolsList: React.FC = () => {
+
+interface PoolsListProps {
+  handleTabChange: (newValue: number) => void;
+}
+
+const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
   const classes = useStyles();
   const [myPools, setMyPools] = useState<Pool[]>([]);
   const [allPools, setAllPools] = useState<Pool[]>([]);
@@ -98,6 +100,12 @@ const PoolsList: React.FC = () => {
   const [value, setValue] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { isConnected: isWalletConnected } = useWallet();
+
+  const menuItems: MenuItemProps[] = [
+    { label: "Remove Liquidity", onClick: () => {} },
+    { label: "Add Liquidity", onClick: () => handleTabChange(1)},
+  ];
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -282,9 +290,11 @@ const PoolsList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMyPools();
+    if (isWalletConnected) {  
+      fetchMyPools();
+    }
     fetchAllPools();
-  }, []);
+  }, [isWalletConnected]);
 
   if (loading) {
     return (
@@ -403,7 +413,7 @@ const PoolsList: React.FC = () => {
           )}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-        {isMobile && (
+        {isMobile && isWalletConnected && (
           <Box>
           {myPools.map((pool) => (
             <Card key={pool.id} className="pool-card">
@@ -465,7 +475,7 @@ const PoolsList: React.FC = () => {
           ))}
         </Box>
         )}
-        {!isMobile && (
+        {!isMobile && isWalletConnected && (
           <TableContainer className={classes.tableContainer}>
             <Table stickyHeader>
               <TableHead>
@@ -501,6 +511,17 @@ const PoolsList: React.FC = () => {
               </TableBody>
               </Table>
             </TableContainer>
+          )}
+          {!isWalletConnected && (
+            <Box display="flex" justifyContent="space-between" alignItems="center" height="100%">
+              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                <CoinPairIcons />
+                <Typography variant="body1">
+                Login with your wallet to see your pools
+                </Typography>
+              </Box>
+              <ConnectWalletButton />
+            </Box>
           )}
         </CustomTabPanel>
       </Box>

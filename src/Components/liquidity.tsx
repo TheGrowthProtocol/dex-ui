@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Input, Button } from "@material-ui/core";
+import { Box, Typography, Button } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN } from "../interfaces";
-import COINS from "../constants/coins";
-import { ethers, Contract } from "ethers";
 import Coindialog from "./coindialog";
-import * as chains from "../constants/chains";
-import IUniswapV2Router02 from "../build/IUniswapV2Router02.json";
 import TokenInputField from "./TokenInputField";
-
-import ERC20 from "../build/ERC20.json";
-import WCERES from "../build/WCERES.json";
-import { addLiquidity, initializeProvider } from "../store/liquidity/liquidityThunks";
+import {
+  addLiquidity,
+} from "../store/liquidity/liquidityThunks";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from '../store/store';
-import { setToken1, setToken2, setAmount1, setAmount2, setAmount1Min, setAmount2Min } from "../store/liquidity/liquiditySlice";
+import { AppDispatch, RootState } from "../store/store";
+import {
+  setToken1,
+  setToken2,
+  setAmount1,
+  setAmount2,
+} from "../store/liquidity/liquiditySlice";
 import CoinNoIcon from "./coinNoIcon";
 import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "./connectWalletButton";
@@ -23,13 +23,20 @@ const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
   const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
-  const liquidityState = useSelector((state: RootState) => state.liquidity);
-  const { isConnected: isWalletConnected } = useWallet(); 
-
+  const { token1, token2 } = useSelector((state: RootState) => state.liquidity);
   const { tokens } = useSelector((state: RootState) => state.tokens);
+  const { isConnected: isWalletConnected } = useWallet();
 
-  console.log(liquidityState);
+  console.log(token1, token2);
 
+  useEffect(() => {
+    if (token1.name === "") {
+      dispatch(setToken1(tokens[0]));
+    }
+    if (token2.name === "") {
+      dispatch(setToken2(tokens[1]));
+    }
+  }, [dispatch, token1, token2]);
 
   // Function to close the dialog
   const handleToken1DialogClose = () => {
@@ -63,13 +70,13 @@ const Liquidity: React.FC<{}> = () => {
   // Function to handle input change in the second field
   const handleTokenAmount2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     const amount = event.target.value.trim();
-      if (!isNaN(Number(amount))) {
-        dispatch(setAmount2(amount));
-      }
+    if (!isNaN(Number(amount))) {
+      dispatch(setAmount2(amount));
+    }
   };
 
   // Function to add liquidity pool
-  const handleAddLiquidityPool =  () => {
+  const handleAddLiquidityPool = () => {
     dispatch(addLiquidity());
   };
 
@@ -92,7 +99,7 @@ const Liquidity: React.FC<{}> = () => {
               >
                 <CoinNoIcon />
                 <Typography className={"gradient-text token-symbol"}>
-                  {liquidityState.token1.symbol || "Select Token"}
+                  {token1.symbol || "Select Token"}
                 </Typography>
               </Button>
               <Coindialog
@@ -101,7 +108,9 @@ const Liquidity: React.FC<{}> = () => {
                 handleClose={handleToken1DialogClose}
                 onTokenSelect={handleToken1Select}
               />
-              <Typography variant="h6" className="coin-field-pair-plus">+</Typography>
+              <Typography variant="h6" className="coin-field-pair-plus">
+                +
+              </Typography>
               <Button
                 variant="contained"
                 onClick={() => setOpenToken2Dialog(true)}
@@ -110,28 +119,32 @@ const Liquidity: React.FC<{}> = () => {
               >
                 <CoinNoIcon />
                 <Typography className={"token-symbol gradient-text"}>
-                  {liquidityState.token2.symbol || "Select Token"} 
+                  {token2.symbol || "Select Token"}
                 </Typography>
               </Button>
               <Coindialog
                 tokens={tokens}
                 isOpen={openToken2Dialog}
-                handleClose={handleToken2DialogClose} 
+                handleClose={handleToken2DialogClose}
                 onTokenSelect={handleToken2Select}
               />
             </Box>
-          </Box>    
+          </Box>
           <Box
             display={"flex"}
             flexDirection={"column"}
             className="coin-field-container"
           >
-            <Box display="flex" justifyContent="space-between" className="coin-field-container-title">
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              className="coin-field-container-title"
+            >
               <Typography variant="body2">Deposit Amounts</Typography>
             </Box>
             <TokenInputField
               tokens={tokens}
-              selectedToken={liquidityState.token1}
+              selectedToken={token1}
               onAmountChange={handleTokenAmount1}
               isDisplayBalance={isWalletConnected}
             />
@@ -143,18 +156,16 @@ const Liquidity: React.FC<{}> = () => {
                 justifyContent: "center",
               }}
             >
-              <Box
-                className="liquidity-token-divider-plus"
-              />
-            </Box> 
+              <Box className="liquidity-token-divider-plus" />
+            </Box>
             <TokenInputField
               tokens={tokens}
-              selectedToken={liquidityState.token2}
+              selectedToken={token2}
               onAmountChange={handleTokenAmount2}
               isDisplayBalance={isWalletConnected}
             />
           </Box>
-          { /* <Box
+          {/* <Box
             className="liquidity-pool-summary"
             sx={{
               display: "flex",
@@ -177,23 +188,24 @@ const Liquidity: React.FC<{}> = () => {
           </Box> */}
         </Box>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }} className="liquidity-button-container">
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+        className="liquidity-button-container"
+      >
         {isWalletConnected && (
           <Button
             variant="contained"
             color="primary"
             className={"gradient-button liquidity-add-button"}
             onClick={handleAddLiquidityPool}
-            disabled={!liquidityState.token1.address || !liquidityState.token2.address}
+            disabled={!token1.address || !token2.address}
           >
             <div className="button-angled-clip">
               <Typography className={"gradient-text"}>Add Liquidity</Typography>
             </div>
           </Button>
         )}
-        {!isWalletConnected && (
-          <ConnectWalletButton />
-        )}
+        {!isWalletConnected && <ConnectWalletButton />}
       </Box>
     </>
   );

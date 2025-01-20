@@ -55,6 +55,9 @@ const Main = () => {
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+  const handleTabChange = (newValue: number) => {
+    setValue(newValue);
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;  
@@ -89,7 +92,7 @@ const Main = () => {
             <Liquidity />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <PoolsList />
+            <PoolsList handleTabChange={handleTabChange} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
             <Staking />
