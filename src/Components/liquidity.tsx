@@ -83,7 +83,7 @@ const Liquidity: React.FC<{}> = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} md={12} lg={8}>
+      <Grid item xs={12} md={12} lg={6}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
             <Box
@@ -167,27 +167,6 @@ const Liquidity: React.FC<{}> = () => {
                 isDisplayBalance={isWalletConnected}
               />
             </Box>
-            {/* <Box
-            className="liquidity-pool-summary"
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="subtitle1">0.00034</Typography>
-              <Typography variant="subtitle1">CAKE per BNB</Typography>
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="subtitle1">24</Typography>
-              <Typography variant="subtitle1">BNB per CAKE</Typography>
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="subtitle1">3.28%</Typography>
-              <Typography variant="subtitle1">Share of Pool</Typography>
-            </Box>
-          </Box> */}
           </Box>
         </Box>
         <Box
@@ -216,8 +195,33 @@ const Liquidity: React.FC<{}> = () => {
           {!isWalletConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
-      <Grid item xs={12} md={12} lg={4}>
-        <Tokenomics />
+      <Grid item xs={12} md={12} lg={6}>
+        <Tokenomics items={[
+          {
+            title: "APR (Annual % Rate)",
+            value: "100,000,000"
+          },
+          {
+            title: "Share of Pool",
+            value: "100,000,000"
+          },
+          {
+            title: "Current Token1 : Token2 Ratio in the pool",
+            value: "100,000,000"
+          },
+          {
+            title: "Current Token1-Token2 V2 LP Rate",
+            value: "100,000,000"
+          },
+          {
+            title: "Token1 per Token2",
+            value: "100,000,000"
+          },
+          {
+            title: "Token2 per Token1",
+            value: "100,000,000"
+          }
+        ]}/>
       </Grid>
     </Grid>
   );

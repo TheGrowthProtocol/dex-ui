@@ -62,11 +62,12 @@ const Swap: React.FC<{}> = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} md={12} lg={8}>
+      <Grid item xs={12} md={12} lg={6}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
             <div className="swap-container">
               <Coinfield
+                title="Sell"
                 value={amount1.toString()}
                 setAmount={(amount) => dispatch(setAmount1(Number(amount)))}
                 setSelectedToken={(token: TOKEN) => dispatch(setToken1(token))}
@@ -87,6 +88,7 @@ const Swap: React.FC<{}> = () => {
                 />
               </Box>
               <Coinfield
+                title="Buy"
                 value={amount2.toString()}
                 setAmount={(amount) => dispatch(setAmount2(Number(amount)))}
                 setSelectedToken={(token: TOKEN) => dispatch(setToken2(token))}
@@ -137,8 +139,25 @@ const Swap: React.FC<{}> = () => {
           {!isConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
-      <Grid item xs={12} md={12} lg={4}>
-        <Tokenomics />
+      <Grid item xs={12} md={12} lg={6}>
+        <Tokenomics items={[
+          {
+            title: "Price Impact",
+            value: "100,000,000"
+          },
+          {
+            title: "Fee tier",
+            value: "100,000,000"
+          },
+          {
+            title: "Token1 per Token2",
+            value: "100,000,000"
+          },
+          {
+            title: "Token2 per Token1",
+            value: "100,000,000"
+          }
+        ]}/>
       </Grid>
     </Grid>
   );

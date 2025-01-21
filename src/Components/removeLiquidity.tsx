@@ -29,7 +29,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} md={12} lg={8}>
+      <Grid item xs={12} md={12} lg={6}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
             <Box
@@ -64,7 +64,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
               {/* TODO: percentage block */}
               <Box display="flex" flexDirection="column" className="percentage-block">
                 <Typography variant="h3" className="percentage-block-title gradient-text">50%</Typography>
-                <Slider value={50} onChange={(event, newValue) => {}} />
+                <Slider value={50} onChange={(event, newValue) => {}} className="percentage-block-slider"/>
                 <Box display="flex" flexDirection="row" className="percentage-block-buttons" justifyContent={"space-between"} alignItems={"center"}>
                     <Button variant="contained" color="primary" className="percentage-block-button">25%</Button>
                     <Button variant="contained" color="primary" className="percentage-block-button">50%</Button>
@@ -120,8 +120,37 @@ const RemoveLiquidity: React.FC<{}> = () => {
           {!isWalletConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
-      <Grid item xs={12} md={12} lg={4}>
-        <Tokenomics />
+      <Grid item xs={12} md={12} lg={6}>
+        <Tokenomics items={[
+          {
+            title: "LP Reward APR (Annual % Rate)",
+            value: "100,000,000"
+          },
+          {
+            title: "Your share in Pool",
+            value: "100,000,000"
+          },
+          {
+            title: "LP Reward Share in Trading pair",
+            value: "100,000,000"
+          },
+          {
+            title: "Current BNB : CAKE Ratio in the pool",
+            value: "100,000,000"
+          },
+          {
+            title: "Current BNB-CAKE V2 LP Rate",
+            value: "100,000,000"
+          },
+          {
+            title: "CAKE per BNB",
+            value: "100,000,000"
+          },
+          {
+            title: "BNB per CAKE",
+            value: "100,000,000"
+          }
+        ]}/>
       </Grid>
     </Grid>
   );

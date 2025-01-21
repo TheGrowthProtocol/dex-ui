@@ -18,6 +18,7 @@ import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
 
 const Coinfield: React.FC<COINFIELD> = ({
+  title,
   setSelectedToken,
   setAmount,
   value,
@@ -113,7 +114,7 @@ const Coinfield: React.FC<COINFIELD> = ({
         sx={{ display: "flex", flexDirection: "column" }}
         className="coin-field-header"
       >
-        <Typography variant="subtitle2">Buy</Typography>
+        <Typography variant="subtitle2">{title}</Typography>
       </Box>
       <Box
         sx={{

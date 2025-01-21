@@ -6,6 +6,7 @@ export interface TOKEN {
 }
 
 export interface COINFIELD {
+    title: string;
     setSelectedToken: (token: TOKEN) => void;
     setAmount: (amount: string) => void;
     value: string;
