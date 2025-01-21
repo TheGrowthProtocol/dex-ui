@@ -16,6 +16,7 @@ import {
 import CoinNoIcon from "./coinNoIcon";
 import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "./connectWalletButton";
+import { Tokenomics } from "./tokenomics";
 
 const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -214,6 +215,9 @@ const Liquidity: React.FC<{}> = () => {
           )}
           {!isWalletConnected && <ConnectWalletButton />}
         </Box>
+      </Grid>
+      <Grid item xs={12} md={12} lg={4}>
+        <Tokenomics />
       </Grid>
     </Grid>
   );

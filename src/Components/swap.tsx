@@ -15,6 +15,7 @@ import {
   setAmount2,
 } from "../store/swap/swapSlice";
 import { getAmount2, swap } from "../store/swap/swapThunks";
+import { Tokenomics } from "./tokenomics";
 
 const Swap: React.FC<{}> = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -135,6 +136,9 @@ const Swap: React.FC<{}> = () => {
           )}
           {!isConnected && <ConnectWalletButton />}
         </Box>
+      </Grid>
+      <Grid item xs={12} md={12} lg={4}>
+        <Tokenomics />
       </Grid>
     </Grid>
   );

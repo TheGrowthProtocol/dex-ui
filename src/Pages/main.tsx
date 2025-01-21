@@ -12,6 +12,7 @@ import Staking from "../Components/staking";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchTokens } from '../store/tokens/tokenThunks'; 
+import RemoveLiquidity from "../Components/removeLiquidity";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,7 +85,8 @@ const Main = () => {
                 className="tab-header"
               />
               <Tab label="Liquidity Pools" {...a11yProps(2)} className="tab-header" />
-              <Tab label="Staking" {...a11yProps(3)} className="tab-header" />
+              <Tab label="Remove Liquidity" {...a11yProps(3)} className="tab-header" />
+              <Tab label="Staking" {...a11yProps(4)} className="tab-header" />
             </Tabs>
           </Box>
           <CustomTabPanel value={value} index={0}>
@@ -97,6 +99,9 @@ const Main = () => {
             <PoolsList handleTabChange={handleTabChange} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
+            <RemoveLiquidity />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={4}>
             <Staking />
           </CustomTabPanel>
         </Box>

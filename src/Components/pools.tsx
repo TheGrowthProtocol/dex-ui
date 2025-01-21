@@ -21,6 +21,7 @@ import { MenuItemProps } from "../interfaces";
 import CoinPairIcons from "./coinPairIcons";
 import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "./connectWalletButton";
+import { PoolsNoItems } from "./poolsNoItems";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 
 const useStyles = makeStyles((theme) => ({
@@ -416,67 +417,76 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         <CustomTabPanel value={value} index={1}>
         {isMobile && isWalletConnected && (
           <Box>
-          {myPools.map((pool) => (
-            <Card key={pool.id} className="pool-card">
-              <CardContent className="pool-card__content">
-                {/* Pool Pair */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                  className="pool-card__header"
-                >
-                  <Box
-                    sx={{ display: "flex", flexDirection: "row" }}
-                    className="pool-card__pair"
-                  >
-                    <Box className="pool-card__icons">
-                      <CoinPairIcons  />
-                    </Box>
-                    <Typography variant="h6" className="pool-card__symbols gradient-text">
-                      {pool.token0Symbol}/{pool.token1Symbol}
-                    </Typography>
-                  </Box>
-                  <Box className="pool-card__menu">
-                    <CustomizedMenus menuItems={menuItems} />
-                  </Box>
-                </Box>
+            {myPools.length === 0 ? (
+              <PoolsNoItems description="No Liquidity added yet" />
+            ) : (
+              <Box>
+                {myPools.map((pool) => (
+                  <Card key={pool.id} className="pool-card">
+                    <CardContent className="pool-card__content">
+                      {/* Pool Pair */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                        className="pool-card__header"
+                      >
+                        <Box
+                          sx={{ display: "flex", flexDirection: "row" }}
+                          className="pool-card__pair"
+                        >
+                          <Box className="pool-card__icons">
+                            <CoinPairIcons  />
+                          </Box>
+                          <Typography variant="h6" className="pool-card__symbols gradient-text">
+                            {pool.token0Symbol}/{pool.token1Symbol}
+                          </Typography>
+                        </Box>
+                        <Box className="pool-card__menu">
+                          <CustomizedMenus menuItems={menuItems} />
+                        </Box>
+                      </Box>
 
-                {/* Stats Grid */}
-                <Grid container spacing={2} className="pool-card__stats">
-                  <Grid item xs={4} className="pool-card__stat">
-                    <Typography className="pool-card__stat-label">
-                      Liquidity
-                    </Typography>
-                    <Typography className="pool-card__stat-value">
-                    ${formatNumber(pool.liquidity)}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} className="pool-card__stat">
-                    <Typography className="pool-card__stat-label">
-                      Token 1
-                    </Typography>
-                    <Typography className="pool-card__stat-value">
-                      ${pool.token0Share}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} className="pool-card__stat">
-                    <Typography className="pool-card__stat-label">
-                      Token 2
-                    </Typography>
-                    <Typography className="pool-card__stat-value">
-                      ${pool.token1Share}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
+                      {/* Stats Grid */}
+                      <Grid container spacing={2} className="pool-card__stats">
+                        <Grid item xs={4} className="pool-card__stat">
+                          <Typography className="pool-card__stat-label">
+                            Liquidity
+                          </Typography>
+                          <Typography className="pool-card__stat-value">
+                          ${formatNumber(pool.liquidity)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4} className="pool-card__stat">
+                          <Typography className="pool-card__stat-label">
+                            Token 1
+                          </Typography>
+                          <Typography className="pool-card__stat-value">
+                            ${pool.token0Share}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4} className="pool-card__stat">
+                          <Typography className="pool-card__stat-label">
+                            Token 2
+                          </Typography>
+                          <Typography className="pool-card__stat-value">
+                            ${pool.token1Share}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            )}
+          </Box>
         )}
         {!isMobile && isWalletConnected && (
+          myPools.length === 0 ? (
+            <PoolsNoItems description="No Liquidity added yet" />
+          ) : (
             <TableContainer className='pools-table'>
             <Box className='pools-table__container'>
               <Box className='pools-table__header'>
@@ -516,7 +526,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
               </Box>
             </Box>
           </TableContainer>
-          )}
+          ))}
           {!isWalletConnected && (
             <Box display="flex" justifyContent="space-between" alignItems="center" height="100%" flexDirection={isMobile ? "column" : "row"} className="pools-table__empty">
               <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
