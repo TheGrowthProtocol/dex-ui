@@ -3,6 +3,7 @@ import { Button, Typography } from "@material-ui/core";
 import { useWallet } from "../Hooks/useWallet";
 import { useSnackbar } from "notistack";
 import { useNetwork } from "../Hooks/useNetwork";
+import { ArrowForward } from '@material-ui/icons'; 
 
 const ConnectWalletButton: React.FC<{}> = () => {
   const { isConnected, address, loading, error, connectWallet, disconnect } = useWallet();
@@ -34,9 +35,10 @@ const ConnectWalletButton: React.FC<{}> = () => {
         variant="text"
         onClick={disconnect}
       >
-          <Typography className={"gradient-text"}>
+          <Typography className={"gradient-text disconnect-wallet-button__text"}>
               Wallet Address: {shortenAddress(address)}
           </Typography>
+          <ArrowForward color="primary" fontSize="small"/>
       </Button>
     );
   }

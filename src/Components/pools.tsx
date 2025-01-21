@@ -518,8 +518,8 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
           </TableContainer>
           )}
           {!isWalletConnected && (
-            <Box display="flex" justifyContent="space-between" alignItems="center" height="100%">
-              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" height="100%" flexDirection={isMobile ? "column" : "row"} className="pools-table__empty">
+              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
                 <CoinPairIcons />
                 <Typography variant="body1">
                 Login with your wallet to see your pools

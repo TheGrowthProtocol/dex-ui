@@ -10,8 +10,12 @@ import {
   Table,
   TableContainer,
   TableHead,
+  useMediaQuery,
+  CardContent,
+  Grid,
+  Card,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CustomizedMenus from "./styledMenu";
 import { ethers } from "ethers";
 import MASTER_CHEF_ABI from "../build/MasterChef.json";
@@ -21,6 +25,7 @@ import { formatEther } from "ethers/lib/utils";
 import { MenuItemProps } from "../interfaces";
 import AddStakeDialog from "./addStackDialog";
 import RemoveStakeDialog from "./removeStackDialog";
+import CoinPairIcons from "./coinPairIcons";
 
 const MASTER_CHEF_ADDRESS = "0x481b2c832322F73Ec66e4f9e013001db9B55518a";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
@@ -60,6 +65,9 @@ const Staking: React.FC<{}> = () => {
   const [openAddStakeDialog, setOpenAddStakeDialog] = useState(false);
   const [openRemoveStakeDialog, setOpenRemoveStakeDialog] = useState(false);
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
+  const theme = useTheme(); 
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  
   useEffect(() => {
     fetchPools();
     setLoading(false);
@@ -268,33 +276,35 @@ const Staking: React.FC<{}> = () => {
   }
 
   return (
-    <div>
-      <Paper className={classes.root}>
-        <TableContainer className={classes.tableContainer}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>Pools</TableCell>
-                <TableCell align="right">Liquidity</TableCell>
-                <TableCell align="right">Token 1</TableCell>
-                <TableCell align="right">Token 2</TableCell>
-                <TableCell align="right"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {allPools.map((pool) => (
-                <TableRow key={pool.id} hover>
-                  <TableCell component="th" scope="row">
-                    <Typography variant="body1">
+    <Box className={`${classes.root} tabpanel-container`}>
+      <Box className="tabpanel-content">
+        {isMobile && (
+          <Box>
+          {allPools.map((pool) => (
+            <Card key={pool.id} className="pool-card">
+              <CardContent className="pool-card__content">
+                {/* Pool Pair */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                  className="pool-card__header"
+                >
+                  <Box
+                    sx={{ display: "flex", flexDirection: "row" }}
+                    className="pool-card__pair"
+                  >
+                    <Box className="pool-card__icons">
+                      <CoinPairIcons />
+                    </Box>
+                    <Typography variant="h6" className="pool-card__symbols gradient-text">
                       {pool.token0Symbol}/{pool.token1Symbol}
                     </Typography>
-                  </TableCell>
-                  <TableCell align="right">{pool.apr}</TableCell>
-                  <TableCell align="right">{pool.tvl}</TableCell>
-                  <TableCell align="right">{pool.volume24h}</TableCell>
-                  <TableCell align="right">
-                    <CustomizedMenus
-                      menuItems={[
+                  </Box>
+                  <Box className="pool-card__menu">
+                    <CustomizedMenus menuItems={[
                         {
                           label: "Remove Stake",
                           onClick: () => {
@@ -315,15 +325,105 @@ const Staking: React.FC<{}> = () => {
                             handlePendingRewards(pool.id);
                           },
                         },
-                      ]}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+                      ]} />
+                  </Box>
+                </Box>
+
+                {/* Stats Grid */}
+                <Grid container spacing={2} className="pool-card__stats">
+                  <Grid item xs={4} className="pool-card__stat">
+                    <Typography className="pool-card__stat-label">
+                      APR
+                    </Typography>
+                    <Typography className="pool-card__stat-value">
+                      {pool.apr}%
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} className="pool-card__stat">
+                    <Typography className="pool-card__stat-label">
+                    TVL
+                    </Typography>
+                    <Typography className="pool-card__stat-value">
+                      ${pool.tvl}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} className="pool-card__stat">
+                    <Typography className="pool-card__stat-label">
+                      Volume 24h
+                    </Typography>
+                    <Typography className="pool-card__stat-value">
+                      ${pool.volume24h}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+        )}
+        {!isMobile && (
+        <TableContainer className='pools-table'>
+        <Box className='pools-table__container'>
+          <Box className='pools-table__header'>
+            <Box className='pools-table__row' sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box className='pools-table__cell' sx={{ flex: '2' }}>Pools</Box>
+              <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>APR</Box>
+              <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>TVL</Box>
+              <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Volume</Box>
+              <Box className='pools-table__cell' sx={{ flex: '0.5', textAlign: 'right' }}></Box>
+            </Box>
+          </Box>
+
+          <Box className='pools-table__body'>
+            {allPools.map((pool) => (
+              <Box key={pool.id} className='pools-table__row' sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                
+              }}>
+                <Box className='pools-table__cell' sx={{ flex: '2' }}>
+                  <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
+                    <CoinPairIcons />
+                    <Typography variant="body1" className="gradient-text pools-table__symbols">
+                      {pool.token0Symbol}/{pool.token1Symbol}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>{pool.apr}</Box>
+                <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.tvl}</Box>
+                <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.volume24h}</Box>
+                <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
+                  <CustomizedMenus menuItems={[
+                        {
+                          label: "Remove Stake",
+                          onClick: () => {
+                            setSelectedPoolId(pool.id);
+                            setOpenRemoveStakeDialog(true);
+                          },
+                        },
+                        {
+                          label: "Add Stake",
+                          onClick: () => {
+                            setOpenAddStakeDialog(true);
+                            setSelectedPoolId(pool.id);
+                          },
+                        },
+                        {
+                          label: "Pending Rewards",
+                          onClick: () => {
+                            handlePendingRewards(pool.id);
+                          },
+                        },
+                      ]} />
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </TableContainer>
+        )}
+      </Box>
       <AddStakeDialog
         open={openAddStakeDialog}
         onClose={() => setOpenAddStakeDialog(false)}
@@ -336,7 +436,7 @@ const Staking: React.FC<{}> = () => {
         onTransact={handleRemoveStake}
         poolId={selectedPoolId}
       />
-    </div>
+    </Box>
   );
 };
 

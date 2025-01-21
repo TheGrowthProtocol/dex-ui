@@ -87,6 +87,10 @@ body {
 .disconnect-wallet-button {
   text-transform: none !important;
 }
+.disconnect-wallet-button__text {
+  margin-right: 4px !important;
+  border-bottom: 1px solid var(--primary-color);
+}
 
 .header {
   padding-right: 120px;
@@ -428,6 +432,17 @@ body {
 }
 .pool-card__stat {
   color: var(--primary-color) !important;
+}
+
+.pools-table {
+  margin-top: 32px !important;
+}
+
+.pools-table__empty {
+  margin-top: 32px !important;
+  background: var(--background-color);
+  border-radius: var(--border-radius);
+  padding: 16px;
 }
 
 .pools-table__head .pools-table__cell {
