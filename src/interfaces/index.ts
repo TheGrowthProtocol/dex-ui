@@ -7,12 +7,14 @@ export interface TOKEN {
 
 export interface POOL {
     id: string;
-    token0Address: string;
-    token1Address: string;
+    pairAddress: string;
+    token0: TOKEN;
+    token1: TOKEN;
     token0Symbol: string;
     token1Symbol: string;
     token0Share?: string;
     token1Share?: string;
+    lpBalance?: string;
     liquidity?: string;
     volume24h?: string;
     tvl?: string;

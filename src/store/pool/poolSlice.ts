@@ -21,7 +21,7 @@ const poolSlice = createSlice({
   name: 'pool',
   initialState,
   reducers: {
-    selectPool: (state, action: PayloadAction<POOL>) => {
+    setSelectedPool: (state, action: PayloadAction<POOL>) => {
       state.selectedPool = action.payload;
     },
     setPools: (state, action: PayloadAction<POOL[]>) => {
@@ -40,7 +40,7 @@ const poolSlice = createSlice({
 });
 
 export const {
-  selectPool,
+    setSelectedPool,
   setPools,
   setMyPools,
   setLoading,

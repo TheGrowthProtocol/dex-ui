@@ -3,7 +3,7 @@ import { ethers, Contract } from "ethers";
 import COINS from "../../constants/coins";
 import WCERES from "../../build/WCERES.json";
 import ERC20 from "../../build/ERC20.json";
-import { setError, setLoading, setMyPools, setPools } from "./poolSlice";
+import { setError, setLoading, setMyPools, setPools, setSelectedPool } from "./poolSlice";
 import { formatEther } from "ethers/lib/utils";
 import POOL_FACTORY_ABI from "../../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../../build/IUniswapV2Pair.json";
@@ -46,6 +46,7 @@ export const fetchPools = createAsyncThunk(
       const poolsData = await Promise.all(
         Array.from({ length: Number(poolCount) }, async (_, i) => {
           // Get pair address
+          const pairID = i.toString();
           const pairAddress = await factory.allPairs(i);
           const pairContract = new ethers.Contract(
             pairAddress,
@@ -54,11 +55,11 @@ export const fetchPools = createAsyncThunk(
           );
 
           // Get tokens
-          const token0Address = await pairContract.token0();
-          const token1Address = await pairContract.token1();
+          const token0 = await pairContract.token0();
+          const token1 = await pairContract.token1();
           const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0Address, provider),
-            getTokenSymbol(token1Address, provider),
+            getTokenSymbol(token0, provider),
+            getTokenSymbol(token1, provider),
           ]);
 
           // Get reserves
@@ -94,9 +95,10 @@ export const fetchPools = createAsyncThunk(
           );
 
           let pool: POOL = {
-            id: pairAddress,
-            token0Address,
-            token1Address,
+            id: pairID,
+            pairAddress: pairAddress,
+            token0,
+            token1,
             token0Symbol,
             token1Symbol,
             liquidity: formatEther(liquidity),
@@ -141,6 +143,7 @@ export const fetchMyPools = createAsyncThunk(
       const poolsData = await Promise.all(
         Array.from({ length: Number(poolCount) }, async (_, i) => {
           // Get pair address
+          const pairID = i.toString();
           const pairAddress = await factory.allPairs(i);
           const pairContract = new ethers.Contract(
             pairAddress,
@@ -149,11 +152,11 @@ export const fetchMyPools = createAsyncThunk(
           );
 
           // Get tokens
-          const token0Address = await pairContract.token0();
-          const token1Address = await pairContract.token1();
+          const token0 = await pairContract.token0();
+          const token1 = await pairContract.token1();
           const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0Address, provider),
-            getTokenSymbol(token1Address, provider),
+            getTokenSymbol(token0, provider),
+            getTokenSymbol(token1, provider),
           ]);
 
           // Get reserves
@@ -194,14 +197,16 @@ export const fetchMyPools = createAsyncThunk(
           //const volume = await getVolume24h(pairAddress, provider);
 
           let pool: POOL = {
-            id: pairAddress,
-            token0Address,
-            token1Address,
+            id: pairID,
+            pairAddress: pairAddress,
+            token0,
+            token1,
             token0Symbol,
             token1Symbol,
             token0Share: Number(formatEther(token0Share)).toFixed(2),
             token1Share: Number(formatEther(token1Share)).toFixed(2),
             liquidity: Number(formatEther(liquidity)).toFixed(2),
+            lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
           };
           return pool;
         })
@@ -212,6 +217,17 @@ export const fetchMyPools = createAsyncThunk(
       dispatch(setError(error.message));
       dispatch(setLoading(false));
       throw new Error("Failed to fetch my pools");
+    }
+  }
+);
+
+export const selectPool = createAsyncThunk(
+  "pools/selectPool",
+  async (poolId: string, { getState, dispatch }) => {
+    const state = getState() as RootState;
+    const pool = state.pool.myPools.find((pool: POOL) => pool.id === poolId);
+    if (pool) {
+      dispatch(setSelectedPool(pool));
     }
   }
 );
