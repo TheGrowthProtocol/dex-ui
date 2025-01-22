@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, Slider, Select, MenuItem } from "@material-ui/core";
+import { Box, Typography, Button, Grid, Slider, Select, MenuItem, Popover, InputLabel } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN } from "../interfaces";
 import Coindialog from "./coindialog";
@@ -19,11 +19,13 @@ import ConnectWalletButton from "./connectWalletButton";
 import { Tokenomics } from "./tokenomics";
 import LpTokenBalanceField from "./lpTokenBalanceField";
 import LpReceiveInputTokenField from "./lpReceiveInputTokenField";
+import CoinPairIcons from "./coinPairIcons";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tokens } = useSelector((state: RootState) => state.tokens);
   const { isConnected: isWalletConnected } = useWallet();
+
 
 
 
@@ -41,17 +43,31 @@ const RemoveLiquidity: React.FC<{}> = () => {
               <Box display="flex" className="coin-field-pair-container">
                 {/* TODO: select pool drop down */}
                 <Select
+                    color="primary"
                     className="select-pool-dropdown"
-                    id="demo-simple-select-autowidth"
-                    value={10}
-                    onChange={(event, newValue) => {}}
-                    autoWidth
+                    id="demo-simple-select-standard"
+                    value={20}
+                    onChange={(event, newValue) => { console.log(newValue)}}
+                    fullWidth
                     label="Age"
                     >
                     <MenuItem value="">
-                        <em>None</em>
+                        <Box display="flex" flexDirection="row">
+                            <CoinPairIcons />
+                            <Typography className={"gradient-text token-symbol"}>
+                                {"Select Token"}
+                            </Typography>
+                        </Box>
                     </MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={20}>
+                        <Box display="flex" flexDirection="row">
+                            <CoinPairIcons />
+                            <Typography className={"gradient-text token-symbol"}>
+                                {"Select Token"}
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+
                     <MenuItem value={21}>Twenty one</MenuItem>
                     <MenuItem value={22}>Twenty one and a half</MenuItem>
                 </Select>

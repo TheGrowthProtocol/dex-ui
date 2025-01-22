@@ -78,7 +78,7 @@ const Main = () => {
               variant="fullWidth"
               textColor="primary"
             >
-              <Tab label="Swap" {...a11yProps(0)} className="tab-header" />
+              <Tab label="Swap Tokens" {...a11yProps(0)} className="tab-header" />
               <Tab
                 label="Add Liquidity"
                 {...a11yProps(1)}

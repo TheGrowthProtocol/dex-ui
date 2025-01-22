@@ -27,7 +27,7 @@ const Coinfield: React.FC<COINFIELD> = ({
   const [openTokenDialog, setOpenTokenDialog] = useState(false);
   const [balance, setBalance] = useState("0.00"); // State to store the balance
   const { enqueueSnackbar } = useSnackbar();
-  const { tokens } = useSelector((state: RootState) => state.tokens);
+  const { tokens } = useSelector((state: RootState) => state.tokens); 
   const {isConnected: isWalletConnected} = useSelector((state: RootState) => state.wallet);
 
   useEffect(() => {

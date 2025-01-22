@@ -25,7 +25,7 @@ const Liquidity: React.FC<{}> = () => {
   const { token1, token2, loading } = useSelector(
     (state: RootState) => state.liquidity
   );
-  const { tokens } = useSelector((state: RootState) => state.tokens);
+  const { tokens } = useSelector((state: RootState) => state.tokens as { tokens: TOKEN[] });
   const { isConnected: isWalletConnected } = useWallet();
 
   console.log(token1, token2);
