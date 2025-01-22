@@ -5,6 +5,20 @@ export interface TOKEN {
     address?: string | null;
 }
 
+export interface POOL {
+    id: string;
+    token0Address: string;
+    token1Address: string;
+    token0Symbol: string;
+    token1Symbol: string;
+    token0Share?: string;
+    token1Share?: string;
+    liquidity?: string;
+    volume24h?: string;
+    tvl?: string;
+    apr?: string;
+}
+
 export interface COINFIELD {
     title: string;
     setSelectedToken: (token: TOKEN) => void;
