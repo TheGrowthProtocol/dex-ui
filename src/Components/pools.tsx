@@ -145,7 +145,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                           <CoinPairIcons  />
                         </Box>
                         <Typography variant="h6" className="pool-card__symbols gradient-text">
-                          {pool.token0Symbol}/{pool.token1Symbol}
+                          {pool.token0.symbol}/{pool.token1.symbol}
                         </Typography>
                       </Box>
                       <Box className="pool-card__menu">
@@ -210,7 +210,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
                           <CoinPairIcons />
                           <Typography variant="body1" className="gradient-text pools-table__symbols">
-                            {pool.token0Symbol}/{pool.token1Symbol}
+                            {pool.token0.symbol}/{pool.token1.symbol}
                           </Typography>
                         </Box>
                       </Box>
@@ -254,7 +254,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                             <CoinPairIcons  />
                           </Box>
                           <Typography variant="h6" className="pool-card__symbols gradient-text">
-                            {pool.token0Symbol}/{pool.token1Symbol}
+                            {pool.token0.symbol}/{pool.token1.symbol}
                           </Typography>
                         </Box>
                         <Box className="pool-card__menu">
@@ -324,7 +324,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                       <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
                         <CoinPairIcons />
                         <Typography variant="body1" className="gradient-text pools-table__symbols">
-                          {pool.token0Symbol}/{pool.token1Symbol}
+                          {pool.token0.symbol}/{pool.token1.symbol}
                         </Typography>
                       </Box>
                     </Box>

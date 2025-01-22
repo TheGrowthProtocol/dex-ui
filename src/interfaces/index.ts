@@ -10,8 +10,8 @@ export interface POOL {
     pairAddress: string;
     token0: TOKEN;
     token1: TOKEN;
-    token0Symbol: string;
-    token1Symbol: string;
+    //token0Symbol: string;
+    //token1Symbol: string;
     token0Share?: string;
     token1Share?: string;
     lpBalance?: string;

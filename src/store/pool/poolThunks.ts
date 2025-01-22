@@ -3,11 +3,11 @@ import { ethers, Contract } from "ethers";
 import COINS from "../../constants/coins";
 import WCERES from "../../build/WCERES.json";
 import ERC20 from "../../build/ERC20.json";
-import { setError, setLoading, setMyPools, setPools, setSelectedPool } from "./poolSlice";
+import { setError, setLoading, setMyPools, setPools, setRemoveLpToken0Share, setRemoveLpToken1Share, setSelectedPool } from "./poolSlice";
 import { formatEther } from "ethers/lib/utils";
 import POOL_FACTORY_ABI from "../../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../../build/IUniswapV2Pair.json";
-import { POOL } from "../../interfaces";
+import { POOL, TOKEN } from "../../interfaces";
 import { RootState } from "../store";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 const PRICE_FEED_API =
@@ -27,9 +27,11 @@ const PRICE_FEED_API =
 
 export const fetchPools = createAsyncThunk(
   "pools/fetchPools",
-  async (_, { dispatch }) => {
+  async (_, { getState, dispatch }) => {
     try {
       dispatch(setLoading(true));
+      const state = getState() as RootState;
+      const tokens = state.tokens.tokens;
       if (!window.ethereum) {
         throw new Error("Metamask not installed");
       }
@@ -55,12 +57,16 @@ export const fetchPools = createAsyncThunk(
           );
 
           // Get tokens
-          const token0 = await pairContract.token0();
-          const token1 = await pairContract.token1();
+          const token0Address  = await pairContract.token0();
+          const token1Address = await pairContract.token1();
           const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0, provider),
-            getTokenSymbol(token1, provider),
+            getTokenSymbol(token0Address, provider),
+            getTokenSymbol(token1Address, provider),
           ]);
+
+          const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
+          const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
+
 
           // Get reserves
           const reserves = await pairContract.getReserves();
@@ -97,10 +103,10 @@ export const fetchPools = createAsyncThunk(
           let pool: POOL = {
             id: pairID,
             pairAddress: pairAddress,
-            token0,
-            token1,
-            token0Symbol,
-            token1Symbol,
+            token0: token0 ?? { name: "", symbol: "", decimals: 0, address: "" },
+            token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
+            //token0Symbol,
+            //token1Symbol,
             liquidity: formatEther(liquidity),
             volume24h: formatEther(volume),
             tvl: tvl.toString(),
@@ -126,6 +132,7 @@ export const fetchMyPools = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const state = getState() as RootState;
+      const tokens = state.tokens.tokens;
       if (!window.ethereum) {
         throw new Error("Please install MetaMask or another Ethereum wallet.");
       }
@@ -152,12 +159,15 @@ export const fetchMyPools = createAsyncThunk(
           );
 
           // Get tokens
-          const token0 = await pairContract.token0();
-          const token1 = await pairContract.token1();
+          const token0Address = await pairContract.token0();
+          const token1Address = await pairContract.token1();
           const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0, provider),
-            getTokenSymbol(token1, provider),
+            getTokenSymbol(token0Address, provider),
+            getTokenSymbol(token1Address, provider),
           ]);
+
+          const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
+          const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
 
           // Get reserves
           const reserves = await pairContract.getReserves();
@@ -199,10 +209,10 @@ export const fetchMyPools = createAsyncThunk(
           let pool: POOL = {
             id: pairID,
             pairAddress: pairAddress,
-            token0,
-            token1,
-            token0Symbol,
-            token1Symbol,
+            token0: token0 ?? { name: "", symbol: "", decimals: 0, address: "" },
+            token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
+            //token0Symbol,
+            //token1Symbol,
             token0Share: Number(formatEther(token0Share)).toFixed(2),
             token1Share: Number(formatEther(token1Share)).toFixed(2),
             liquidity: Number(formatEther(liquidity)).toFixed(2),
@@ -228,6 +238,53 @@ export const selectPool = createAsyncThunk(
     const pool = state.pool.myPools.find((pool: POOL) => pool.id === poolId);
     if (pool) {
       dispatch(setSelectedPool(pool));
+    }
+  }
+);
+
+export const fetchShareBalances = createAsyncThunk(
+  "pools/fetchShareBalances",
+  async (params: { pool: POOL; lpBalance: number }, { getState, dispatch }) => {
+    try {
+      if (!window.ethereum) {
+        throw new Error("Please install MetaMask or another Ethereum wallet.");
+      }
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const pairContract = new ethers.Contract(
+        params.pool.pairAddress,
+        PAIR_ABI.abi,
+        provider
+      );
+      const reserves = await pairContract.getReserves();
+      const [reserve0, reserve1] = [reserves[0], reserves[1]];
+      const totalSupply = await pairContract.totalSupply();
+      const userLPBalance = ethers.utils.parseEther(params.lpBalance.toString());
+
+        // Calculate user's share percentage
+        const userSharePercent = userLPBalance
+        .mul(ethers.constants.WeiPerEther)
+        .div(totalSupply);
+
+        // Calculate user's token shares
+        const token0Share = reserve0
+        .mul(userSharePercent)
+        .div(ethers.constants.WeiPerEther);
+        const token1Share = reserve1
+        .mul(userSharePercent)
+        .div(ethers.constants.WeiPerEther);
+        console.log("token0Share", Number(formatEther(token0Share)).toFixed(2));
+        console.log("token1Share", Number(formatEther(token1Share)).toFixed(2));
+        //dispatch(setRemoveLpToken0Share({ token: params.pool.token0, amount: Number(formatEther(token0Share)).toFixed(2) }));
+        //dispatch(setRemoveLpToken1Share({ token: params.pool.token1, amount: Number(formatEther(token1Share)).toFixed(2) }));
+        //dispatch(setLoading(false));
+        return {
+          token0Share: { token: params.pool.token0, amount: Number(formatEther(token0Share)).toFixed(2) },
+          token1Share: { token: params.pool.token1, amount: Number(formatEther(token1Share)).toFixed(2) },
+        };
+  } catch (error: any) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+      throw error;
     }
   }
 );

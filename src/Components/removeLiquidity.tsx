@@ -10,15 +10,18 @@ import LpTokenBalanceField from "./lpTokenBalanceField";
 import LpReceiveInputTokenField from "./lpReceiveInputTokenField";
 import CoinPairIcons from "./coinPairIcons";
 import { POOL } from "../interfaces";
-import { fetchMyPools, selectPool } from "../store/pool/poolThunks";
+import { fetchMyPools, fetchShareBalances, selectPool } from "../store/pool/poolThunks";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tokens } = useSelector((state: RootState) => state.tokens);
-  const { myPools, selectedPool } = useSelector((state: RootState) => state.pool);
+  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
   const [ percentage, setPercentage ] = useState<number>(50);
   const [ removeLpBalance, setRemoveLpBalance ] = useState<string>("--");
+  const [token0, setToken0] = useState<string>("");
+  const [token1, setToken1] = useState<string>("");
+
   // Add state for selected pool ID
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
 
@@ -37,8 +40,11 @@ const RemoveLiquidity: React.FC<{}> = () => {
   }, [dispatch, selectedPoolId]);
 
   useEffect(() => {
-    let removeLpBalance = Number(selectedPool?.lpBalance?? 0) * percentage / 100;
-    setRemoveLpBalance(removeLpBalance.toFixed(2));
+    if (selectedPool) {
+        let removeLpBalance = Number(selectedPool.lpBalance?? 0) * percentage / 100;
+        setRemoveLpBalance(removeLpBalance.toFixed(2));
+      dispatch(fetchShareBalances({ pool: selectedPool, lpBalance: removeLpBalance }));
+    }
   }, [percentage, selectedPool]);
 
   const handleSelectPool = (poolId: string) => {
@@ -48,6 +54,8 @@ const RemoveLiquidity: React.FC<{}> = () => {
   console.log("myPools", myPools);
   console.log("selectedPool", selectedPool);
   console.log("percentage", percentage);
+  console.log("removeLpToken0Share", removeLpToken0Share);
+  console.log("removeLpToken1Share", removeLpToken1Share);
   return (
     <Grid container>
       <Grid item xs={12} md={12} lg={6}>
@@ -82,7 +90,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                             <Box display="flex" flexDirection="row">
                                 <CoinPairIcons />
                                 <Typography className={"gradient-text token-symbol"}>
-                                    {pool.token0Symbol} / {pool.token1Symbol}
+                                    {pool.token0.symbol} / {pool.token1.symbol}
                                 </Typography>
                             </Box>
                         </MenuItem>
@@ -117,13 +125,17 @@ const RemoveLiquidity: React.FC<{}> = () => {
             <Box display="flex" flexDirection="column" className="pooled-tokens-receiving-container">
               <Typography variant="subtitle2">Pooled Tokens receiving</Typography>
               {/* TODO: Pooled Tokens receiving */}
-              <Box display="flex" flexDirection="row" className="pooled-tokens-receiving-input">
-                <LpReceiveInputTokenField token={tokens[0]} balance="Balance" usdValue="(--USD)" />
-                <Box>
-                    <Typography variant="subtitle2">+</Typography>
+              {
+                removeLpToken0Share && removeLpToken1Share && (
+                    <Box display="flex" flexDirection="row" className="pooled-tokens-receiving-input">
+                    <LpReceiveInputTokenField token={removeLpToken0Share.token} balance={removeLpToken0Share.amount} usdValue={removeLpToken0Share.amount} />
+                    <Box>
+                        <Typography variant="subtitle2">+</Typography>
+                    </Box>
+                    <LpReceiveInputTokenField token={removeLpToken1Share.token} balance={removeLpToken1Share.amount} usdValue={removeLpToken1Share.amount} />
                 </Box>
-                <LpReceiveInputTokenField token={tokens[1]} balance="Balance" usdValue="(--USD)" />
-              </Box>
+              )
+              }
             </Box>
           </Box>
         </Box>
