@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchTokens } from '../store/tokens/tokenThunks'; 
 import RemoveLiquidity from "../Components/removeLiquidity";
+import { fetchPools } from "../store/pool/poolThunks";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,7 +52,13 @@ const Main = () => {
   // @description fetch tokens
   useEffect(() => {
     dispatch(fetchTokens());
+    dispatch(fetchPools());
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log("tokens", tokens);
+    dispatch(fetchPools());
+  }, [tokens]);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);

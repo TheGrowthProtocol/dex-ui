@@ -2,7 +2,7 @@ export interface TOKEN {
     name: string;
     symbol: string;
     decimals?: number;
-    address?: string | null;
+    address: string;
 }
 
 export interface POOL {
@@ -12,6 +12,8 @@ export interface POOL {
     token1: TOKEN;
     //token0Symbol: string;
     //token1Symbol: string;
+    token0Reserve: string;
+    token1Reserve: string;
     token0Share?: string;
     token1Share?: string;
     lpBalance?: string;
@@ -81,3 +83,12 @@ export interface CoinPairIconsProps {
     loading: boolean;
     error: string | null;
   }
+
+  export interface TokenomicsItem {
+    title: string;
+    value: string;
+}
+
+export interface Tokenomics {
+    [key: string]: TokenomicsItem;
+}

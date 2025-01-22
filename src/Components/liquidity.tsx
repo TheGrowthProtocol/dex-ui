@@ -196,32 +196,11 @@ const Liquidity: React.FC<{}> = () => {
         </Box>
       </Grid>
       <Grid item xs={12} md={12} lg={6}>
-        <Tokenomics items={[
-          {
-            title: "APR (Annual % Rate)",
-            value: "100,000,000"
-          },
-          {
-            title: "Share of Pool",
-            value: "100,000,000"
-          },
-          {
-            title: "Current Token1 : Token2 Ratio in the pool",
-            value: "100,000,000"
-          },
-          {
-            title: "Current Token1-Token2 V2 LP Rate",
-            value: "100,000,000"
-          },
-          {
-            title: "Token1 per Token2",
-            value: "100,000,000"
-          },
-          {
-            title: "Token2 per Token1",
-            value: "100,000,000"
-          }
-        ]}/>
+        <Tokenomics 
+        isConnected={isWalletConnected}
+        type="pool"
+        selectedPool={null}
+        />
       </Grid>
     </Grid>
   );

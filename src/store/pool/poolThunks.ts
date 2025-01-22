@@ -3,12 +3,14 @@ import { ethers, Contract } from "ethers";
 import COINS from "../../constants/coins";
 import WCERES from "../../build/WCERES.json";
 import ERC20 from "../../build/ERC20.json";
-import { setError, setLoading, setMyPools, setPools, setRemoveLpToken0Share, setRemoveLpToken1Share, setSelectedPool } from "./poolSlice";
+import { setError, setLoading, setMyPools, setPools, setSelectedPool } from "./poolSlice";
 import { formatEther } from "ethers/lib/utils";
 import POOL_FACTORY_ABI from "../../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../../build/IUniswapV2Pair.json";
-import { POOL, TOKEN } from "../../interfaces";
+import { POOL, TOKEN, Tokenomics } from "../../interfaces";
 import { RootState } from "../store";
+import * as chains from "../../constants/chains";
+import ROUTER from "../../build/UniswapV2Router02.json";
 const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 const PRICE_FEED_API =
   "https://api.coingecko.com/api/v3/simple/price?ids=ceres&vs_currencies=usd";
@@ -35,6 +37,9 @@ export const fetchPools = createAsyncThunk(
       if (!window.ethereum) {
         throw new Error("Metamask not installed");
       }
+      if(tokens.length < 1) {
+        throw new Error("No tokens found");
+      }
       // Connect to provider
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const factory = new ethers.Contract(
@@ -59,10 +64,7 @@ export const fetchPools = createAsyncThunk(
           // Get tokens
           const token0Address  = await pairContract.token0();
           const token1Address = await pairContract.token1();
-          const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0Address, provider),
-            getTokenSymbol(token1Address, provider),
-          ]);
+         
 
           const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
           const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
@@ -72,10 +74,13 @@ export const fetchPools = createAsyncThunk(
           const reserves = await pairContract.getReserves();
           const [reserve0, reserve1] = [reserves[0], reserves[1]];
 
+          const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
+          const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
+
           // Get token prices
           const [price0, price1] = await Promise.all([
-            getTokenPrice(token0Symbol),
-            getTokenPrice(token1Symbol),
+            getTokenPrice(token0?.symbol ?? ""),
+            getTokenPrice(token1?.symbol ?? ""),
           ]);
 
           // Get volume (Note: You'll need to implement your own volume tracking as
@@ -105,6 +110,8 @@ export const fetchPools = createAsyncThunk(
             pairAddress: pairAddress,
             token0: token0 ?? { name: "", symbol: "", decimals: 0, address: "" },
             token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
+            token0Reserve: token0Reserve,
+            token1Reserve: token1Reserve,
             //token0Symbol,
             //token1Symbol,
             liquidity: formatEther(liquidity),
@@ -161,10 +168,6 @@ export const fetchMyPools = createAsyncThunk(
           // Get tokens
           const token0Address = await pairContract.token0();
           const token1Address = await pairContract.token1();
-          const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0Address, provider),
-            getTokenSymbol(token1Address, provider),
-          ]);
 
           const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
           const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
@@ -173,8 +176,12 @@ export const fetchMyPools = createAsyncThunk(
           const reserves = await pairContract.getReserves();
           const [reserve0, reserve1] = [reserves[0], reserves[1]];
 
+          const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
+          const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
+
           // Get total supply
           const totalSupply = await pairContract.totalSupply();
+
 
           // Get user balance
           const userLPBalance = await pairContract.balanceOf(account);
@@ -213,6 +220,8 @@ export const fetchMyPools = createAsyncThunk(
             token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
             //token0Symbol,
             //token1Symbol,
+            token0Reserve: token0Reserve,
+            token1Reserve: token1Reserve,
             token0Share: Number(formatEther(token0Share)).toFixed(2),
             token1Share: Number(formatEther(token1Share)).toFixed(2),
             liquidity: Number(formatEther(liquidity)).toFixed(2),
@@ -227,6 +236,17 @@ export const fetchMyPools = createAsyncThunk(
       dispatch(setError(error.message));
       dispatch(setLoading(false));
       throw new Error("Failed to fetch my pools");
+    }
+  }
+);
+
+export const fetchPoolByTokenAddresses = createAsyncThunk(
+  "pools/fetchPoolByTokenAddresses",
+  async (tokenAddresses: string[], { getState, dispatch }) => {
+    const state = getState() as RootState;
+    const pool = state.pool.pools.find((pool: POOL) => tokenAddresses.includes(pool.token0.address ?? "") || tokenAddresses.includes(pool.token1.address ?? ""  ));
+    if (pool) {
+      dispatch(setSelectedPool(pool));
     }
   }
 );
@@ -272,11 +292,7 @@ export const fetchShareBalances = createAsyncThunk(
         const token1Share = reserve1
         .mul(userSharePercent)
         .div(ethers.constants.WeiPerEther);
-        console.log("token0Share", Number(formatEther(token0Share)).toFixed(2));
-        console.log("token1Share", Number(formatEther(token1Share)).toFixed(2));
-        //dispatch(setRemoveLpToken0Share({ token: params.pool.token0, amount: Number(formatEther(token0Share)).toFixed(2) }));
-        //dispatch(setRemoveLpToken1Share({ token: params.pool.token1, amount: Number(formatEther(token1Share)).toFixed(2) }));
-        //dispatch(setLoading(false));
+        dispatch(setLoading(false));
         return {
           token0Share: { token: params.pool.token0, amount: Number(formatEther(token0Share)).toFixed(2) },
           token1Share: { token: params.pool.token1, amount: Number(formatEther(token1Share)).toFixed(2) },
@@ -289,7 +305,103 @@ export const fetchShareBalances = createAsyncThunk(
   }
 );
 
+export const removeLpToken = createAsyncThunk(
+  "pools/removeLpToken",
+  async (_, { getState, dispatch }) => {
+    try {
+    const state = getState() as RootState;
+    const selectedPool = state.pool.selectedPool;
+    if(!window.ethereum) {
+      throw new Error("Please install MetaMask or another Ethereum wallet.");
+    }
+    if (!selectedPool) {
+      throw new Error("No selected pool");
+    }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const pairContract = new Contract(selectedPool.pairAddress, PAIR_ABI.abi, provider);
+    const token0Share = state.pool.removeLpToken0Share?.amount;
+    const token1Share = state.pool.removeLpToken1Share?.amount;
+    const token0Decimals = selectedPool.token0.decimals;
+    const token1Decimals = selectedPool.token1.decimals;
+    const token0ShareAmount = ethers.utils.parseUnits(token0Share ?? "0", token0Decimals);
+    const token1ShareAmount = ethers.utils.parseUnits(token1Share ?? "0", token1Decimals);
+    const time = Math.floor(Date.now() / 1000) + 200000;
+    const deadline = ethers.BigNumber.from(time);
+    const liquidity = ethers.utils.parseUnits(selectedPool.liquidity ?? "0", 18);
+
+    const routerContract = new Contract(chains.routerAddress.get(state.network.chainId), ROUTER.abi, provider);
+    const wethAddress = await routerContract.WCERES();
+    await pairContract.approve(routerContract.address, liquidity);
+    if (selectedPool.token0.address === wethAddress) {
+      await routerContract.removeLiquidityCERES(selectedPool.token1.address, liquidity, token1ShareAmount, token0ShareAmount, state.wallet.address, deadline);
+    } else if (selectedPool.token1.address === wethAddress) {
+      await routerContract.removeLiquidityCERES(selectedPool.token0.address, liquidity, token0ShareAmount, token1ShareAmount, state.wallet.address, deadline);
+    } else {
+      await routerContract.removeLiquidity(selectedPool.token0.address, selectedPool.token1.address, liquidity, token0ShareAmount, token1ShareAmount, state.wallet.address, deadline);
+    }
+    dispatch(setLoading(false));
+  } catch (error: any) {
+    dispatch(setError(error.message));
+    dispatch(setLoading(false));
+    throw error;
+  }
+  }
+);
+
+
+export const fetchPoolTokenomics = createAsyncThunk(
+  "pools/fetchPoolTokenomics",
+  async (params: {pool: POOL, swapAmount1: number, swapAmount2: number}, { getState, dispatch }) => {
+    try{
+      const state = getState() as RootState;
+      const tokenomics = calculateTokenomics({pool: params.pool, swapAmount1: params.swapAmount1, swapAmount2: params.swapAmount2});
+      return tokenomics;
+    } catch (error: any) {
+      dispatch(setError(error.message));
+      dispatch(setLoading(false));
+      throw error;
+    }
+  }
+);
+
 // Helper functions
+
+const calculateTokenomics = (params: {pool: POOL, swapAmount1: number, swapAmount2: number}) => {
+  const {pool, swapAmount1, swapAmount2} = params;
+  const token0 = pool.token0;
+  const token1 = pool.token1;
+  const token0Reserve = pool.token0Reserve;
+  const token1Reserve = pool.token1Reserve;
+  const currentRatio = Number(token0Reserve) / Number(token1Reserve);
+  let newRatio = 0;
+  let priceImpact = 0
+  if(swapAmount1 > 0 && swapAmount2 > 0) {
+    newRatio = (Number(token0Reserve) - swapAmount1) / (Number(token1Reserve) + swapAmount2);
+    priceImpact = (newRatio - currentRatio) / currentRatio;
+  }
+  const feeTier = 0;
+  const token0perToken1 = swapAmount1 / (Number(token0Reserve) - swapAmount1);
+  const token1perToken0 = swapAmount2 / (Number(token1Reserve) - swapAmount2);
+
+  let tokenomics: Tokenomics = {}; 
+  tokenomics.priceImpact = {title: "Price Impact", value: priceImpact.toString()};
+  tokenomics.feeTier = {title: "Fee Tier", value: feeTier.toString()};
+  tokenomics.token0perToken1 = {title: "Token 0 per Token 1", value: token0perToken1.toString()};
+  tokenomics.token1perToken0 = {title: "Token 1 per Token 0", value: token1perToken0.toString()};
+  tokenomics.token0 = {title: "Token 0", value: pool.token0.symbol};
+  tokenomics.token1 = {title: "Token 1", value: pool.token1.symbol};
+  tokenomics.apr = {title: "APR", value: pool.apr ?? "0"};
+  tokenomics.volume24h = {title: "Volume 24h", value: pool.volume24h ?? "0"};
+  tokenomics.tvl = {title: "TVL", value: pool.tvl ?? "0"};
+  tokenomics.liquidity = {title: "Liquidity", value: pool.liquidity ?? "0"};
+  tokenomics.currentRatio = {title: "Current Ratio", value: currentRatio.toString()};
+  tokenomics.newRatio = {title: "New Ratio", value: newRatio.toString()};
+  tokenomics.currentLPRate = {title: "Current LPRate", value: "0"};
+  tokenomics.swapAmount1 = {title: "Swap Amount 1", value: swapAmount1.toString()};
+  tokenomics.swapAmount2 = {title: "Swap Amount 2", value: swapAmount2.toString()};
+  return tokenomics;
+  };
+
 const getTokenSymbol = async (
   tokenAddress: string,
   provider: ethers.providers.Provider

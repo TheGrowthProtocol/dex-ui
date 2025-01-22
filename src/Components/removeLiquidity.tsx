@@ -10,12 +10,12 @@ import LpTokenBalanceField from "./lpTokenBalanceField";
 import LpReceiveInputTokenField from "./lpReceiveInputTokenField";
 import CoinPairIcons from "./coinPairIcons";
 import { POOL } from "../interfaces";
-import { fetchMyPools, fetchShareBalances, selectPool } from "../store/pool/poolThunks";
+import { fetchMyPools, fetchShareBalances, removeLpToken, selectPool } from "../store/pool/poolThunks";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tokens } = useSelector((state: RootState) => state.tokens);
-  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share } = useSelector((state: RootState) => state.pool);
+  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
   const [ percentage, setPercentage ] = useState<number>(50);
   const [ removeLpBalance, setRemoveLpBalance ] = useState<string>("--");
@@ -51,11 +51,16 @@ const RemoveLiquidity: React.FC<{}> = () => {
     setSelectedPoolId(poolId); // Update local state
   }
 
+  const handleRemoveLiquidityPool = () => {
+    dispatch(removeLpToken());
+  }
+
   console.log("myPools", myPools);
   console.log("selectedPool", selectedPool);
   console.log("percentage", percentage);
   console.log("removeLpToken0Share", removeLpToken0Share);
   console.log("removeLpToken1Share", removeLpToken1Share);
+  console.log("error", error);
   return (
     <Grid container>
       <Grid item xs={12} md={12} lg={6}>
@@ -152,7 +157,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
               variant="contained"
               color="primary"
               className={"gradient-button liquidity-add-button"}
-              //onClick={handleRemoveLiquidityPool}
+              onClick={handleRemoveLiquidityPool}
               //disabled={!token1.address || !token2.address}
             >
               <div className="button-angled-clip">
@@ -166,36 +171,11 @@ const RemoveLiquidity: React.FC<{}> = () => {
         </Box>
       </Grid>
       <Grid item xs={12} md={12} lg={6}>
-        <Tokenomics items={[
-          {
-            title: "LP Reward APR (Annual % Rate)",
-            value: "100,000,000"
-          },
-          {
-            title: "Your share in Pool",
-            value: "100,000,000"
-          },
-          {
-            title: "LP Reward Share in Trading pair",
-            value: "100,000,000"
-          },
-          {
-            title: "Current BNB : CAKE Ratio in the pool",
-            value: "100,000,000"
-          },
-          {
-            title: "Current BNB-CAKE V2 LP Rate",
-            value: "100,000,000"
-          },
-          {
-            title: "CAKE per BNB",
-            value: "100,000,000"
-          },
-          {
-            title: "BNB per CAKE",
-            value: "100,000,000"
-          }
-        ]}/>
+        <Tokenomics 
+        isConnected={isWalletConnected}                 
+        type="pool"
+        selectedPool={selectedPool}
+        />
       </Grid>
     </Grid>
   );

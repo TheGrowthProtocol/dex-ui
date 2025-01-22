@@ -16,6 +16,7 @@ import {
 } from "../store/swap/swapSlice";
 import { getAmount2, swap } from "../store/swap/swapThunks";
 import { Tokenomics } from "./tokenomics";
+import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 
 const Swap: React.FC<{}> = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -25,6 +26,7 @@ const Swap: React.FC<{}> = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
+  const {selectedPool} = useSelector((state: RootState) => state.pool);
 
   useEffect(() => {
     if (tokens.length > 0) {
@@ -33,6 +35,13 @@ const Swap: React.FC<{}> = () => {
     }
   }, [tokens, dispatch]);
 
+  useEffect(() => {
+    if (isConnected) {  
+      if (token1 && token2) {
+        dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+      }
+    }
+  }, [token1, token2, dispatch,isConnected]);
   
 
   useEffect(() => {
@@ -45,9 +54,9 @@ const Swap: React.FC<{}> = () => {
     };
     if (amount1 > 0) {
       setCoinfield2Amount();
+
     }
   }, [amount1, dispatch, enqueueSnackbar]);
-
 
 
   const handleSwap = () => {
@@ -140,24 +149,11 @@ const Swap: React.FC<{}> = () => {
         </Box>
       </Grid>
       <Grid item xs={12} md={12} lg={6}>
-        <Tokenomics items={[
-          {
-            title: "Price Impact",
-            value: "100,000,000"
-          },
-          {
-            title: "Fee tier",
-            value: "100,000,000"
-          },
-          {
-            title: "Token1 per Token2",
-            value: "100,000,000"
-          },
-          {
-            title: "Token2 per Token1",
-            value: "100,000,000"
-          }
-        ]}/>
+        <Tokenomics 
+        isConnected={isConnected}
+        type="swap"
+        selectedPool={selectedPool} 
+        />  
       </Grid>
     </Grid>
   );
