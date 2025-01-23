@@ -148,9 +148,13 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                           {pool.token0.symbol}/{pool.token1.symbol}
                         </Typography>
                       </Box>
-                      <Box className="pool-card__menu">
-                        <CustomizedMenus menuItems={menuItems} />
-                      </Box>
+                      {
+                      isWalletConnected && (
+                        <Box className="pool-card__menu">
+                          <CustomizedMenus menuItems={menuItems} />
+                        </Box>
+                      )
+                    }
                     </Box>
 
                     {/* Stats Grid */}
@@ -217,9 +221,13 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                       <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>{pool.apr}</Box>
                       <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.tvl}</Box>
                       <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.volume24h}</Box>
-                      <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                        <CustomizedMenus menuItems={menuItems} />
-                      </Box>
+                      {
+                      isWalletConnected && (
+                        <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
+                          <CustomizedMenus menuItems={menuItems} />
+                        </Box>
+                      )
+                    }
                     </Box>
                   ))}
                 </Box>
@@ -331,13 +339,17 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                     <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>${formatNumber(pool.liquidity?? '')}</Box>
                     <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.token0Share}</Box>
                     <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.token1Share}</Box>
-                    <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                      <CustomizedMenus menuItems={menuItems} />
+                    {
+                      isWalletConnected && (
+                        <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
+                          <CustomizedMenus menuItems={menuItems} />
+                        </Box>
+                      )
+                    }
                     </Box>
-                  </Box>
-                ))}
+                  ))}
+                </Box>
               </Box>
-            </Box>
           </TableContainer>
           ))}
           {!isWalletConnected && (
@@ -345,7 +357,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
               <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
                 <CoinPairIcons />
                 <Typography variant="body1">
-                Login with your wallet to see your pools
+                Connect wallet to see your pools
                 </Typography>
               </Box>
               <ConnectWalletButton />

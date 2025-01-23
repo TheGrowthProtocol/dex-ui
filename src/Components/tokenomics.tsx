@@ -21,7 +21,7 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
     const { amount1: liquidityAmount1, amount2: liquidityAmount2, loading:liquidityLoading, error:liquidityError} = useSelector((state: RootState) => state.liquidity);
     
     const poolTokenomics:TokenomicsType = useSelector((state: RootState) => state.pool.poolTokenomics);
-
+    console.log("poolTokenomics", poolTokenomics);
     useEffect(() => {
         if (isConnected && selectedPool) {
             switch (type) {
@@ -52,20 +52,29 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
         return <div>Error: {swapError}</div>;
     }
 
+    let displayTokenomicsItemKeys = ['priceImpact','token0perToken1', 'token1perToken0', 'apr', 'tvl', 'currentRatio', 'newRatio', 'currentLPRate'];
+    let displayTokenomicsItemLabels = ['Price Impact', 'Token 0 per Token 1', 'Token 1 per Token 0', 'APR', 'TVL', 'Current Ratio', 'New Ratio', 'Current LPRate'];
     console.log("poolTokenomics", poolTokenomics);
-
     return (
         <Box className="tokenomics-container">
             <Box className="tokenomics-header" display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
                 <Typography variant="subtitle1">Tokenomics</Typography>
             </Box>
             <Box className="tokenomics-content">
-                {poolTokenomics && Object.keys(poolTokenomics).map((key) => (
+                { poolTokenomics && displayTokenomicsItemKeys.map((key) => (
                     <Box className="tokenomics-content__item" key={`tokenomics-${key}`} display="flex" flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
                         <Typography variant="caption" color="textSecondary">{poolTokenomics[key].title}</Typography>
                         <Typography variant="subtitle2" color="primary">{poolTokenomics[key].value}</Typography>
                     </Box>
                 ))}
+                {
+                    !poolTokenomics && displayTokenomicsItemLabels.map((label) => (
+                        <Box className="tokenomics-content__item" key={`tokenomics-${label}`} display="flex" flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
+                            <Typography variant="caption" color="textSecondary">{label}</Typography>
+                            <Typography variant="subtitle2" color="primary">--</Typography>
+                        </Box>
+                    ))
+                }
             </Box>
         </Box>
     )

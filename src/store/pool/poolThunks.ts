@@ -15,17 +15,6 @@ const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
 const PRICE_FEED_API =
   "https://api.coingecko.com/api/v3/simple/price?ids=ceres&vs_currencies=usd";
 
-/*const TGP_NETWORK = {
-  chainId: "0x17c99", // Convert 97433 to hex
-  chainName: "TGP Testnet",
-  rpcUrls: ["https://subnets.avax.network/tgp/testnet/rpc"],
-  nativeCurrency: {
-    name: "CERES",
-    symbol: "CERES",
-    decimals: 18,
-  },
-  blockExplorerUrls: ["https://subnets-test.avax.network/tgp"],
-};*/
 
 export const fetchPools = createAsyncThunk(
   "pools/fetchPools",
@@ -69,7 +58,11 @@ export const fetchPools = createAsyncThunk(
           const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
           const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
 
+          // get token swap volume
+          //const token0SwapVolume = await pairContract.swap(token0Address);
+          //const token1SwapVolume = await pairContract.swap(token1Address);
 
+          //console.log(token0SwapVolume, token1SwapVolume);
           // Get reserves
           const reserves = await pairContract.getReserves();
           const [reserve0, reserve1] = [reserves[0], reserves[1]];
@@ -116,7 +109,7 @@ export const fetchPools = createAsyncThunk(
             //token1Symbol,
             liquidity: formatEther(liquidity),
             volume24h: formatEther(volume),
-            tvl: tvl.toString(),
+            tvl: Number(tvl).toFixed(2),
             apr: apr.toString(),
           };
           return pool;
@@ -182,6 +175,14 @@ export const fetchMyPools = createAsyncThunk(
           // Get total supply
           const totalSupply = await pairContract.totalSupply();
 
+          // Get token prices
+          const [price0, price1] = await Promise.all([
+            getTokenPrice(token0?.symbol ?? ""),
+            getTokenPrice(token1?.symbol ?? ""),
+          ]);
+
+          // Get TBL
+          const tvl = (Number(token0Reserve) * price0 + Number(token1Reserve) * price1).toFixed(2);
 
           // Get user balance
           const userLPBalance = await pairContract.balanceOf(account);
@@ -226,6 +227,7 @@ export const fetchMyPools = createAsyncThunk(
             token1Share: Number(formatEther(token1Share)).toFixed(2),
             liquidity: Number(formatEther(liquidity)).toFixed(2),
             lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
+            tvl:  Number(tvl).toFixed(2),
           };
           return pool;
         })
@@ -402,14 +404,6 @@ const calculateTokenomics = (params: {pool: POOL, swapAmount1: number, swapAmoun
   return tokenomics;
   };
 
-const getTokenSymbol = async (
-  tokenAddress: string,
-  provider: ethers.providers.Provider
-) => {
-  const tokenABI = ["function symbol() view returns (string)"];
-  const tokenContract = new ethers.Contract(tokenAddress, tokenABI, provider);
-  return await tokenContract.symbol();
-};
 
 const getVolume24h = async (
   pairAddress: string,
@@ -428,10 +422,10 @@ const getTokenPrice = async (tokenSymbol: string): Promise<number> => {
   try {
     const response = await fetch(`${PRICE_FEED_API}/${tokenSymbol}`);
     const data = await response.json();
-    return data.price;
+    return data.price ?? 1;
   } catch (error) {
     console.error(`Error fetching price for ${tokenSymbol}:`, error);
-    return 0;
+    return 1;
   }
 };
 

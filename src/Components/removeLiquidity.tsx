@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, Slider, Select, MenuItem } from "@material-ui/core";
+import { Box, Typography, Button, Grid, Slider, Select, MenuItem, useMediaQuery, useTheme } from "@material-ui/core";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
@@ -14,6 +14,8 @@ import { fetchMyPools, fetchShareBalances, removeLpToken, selectPool } from "../
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme(); 
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { tokens } = useSelector((state: RootState) => state.tokens);
   const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
@@ -23,13 +25,19 @@ const RemoveLiquidity: React.FC<{}> = () => {
   const [token1, setToken1] = useState<string>("");
 
   // Add state for selected pool ID
-  const [selectedPoolId, setSelectedPoolId] = useState<string>("");
+  const [selectedPoolId, setSelectedPoolId] = useState<string>("0");
 
   useEffect(() => {
     if (isWalletConnected) {
-      dispatch(fetchMyPools()); 
+      dispatch(fetchMyPools());  
     }
   }, [dispatch, isWalletConnected]);
+
+  useEffect(() => {
+    if (myPools.length > 0) {
+      dispatch(selectPool(myPools[0].id));
+    }
+  }, [myPools]);
 
   useEffect(() => {
     if (selectedPoolId === "") {
@@ -66,8 +74,23 @@ const RemoveLiquidity: React.FC<{}> = () => {
       <Grid item xs={12} md={12} lg={6}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
-            <Box
-              display="flex"
+            {
+                !isWalletConnected && (
+                    <Box display="flex" justifyContent="space-between" alignItems="center" height="100%" flexDirection={isMobile ? "column" : "row"} className="pools-table__empty">
+                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
+                            <CoinPairIcons />
+                            <Typography variant="body1">
+                            Connect wallet to see your pools
+                            </Typography>
+                        </Box>
+                        <ConnectWalletButton />
+                    </Box>
+                )
+            }
+            { isWalletConnected && (
+                <>
+                <Box
+                    display="flex"
               flexDirection="column"
               className="coin-field-container coin-field-pair-block"
             >
@@ -78,18 +101,11 @@ const RemoveLiquidity: React.FC<{}> = () => {
                     className="select-pool-dropdown"
                     id="demo-simple-select-standard"
                     value={selectedPoolId} // Use local state instead
+                    defaultValue={selectedPoolId}
                     onChange={(event) => handleSelectPool(event.target.value as string)}
                     fullWidth
-                    label="Age"
+                    label="Select Pool"
                 >
-                    <MenuItem value="">
-                        <Box display="flex" flexDirection="row">
-                            <CoinPairIcons />
-                            <Typography className={"gradient-text token-symbol"}>
-                                {"Select Token"}
-                            </Typography>
-                        </Box>
-                    </MenuItem>
                     {myPools.map((pool: POOL) => (
                         <MenuItem key={pool.id} value={pool.id}>
                             <Box display="flex" flexDirection="row">
@@ -112,10 +128,10 @@ const RemoveLiquidity: React.FC<{}> = () => {
                 <Typography variant="h3" className="percentage-block-title gradient-text">{percentage}%</Typography>
                 <Slider value={percentage} onChange={(event, newValue) => {setPercentage(newValue as number)}} className="percentage-block-slider"/>
                 <Box display="flex" flexDirection="row" className="percentage-block-buttons" justifyContent={"space-between"} alignItems={"center"}>
-                    <Button variant="contained" color="primary" className="percentage-block-button">25%</Button>
-                    <Button variant="contained" color="primary" className="percentage-block-button">50%</Button>
-                    <Button variant="contained" color="primary" className="percentage-block-button">75%</Button>
-                    <Button variant="contained" color="primary" className="percentage-block-button">100%</Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(25)}>25%</Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(50)}>50%</Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(75)}>75%</Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(100)}>100%</Button>
                 </Box>
                 <Grid container>
                     <Grid item xs={12} md={12} lg={6}>
@@ -142,6 +158,8 @@ const RemoveLiquidity: React.FC<{}> = () => {
               )
               }
             </Box>
+            </> 
+            )}
           </Box>
         </Box>
         <Box
@@ -167,7 +185,6 @@ const RemoveLiquidity: React.FC<{}> = () => {
               </div>
             </Button>
           )}
-          {!isWalletConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
       <Grid item xs={12} md={12} lg={6}>

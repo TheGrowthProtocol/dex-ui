@@ -32,6 +32,7 @@ const Swap: React.FC<{}> = () => {
     if (tokens.length > 0) {
       dispatch(setToken1(tokens[0]));
       dispatch(setToken2(tokens[1]));
+      //dispatch(fetchPoolByTokenAddresses([tokens[0].address, tokens[1].address]));
     }
   }, [tokens, dispatch]);
 
