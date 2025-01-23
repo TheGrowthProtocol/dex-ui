@@ -26,23 +26,24 @@ const Swap: React.FC<{}> = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
-  const {selectedPool} = useSelector((state: RootState) => state.pool);
+  const {selectedPool, pools} = useSelector((state: RootState) => state.pool);
 
   useEffect(() => {
     if (tokens.length > 0) {
       dispatch(setToken1(tokens[0]));
       dispatch(setToken2(tokens[1]));
-      //dispatch(fetchPoolByTokenAddresses([tokens[0].address, tokens[1].address]));
     }
   }, [tokens, dispatch]);
 
   useEffect(() => {
-    if (isConnected) {  
+    dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+  }, [pools, token1, token2,  dispatch]);
+
+  useEffect(() => {
       if (token1 && token2) {
         dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
       }
-    }
-  }, [token1, token2, dispatch,isConnected]);
+  }, [token1, token2, dispatch]);
   
 
   useEffect(() => {

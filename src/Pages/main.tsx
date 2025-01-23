@@ -56,7 +56,6 @@ const Main = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("tokens", tokens);
     dispatch(fetchPools());
   }, [tokens]);
 
@@ -71,8 +70,6 @@ const Main = () => {
     <CircularProgress />
   </div>;
   if (error) return <div>Error: {error}</div>;  
-
-  console.log(tokens);
 
   return (
     <Grid container>

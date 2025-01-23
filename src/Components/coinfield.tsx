@@ -100,8 +100,6 @@ const Coinfield: React.FC<COINFIELD> = ({
       enqueueSnackbar("Invalid amount entered", { variant: "error" });
       return;
     }
-    // Update the state or perform any necessary actions here
-    console.log(amount);
     setAmount(amount);
   };
 

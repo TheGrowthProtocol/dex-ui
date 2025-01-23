@@ -26,9 +26,10 @@ import { MenuItemProps } from "../interfaces";
 import AddStakeDialog from "./addStackDialog";
 import RemoveStakeDialog from "./removeStackDialog";
 import CoinPairIcons from "./coinPairIcons";
+import { env } from "../env";
 
-const MASTER_CHEF_ADDRESS = "0x481b2c832322F73Ec66e4f9e013001db9B55518a";
-const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
+const MASTER_CHEF_ADDRESS = env.contracts.masterChef;
+const POOL_FACTORY_ADDRESS = env.contracts.poolFactory;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,7 +86,6 @@ const Staking: React.FC<{}> = () => {
         provider
       );
       const poolCount = await poolFactory.allPairsLength();
-      console.log(poolCount);
       const poolsData = await Promise.all(
         Array.from({ length: Number(poolCount) }, async (_, i) => {
           // Get pair address
@@ -167,12 +167,6 @@ const Staking: React.FC<{}> = () => {
       const valueInWei = ethers.utils.parseUnits(value.toString(), 18);
       const approveTx = await pairContract.approve(MASTER_CHEF_ADDRESS, valueInWei);
       await approveTx.wait();
-      console.log("Approved");
-      /**const allowance = await pairContract.allowance(
-        signer.getAddress(),
-        MASTER_CHEF_ADDRESS
-      );
-      console.log("Allowance:", allowance);**/
       const masterChef = new ethers.Contract(
         MASTER_CHEF_ADDRESS,
         MASTER_CHEF_ABI.abi,
@@ -180,7 +174,6 @@ const Staking: React.FC<{}> = () => {
       );
       // Get total number of pools
       const poolLength = await masterChef.poolLength();
-      console.log("Pool Length:", poolLength);
       // Iterate through pools to find matching address
       let selectedPoolId = 0;
       for (let pid = 0; pid < poolLength; pid++) {
@@ -190,7 +183,6 @@ const Staking: React.FC<{}> = () => {
           break;
         }
       }
-      console.log("Selected Pool ID:", selectedPoolId);
       const tx = await masterChef.deposit(selectedPoolId, valueInWei);
       await tx.wait();
     } catch (error) {
@@ -199,7 +191,6 @@ const Staking: React.FC<{}> = () => {
   };
 
   const handleRemoveStake = async (value: string, poolId: string) => {
-    console.log("Remove Stake", value, poolId);
     try {
       if (!window.ethereum) throw new Error("No ethereum provider found");
       const provider = new ethers.providers.Web3Provider(
@@ -213,7 +204,6 @@ const Staking: React.FC<{}> = () => {
       );
       // Get total number of pools
       const poolLength = await masterChef.poolLength();
-      console.log("Pool Length:", poolLength);
       // Iterate through pools to find matching address
       let selectedPoolId = 0;
       for (let pid = 0; pid < poolLength; pid++) {
@@ -223,7 +213,6 @@ const Staking: React.FC<{}> = () => {
           break;
         }
       }
-      console.log("Selected Pool ID:", selectedPoolId);
       const valueInWei = ethers.utils.parseUnits(value.toString(), 18); // or use the specific token decimals
       const tx = await masterChef.withdraw(selectedPoolId, valueInWei);
       await tx.wait();
@@ -233,7 +222,6 @@ const Staking: React.FC<{}> = () => {
   };
 
   const handlePendingRewards = async (poolId: string) => {
-    console.log("Pending Rewards", poolId);
     try {
       if (!window.ethereum) throw new Error("No ethereum provider found");
       const provider = new ethers.providers.Web3Provider(
@@ -246,7 +234,6 @@ const Staking: React.FC<{}> = () => {
         signer
       );
       const poolLength = await masterChef.poolLength();
-      console.log("Pool Length:", poolLength);
       // Iterate through pools to find matching address
       let selectedPoolId = 0;
       for (let pid = 0; pid < poolLength; pid++) {
@@ -256,12 +243,10 @@ const Staking: React.FC<{}> = () => {
           break;
         }
       }
-      console.log("Selected Pool ID:", selectedPoolId);
       const pendingRewards = await masterChef.pendingSauce(
         selectedPoolId,
         signer.getAddress()
       );
-      console.log("Pending Rewards:", pendingRewards);
     } catch (error) {
       console.error(error);
     }

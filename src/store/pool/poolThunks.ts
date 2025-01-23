@@ -11,9 +11,9 @@ import { POOL, TOKEN, Tokenomics } from "../../interfaces";
 import { RootState } from "../store";
 import * as chains from "../../constants/chains";
 import ROUTER from "../../build/UniswapV2Router02.json";
-const POOL_FACTORY_ADDRESS = "0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9";
-const PRICE_FEED_API =
-  "https://api.coingecko.com/api/v3/simple/price?ids=ceres&vs_currencies=usd";
+import { env } from "../../env";
+const POOL_FACTORY_ADDRESS = env.contracts.poolFactory; 
+const PRICE_FEED_API = env.priceFeedApi;
 
 
 export const fetchPools = createAsyncThunk(
@@ -58,11 +58,6 @@ export const fetchPools = createAsyncThunk(
           const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
           const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
 
-          // get token swap volume
-          //const token0SwapVolume = await pairContract.swap(token0Address);
-          //const token1SwapVolume = await pairContract.swap(token1Address);
-
-          //console.log(token0SwapVolume, token1SwapVolume);
           // Get reserves
           const reserves = await pairContract.getReserves();
           const [reserve0, reserve1] = [reserves[0], reserves[1]];
@@ -115,7 +110,6 @@ export const fetchPools = createAsyncThunk(
           return pool;
         })
       );
-      console.log(poolsData);
       dispatch(setPools(poolsData));
       dispatch(setLoading(false));
     } catch (error: any) {
@@ -246,7 +240,7 @@ export const fetchPoolByTokenAddresses = createAsyncThunk(
   "pools/fetchPoolByTokenAddresses",
   async (tokenAddresses: string[], { getState, dispatch }) => {
     const state = getState() as RootState;
-    const pool = state.pool.pools.find((pool: POOL) => tokenAddresses.includes(pool.token0.address ?? "") || tokenAddresses.includes(pool.token1.address ?? ""  ));
+    const pool = state.pool.pools.find((pool: POOL) => tokenAddresses.includes(pool.token0.address ?? "") && tokenAddresses.includes(pool.token1.address ?? ""  ));
     if (pool) {
       dispatch(setSelectedPool(pool));
     }
@@ -330,16 +324,54 @@ export const removeLpToken = createAsyncThunk(
     const time = Math.floor(Date.now() / 1000) + 200000;
     const deadline = ethers.BigNumber.from(time);
     const liquidity = ethers.utils.parseUnits(selectedPool.liquidity ?? "0", 18);
+    const network = await provider.getNetwork();
+    const signer = provider.getSigner();
+    const routerContract = new Contract(
+      chains.routerAddress.get(network.chainId), 
+      ROUTER.abi, 
+      provider.getSigner()
+    );
+    
+    try {
+      const wethAddress = await routerContract.WCERES();
+      
+      await pairContract.connect(provider.getSigner()).approve(routerContract.address, liquidity);
 
-    const routerContract = new Contract(chains.routerAddress.get(state.network.chainId), ROUTER.abi, provider);
-    const wethAddress = await routerContract.WCERES();
-    await pairContract.approve(routerContract.address, liquidity);
-    if (selectedPool.token0.address === wethAddress) {
-      await routerContract.removeLiquidityCERES(selectedPool.token1.address, liquidity, token1ShareAmount, token0ShareAmount, state.wallet.address, deadline);
-    } else if (selectedPool.token1.address === wethAddress) {
-      await routerContract.removeLiquidityCERES(selectedPool.token0.address, liquidity, token0ShareAmount, token1ShareAmount, state.wallet.address, deadline);
-    } else {
-      await routerContract.removeLiquidity(selectedPool.token0.address, selectedPool.token1.address, liquidity, token0ShareAmount, token1ShareAmount, state.wallet.address, deadline);
+      if (selectedPool.token0.address === wethAddress) {
+        await routerContract.removeLiquidityCERES(
+          selectedPool.token1.address, 
+          liquidity, 
+          token1ShareAmount, 
+          token0ShareAmount, 
+          signer, 
+          deadline,
+          { gasLimit: 500000 } // Add explicit gas limit
+        );
+      } else if (selectedPool.token1.address === wethAddress) {
+        await routerContract.removeLiquidityCERES(
+          selectedPool.token0.address, 
+          liquidity, 
+          token0ShareAmount, 
+          token1ShareAmount, 
+          signer, 
+          deadline,
+          { gasLimit: 500000 }
+        );
+      } else {
+        await routerContract.removeLiquidity(
+          selectedPool.token0.address, 
+          selectedPool.token1.address, 
+          liquidity, 
+          token0ShareAmount, 
+          token1ShareAmount, 
+          signer, 
+          deadline,
+          { gasLimit: 500000 }
+        );
+      }
+    } catch (error) {
+      console.error('Detailed error:', error);
+      throw error;
     }
     dispatch(setLoading(false));
   } catch (error: any) {

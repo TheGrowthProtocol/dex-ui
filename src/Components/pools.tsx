@@ -22,6 +22,7 @@ import { PoolsNoItems } from "./poolsNoItems";
 import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector , useDispatch} from "react-redux";
+import { setSelectedPool } from "../store/pool/poolSlice";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -80,12 +81,16 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { isConnected: isWalletConnected } = useWallet();
-  const { pools, loading , myPools, error} = useSelector((state: RootState) => state.pool);
+  const { pools, loading , myPools} = useSelector((state: RootState) => state.pool);
   const [value, setValue] = useState(0);
 
 
-  const menuItems: MenuItemProps[] = [
-    { label: "Remove Liquidity", onClick: () => {} },
+  const myPoolsMenuItems: MenuItemProps[] = [
+    { label: "Remove Liquidity", onClick: () => handleTabChange(3) },
+    { label: "Add Liquidity", onClick: () => handleTabChange(1)},
+  ];
+
+  const allPoolsMenuItems: MenuItemProps[] = [
     { label: "Add Liquidity", onClick: () => handleTabChange(1)},
   ];
 
@@ -99,11 +104,6 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
     }
     dispatch(fetchPools());
   }, [isWalletConnected, dispatch]);
-
-  console.log(pools);
-  console.log(myPools);
-  console.log(error);
-  console.log(loading);
 
   if (loading) {
     return (
@@ -151,7 +151,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                       {
                       isWalletConnected && (
                         <Box className="pool-card__menu">
-                          <CustomizedMenus menuItems={menuItems} />
+                          <CustomizedMenus menuItems={allPoolsMenuItems} />
                         </Box>
                       )
                     }
@@ -224,7 +224,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                       {
                       isWalletConnected && (
                         <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                          <CustomizedMenus menuItems={menuItems} />
+                          <CustomizedMenus menuItems={allPoolsMenuItems} />
                         </Box>
                       )
                     }
@@ -266,7 +266,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                           </Typography>
                         </Box>
                         <Box className="pool-card__menu">
-                          <CustomizedMenus menuItems={menuItems} />
+                          <CustomizedMenus menuItems={myPoolsMenuItems} />
                         </Box>
                       </Box>
 
@@ -342,7 +342,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                     {
                       isWalletConnected && (
                         <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                          <CustomizedMenus menuItems={menuItems} />
+                          <CustomizedMenus menuItems={myPoolsMenuItems} />
                         </Box>
                       )
                     }

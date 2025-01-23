@@ -7,17 +7,18 @@ import {
   disconnectNetwork,
 } from '../store/network/networkSlice';
 import { RootState } from '../store/store';
+import { env } from '../env';
 
-const TGP_NETWORK = {
-    chainId: "0x17c99", // Convert 97433 to hex
-    chainName: "TGP Testnet",
-    rpcUrls: ["https://subnets.avax.network/tgp/testnet/rpc"],
+const TGP_NETWORK = {   
+    chainId: env.chainId, // Convert 97433 to hex
+    chainName: env.networkName,
+    rpcUrls: [env.rpcUrl],
     nativeCurrency: {
-      name: "CERES",
-      symbol: "CERES",
-      decimals: 18,
+      name: env.currency.name,
+      symbol: env.currency.symbol,
+      decimals: env.currency.decimals,
     },
-    blockExplorerUrls: ["https://subnets-test.avax.network/tgp"],
+    blockExplorerUrls: [env.blockExplorerUrl],
   };
 
 export const useNetwork = () => {
@@ -31,7 +32,6 @@ export const useNetwork = () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
         const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-        console.log("Current chain ID:", currentChainId);
         if (currentChainId !== TGP_NETWORK.chainId) {
             try {
               await window.ethereum.request({
@@ -52,12 +52,10 @@ export const useNetwork = () => {
             finally {
               const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
               dispatch(connectNetworkSuccess(currentChainId));
-              console.log("Connected to network:", currentChainId);
             }
         }
         else {
           dispatch(connectNetworkSuccess(currentChainId));
-          console.log("Connected to network:", currentChainId);
         }
       } else {
         throw new Error('Please install MetaMask'); 

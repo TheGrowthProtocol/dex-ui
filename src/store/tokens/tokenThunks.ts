@@ -3,18 +3,19 @@ import { ethers, Contract } from "ethers";
 import COINS from "../../constants/coins";
 import WCERES from "../../build/WCERES.json";
 import ERC20 from "../../build/ERC20.json";
+import { env } from "../../env";
 
 
 const TGP_NETWORK = {
-    chainId: "0x17c99", // Convert 97433 to hex
-    chainName: "TGP Testnet",
-    rpcUrls: ["https://subnets.avax.network/tgp/testnet/rpc"],
+    chainId: env.chainId, // Convert 97433 to hex
+    chainName: env.networkName,
+    rpcUrls: [env.rpcUrl],
     nativeCurrency: {
-      name: "CERES",
-      symbol: "CERES",
-      decimals: 18,
+      name: env.currency.name,
+      symbol: env.currency.symbol,
+      decimals: env.currency.decimals,
     },
-    blockExplorerUrls: ["https://subnets-test.avax.network/tgp"],
+    blockExplorerUrls: [env.blockExplorerUrl],
   };
 
 export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async () => {
@@ -34,7 +35,6 @@ export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async () => {
                     const decimals = await tokenContract.decimals().then((result: any) => {
                         return result;
                       }).catch((error: any) => {
-                        console.log('No tokenDecimals function for this token, set to 0');
                         console.log(error)
                         return 18;
                       });

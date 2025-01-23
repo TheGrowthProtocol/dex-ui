@@ -5,7 +5,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { MenuItemProps } from "../interfaces";
-import { Grow } from "@material-ui/core";
+import { Grow, Typography } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 
 // Add custom transition component
@@ -93,7 +93,7 @@ const StyledMenu = styled((props: MenuProps) => (
         >
           {menuItems.map((item) => (
             <MenuItem key={item.label} onClick={item.onClick} disableRipple>
-              {item.label}
+              <Typography variant="body1" className="menu-item-label gradient-text">{item.label}</Typography>
             </MenuItem>
           ))}
         </StyledMenu>

@@ -63,15 +63,9 @@ const RemoveLiquidity: React.FC<{}> = () => {
     dispatch(removeLpToken());
   }
 
-  console.log("myPools", myPools);
-  console.log("selectedPool", selectedPool);
-  console.log("percentage", percentage);
-  console.log("removeLpToken0Share", removeLpToken0Share);
-  console.log("removeLpToken1Share", removeLpToken1Share);
-  console.log("error", error);
   return (
     <Grid container>
-      <Grid item xs={12} md={12} lg={6}>
+      <Grid item xs={12} md={12} lg={ isWalletConnected ? 6 : 12}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
             {
@@ -80,7 +74,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
                             <CoinPairIcons />
                             <Typography variant="body1">
-                            Connect wallet to see your pools
+                            Connect wallet to remove
                             </Typography>
                         </Box>
                         <ConnectWalletButton />
@@ -187,6 +181,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
           )}
         </Box>
       </Grid>
+      { isWalletConnected && (
       <Grid item xs={12} md={12} lg={6}>
         <Tokenomics 
         isConnected={isWalletConnected}                 
@@ -194,6 +189,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
         selectedPool={selectedPool}
         />
       </Grid>
+      )}
     </Grid>
   );
 };

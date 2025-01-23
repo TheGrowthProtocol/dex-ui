@@ -17,6 +17,7 @@ import CoinNoIcon from "./coinNoIcon";
 import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "./connectWalletButton";
 import { Tokenomics } from "./tokenomics";
+import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 
 const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,18 +27,23 @@ const Liquidity: React.FC<{}> = () => {
     (state: RootState) => state.liquidity
   );
   const { tokens } = useSelector((state: RootState) => state.tokens as { tokens: TOKEN[] });
+  const { selectedPool } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
 
-  console.log(token1, token2);
-
   useEffect(() => {
-    if (token1.name === "") {
+    if (tokens.length > 0) {
       dispatch(setToken1(tokens[0]));
-    }
-    if (token2.name === "") {
       dispatch(setToken2(tokens[1]));
     }
-  }, [dispatch, token1, token2]);
+  }, [dispatch, tokens]);
+
+  useEffect(() => { 
+      if (token1 && token2) {
+        dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+      }
+  }, [token1, token2, dispatch]);
+
+
 
   // Function to close the dialog
   const handleToken1DialogClose = () => {
@@ -80,6 +86,7 @@ const Liquidity: React.FC<{}> = () => {
   const handleAddLiquidityPool = () => {
     dispatch(addLiquidity());
   };
+
 
   return (
     <Grid container>
@@ -199,7 +206,7 @@ const Liquidity: React.FC<{}> = () => {
         <Tokenomics 
         isConnected={isWalletConnected}
         type="pool"
-        selectedPool={null}
+        selectedPool={selectedPool}
         />
       </Grid>
     </Grid>

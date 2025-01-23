@@ -1,8 +1,8 @@
-import { Box, Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import { Box, CircularProgress, Typography } from "@material-ui/core";
+import React, { useEffect } from "react";
 import { POOL } from "../interfaces";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPools, fetchPoolTokenomics } from "../store/pool/poolThunks";
+import { fetchPoolTokenomics } from "../store/pool/poolThunks";
 import { AppDispatch, RootState } from "../store/store";
 import { Tokenomics as TokenomicsType } from "../interfaces";
 
@@ -21,16 +21,14 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
     const { amount1: liquidityAmount1, amount2: liquidityAmount2, loading:liquidityLoading, error:liquidityError} = useSelector((state: RootState) => state.liquidity);
     
     const poolTokenomics:TokenomicsType = useSelector((state: RootState) => state.pool.poolTokenomics);
-    console.log("poolTokenomics", poolTokenomics);
     useEffect(() => {
         if (isConnected && selectedPool) {
             switch (type) {
                 case "swap":
-                    console.log("swap", selectedPool, swapAmount1, swapAmount2);
                     dispatch(fetchPoolTokenomics({pool: selectedPool, swapAmount1: swapAmount1, swapAmount2: swapAmount2}));
                     break;
                 case "pool":
-                    //dispatch(fetchPoolTokenomics({pool: selectedPool, liquidityAmount1: liquidityAmount1, liquidityAmount2: liquidityAmount2}));
+                    dispatch(fetchPoolTokenomics({pool: selectedPool, swapAmount1: Number(liquidityAmount1), swapAmount2: Number(liquidityAmount2)}));
                     break;
             }
         }
@@ -40,13 +38,8 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
         if (selectedPool) {
             dispatch(fetchPoolTokenomics({pool: selectedPool, swapAmount1: swapAmount1, swapAmount2: swapAmount2}));
         }
-    }, [swapAmount1, swapAmount2, dispatch, selectedPool]);
+    }, [dispatch, selectedPool]);
 
-
-    
-    if (swapLoading) {
-        return <div>Loading...</div>;
-    }
 
     if (swapError) {
         return <div>Error: {swapError}</div>;
@@ -54,13 +47,20 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
 
     let displayTokenomicsItemKeys = ['priceImpact','token0perToken1', 'token1perToken0', 'apr', 'tvl', 'currentRatio', 'newRatio', 'currentLPRate'];
     let displayTokenomicsItemLabels = ['Price Impact', 'Token 0 per Token 1', 'Token 1 per Token 0', 'APR', 'TVL', 'Current Ratio', 'New Ratio', 'Current LPRate'];
-    console.log("poolTokenomics", poolTokenomics);
+
     return (
         <Box className="tokenomics-container">
             <Box className="tokenomics-header" display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
                 <Typography variant="subtitle1">Tokenomics</Typography>
             </Box>
             <Box className="tokenomics-content">
+                {
+                    swapLoading || liquidityLoading &&  (
+                        <Box className="loading-container">
+                            <CircularProgress />
+                        </Box>
+                    )
+                }
                 { poolTokenomics && displayTokenomicsItemKeys.map((key) => (
                     <Box className="tokenomics-content__item" key={`tokenomics-${key}`} display="flex" flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
                         <Typography variant="caption" color="textSecondary">{poolTokenomics[key].title}</Typography>
