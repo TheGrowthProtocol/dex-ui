@@ -17,6 +17,7 @@ import CoinNoIcon from "./coinNoIcon";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import CloseIcon from "@material-ui/icons/Close";
+import CoinIcon from "./coinIcon";
 
 const Coindialog: React.FC<COINDIALOG> = ({
   tokens,
@@ -76,7 +77,8 @@ const Coindialog: React.FC<COINDIALOG> = ({
               className="coin-dialog__list-item"
             >
               <ListItemIcon className="coin-dialog__list-item-icon">
-                <CoinNoIcon />
+                {token.icon && <CoinIcon icon={token.icon} />}
+                {!token.icon && <CoinNoIcon />}
               </ListItemIcon>
               <ListItemText
                 primary={`${token.name} (${token.symbol})`}

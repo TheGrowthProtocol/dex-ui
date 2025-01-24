@@ -8,6 +8,7 @@ import ERC20 from "../build/ERC20.json";
 import CoinNoIcon from "./coinNoIcon";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import CoinIcon from "./coinIcon";
 
 const TokenInputField: React.FC<TokenInputFieldProps> = ({
   tokens,
@@ -112,7 +113,8 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
           <Box
             sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
           >
-            <CoinNoIcon />
+            {selectedToken.icon && <CoinIcon icon={selectedToken.icon} />}
+            {!selectedToken.icon && <CoinNoIcon />}
             <Typography className="token-symbol gradient-text">
               {selectedToken.symbol}
             </Typography>

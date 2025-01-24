@@ -38,7 +38,7 @@ export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async () => {
                         console.log(error)
                         return 18;
                       });
-                    return { name, symbol, address, decimals };
+                    return { name, symbol, address, decimals, icon: coinObject.icon };
                 })
             );
 

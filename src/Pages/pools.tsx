@@ -142,7 +142,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                         className="pool-card__pair"
                       >
                         <Box className="pool-card__icons">
-                          <CoinPairIcons  />
+                          <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                         </Box>
                         <Typography variant="h6" className="pool-card__symbols gradient-text">
                           {pool.token0.symbol}/{pool.token1.symbol}
@@ -212,7 +212,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                     }}>
                       <Box className='pools-table__cell' sx={{ flex: '2' }}>
                         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
-                          <CoinPairIcons />
+                          <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                           <Typography variant="body1" className="gradient-text pools-table__symbols">
                             {pool.token0.symbol}/{pool.token1.symbol}
                           </Typography>
@@ -259,7 +259,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                           className="pool-card__pair"
                         >
                           <Box className="pool-card__icons">
-                            <CoinPairIcons  />
+                            <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                           </Box>
                           <Typography variant="h6" className="pool-card__symbols gradient-text">
                             {pool.token0.symbol}/{pool.token1.symbol}
@@ -330,7 +330,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                   }}>
                     <Box className='pools-table__cell' sx={{ flex: '2' }}>
                       <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
-                        <CoinPairIcons />
+                        <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                         <Typography variant="body1" className="gradient-text pools-table__symbols">
                           {pool.token0.symbol}/{pool.token1.symbol}
                         </Typography>

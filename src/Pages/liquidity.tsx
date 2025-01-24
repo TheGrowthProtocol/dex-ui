@@ -18,6 +18,7 @@ import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "../Components/connectWalletButton";
 import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
+import CoinIcon from "../Components/coinIcon";
 
 const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -104,7 +105,8 @@ const Liquidity: React.FC<{}> = () => {
                   endIcon={<KeyboardArrowDownIcon color="primary" />}
                   className="coin-field-button"
                 >
-                  <CoinNoIcon />
+                  {token1.icon && <CoinIcon icon={token1.icon} />}
+                  {!token1.icon && <CoinNoIcon />}
                   <Typography className={"gradient-text token-symbol"}>
                     {token1.symbol || "Select Token"}
                   </Typography>
@@ -124,7 +126,8 @@ const Liquidity: React.FC<{}> = () => {
                   endIcon={<KeyboardArrowDownIcon color="primary" />}
                   className="coin-field-button"
                 >
-                  <CoinNoIcon />
+                  {token2.icon && <CoinIcon icon={token2.icon} />}
+                  {!token2.icon && <CoinNoIcon />}
                   <Typography className={"token-symbol gradient-text"}>
                     {token2.symbol || "Select Token"}
                   </Typography>

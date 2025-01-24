@@ -16,6 +16,7 @@ import ERC20 from "../build/ERC20.json";
 import CoinNoIcon from "./coinNoIcon";
 import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
+import CoinIcon from "./coinIcon";
 
 const Coinfield: React.FC<COINFIELD> = ({
   title,
@@ -132,7 +133,8 @@ const Coinfield: React.FC<COINFIELD> = ({
             endIcon={<KeyboardArrowDownIcon color="primary" />}
             className="coin-field-button"
           >
-            <CoinNoIcon />
+            {selectedToken.icon && <CoinIcon icon={selectedToken.icon} />}
+            {!selectedToken.icon && <CoinNoIcon />}
             <Typography className={"token-symbol gradient-text"}>
               {selectedToken.symbol || "Select Token"}
             </Typography>

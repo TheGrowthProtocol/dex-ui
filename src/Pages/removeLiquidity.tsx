@@ -74,7 +74,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
                             <CoinPairIcons />
                             <Typography variant="body1">
-                            Connect wallet to remove
+                            Connect wallet to remove liquidity
                             </Typography>
                         </Box>
                         <ConnectWalletButton />
@@ -103,7 +103,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                     {myPools.map((pool: POOL) => (
                         <MenuItem key={pool.id} value={pool.id}>
                             <Box display="flex" flexDirection="row">
-                                <CoinPairIcons />
+                                <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                                 <Typography className={"gradient-text token-symbol"}>
                                     {pool.token0.symbol} / {pool.token1.symbol}
                                 </Typography>

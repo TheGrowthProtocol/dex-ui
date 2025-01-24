@@ -532,6 +532,22 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.coin-icon-placeholder {
+  width: 24px;
+  height: 24px;
+  background: #1A1A1A;
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.coin-icon {
+  width: 24px;
+  height: 24px;
+}
+
 .coin-pair-icons {
   margin-right: 12px;
 }

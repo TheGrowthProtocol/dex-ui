@@ -3,6 +3,7 @@ export interface TOKEN {
     symbol: string;
     decimals?: number;
     address: string;
+    icon?: string;
 }
 
 export interface POOL {
