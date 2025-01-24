@@ -122,10 +122,18 @@ const RemoveLiquidity: React.FC<{}> = () => {
                 <Typography variant="h3" className="percentage-block-title gradient-text">{percentage}%</Typography>
                 <Slider value={percentage} onChange={(event, newValue) => {setPercentage(newValue as number)}} className="percentage-block-slider"/>
                 <Box display="flex" flexDirection="row" className="percentage-block-buttons" justifyContent={"space-between"} alignItems={"center"}>
-                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(25)}>25%</Button>
-                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(50)}>50%</Button>
-                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(75)}>75%</Button>
-                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(100)}>100%</Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(25)}>
+                      <Typography variant="subtitle1" className="gradient-text">25%</Typography>
+                    </Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(50)}>
+                      <Typography variant="subtitle1" className="gradient-text">50%</Typography>
+                    </Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(75)}>
+                      <Typography variant="subtitle1" className="gradient-text">75%</Typography>
+                    </Button>
+                    <Button variant="contained" color="primary" className="percentage-block-button" onClick={() => setPercentage(100)}>
+                      <Typography variant="subtitle1" className="gradient-text">100%</Typography>
+                    </Button>
                 </Box>
                 <Grid container>
                     <Grid item xs={12} md={12} lg={6}>

@@ -654,6 +654,15 @@ body {
 .coin-field-max-button .MuiButton-label {
   justify-content: flex-end !important;
 }
+.percentage-block-button {
+  background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%) !important;
+  border-radius: 24px !important;
+  padding: 4px 20px !important;
+}
+
+.percentage-block-button:hover {
+  background: linear-gradient(355deg, #926128 -20.2%, #E3D6B4 46.46%, #B99A45 85.12%, #916027 113.11%) !important;
+}
 
 @media (max-width: 600px) {
   .main-container {
