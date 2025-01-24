@@ -41,8 +41,9 @@ export interface COINDIALOG {
 export interface TokenInputFieldProps {
     tokens: TOKEN[];
     selectedToken: TOKEN;
-    onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onAmountChange: (amount: string) => void;
     isDisplayBalance: boolean;
+    value: string;
   }
 
   export interface LiquidityState {

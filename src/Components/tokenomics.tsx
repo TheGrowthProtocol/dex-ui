@@ -1,10 +1,9 @@
 import { Box, CircularProgress, Typography } from "@material-ui/core";
 import React, { useEffect } from "react";
-import { POOL } from "../interfaces";
+import { POOL, Tokenomics as TokenomicsType } from "../interfaces";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPoolTokenomics } from "../store/pool/poolThunks";
 import { AppDispatch, RootState } from "../store/store";
-import { Tokenomics as TokenomicsType } from "../interfaces";
 
 
 
@@ -19,27 +18,31 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
     const dispatch = useDispatch<AppDispatch>(); 
     const { amount1: swapAmount1, amount2: swapAmount2, loading:swapLoading, error:swapError} = useSelector((state: RootState) => state.swap);
     const { amount1: liquidityAmount1, amount2: liquidityAmount2, loading:liquidityLoading, error:liquidityError} = useSelector((state: RootState) => state.liquidity);
-    
     const poolTokenomics:TokenomicsType = useSelector((state: RootState) => state.pool.poolTokenomics);
-    useEffect(() => {
-        if (isConnected && selectedPool) {
-            switch (type) {
-                case "swap":
-                    dispatch(fetchPoolTokenomics({pool: selectedPool, swapAmount1: swapAmount1, swapAmount2: swapAmount2}));
-                    break;
-                case "pool":
-                    dispatch(fetchPoolTokenomics({pool: selectedPool, swapAmount1: Number(liquidityAmount1), swapAmount2: Number(liquidityAmount2)}));
-                    break;
-            }
-        }
-    }, [dispatch, isConnected, type, selectedPool]);
 
     useEffect(() => {
         if (selectedPool) {
-            dispatch(fetchPoolTokenomics({pool: selectedPool, swapAmount1: swapAmount1, swapAmount2: swapAmount2}));
+            const amount1 = type === "swap" ? swapAmount1 : Number(liquidityAmount1);
+            const amount2 = type === "swap" ? swapAmount2 : Number(liquidityAmount2);
+            
+            if (isConnected) {
+                dispatch(fetchPoolTokenomics({
+                    pool: selectedPool, 
+                    swapAmount1: amount1, 
+                    swapAmount2: amount2
+                }));
+            }
         }
-    }, [dispatch, selectedPool]);
-
+    }, [
+        dispatch, 
+        isConnected, 
+        type, 
+        selectedPool, 
+        swapAmount1, 
+        swapAmount2, 
+        liquidityAmount1, 
+        liquidityAmount2
+    ]);
 
     if (swapError) {
         return <div>Error: {swapError}</div>;
@@ -54,30 +57,48 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
                 <Typography variant="subtitle1">Tokenomics</Typography>
             </Box>
             <Box className="tokenomics-content">
-                {
-                    swapLoading || liquidityLoading &&  (
-                        <Box className="loading-container">
-                            <CircularProgress />
-                        </Box>
-                    )
-                }
-                { poolTokenomics && displayTokenomicsItemKeys.map((key) => (
-                    <Box className="tokenomics-content__item" key={`tokenomics-${key}`} display="flex" flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
-                        <Typography variant="caption" color="textSecondary">{poolTokenomics[key].title}</Typography>
-                        <Typography variant="subtitle2" color="primary">{poolTokenomics[key].value}</Typography>
+                {(swapLoading || liquidityLoading) && (
+                    <Box className="loading-container">
+                        <CircularProgress />
+                    </Box>
+                )}
+                {poolTokenomics && displayTokenomicsItemKeys.map((key) => (
+                    <Box 
+                        className="tokenomics-content__item" 
+                        key={`tokenomics-${key}`} 
+                        display="flex" 
+                        flexDirection="column" 
+                        justifyContent="flex-start" 
+                        alignItems="flex-start"
+                    >
+                        <Typography variant="caption" color="textSecondary">
+                            {poolTokenomics[key].title}
+                        </Typography>
+                        <Typography variant="subtitle2" color="primary">
+                            {poolTokenomics[key].value}
+                        </Typography>
                     </Box>
                 ))}
-                {
-                    !poolTokenomics && displayTokenomicsItemLabels.map((label) => (
-                        <Box className="tokenomics-content__item" key={`tokenomics-${label}`} display="flex" flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
-                            <Typography variant="caption" color="textSecondary">{label}</Typography>
-                            <Typography variant="subtitle2" color="primary">--</Typography>
-                        </Box>
-                    ))
-                }
+                {!poolTokenomics && displayTokenomicsItemLabels.map((label) => (
+                    <Box 
+                        className="tokenomics-content__item" 
+                        key={`tokenomics-${label}`} 
+                        display="flex" 
+                        flexDirection="column" 
+                        justifyContent="flex-start" 
+                        alignItems="flex-start"
+                    >
+                        <Typography variant="caption" color="textSecondary">
+                            {label}
+                        </Typography>
+                        <Typography variant="subtitle2" color="primary">
+                            --
+                        </Typography>
+                    </Box>
+                ))}
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default Tokenomics;

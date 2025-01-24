@@ -103,6 +103,10 @@ const Coinfield: React.FC<COINFIELD> = ({
     setAmount(amount);
   };
 
+  const handleMaxButtonClick = () => {
+    setAmount(balance);
+  };
+
   return (
     <Box
       sx={{ display: "flex", flexDirection: "column" }}
@@ -148,6 +152,15 @@ const Coinfield: React.FC<COINFIELD> = ({
           )}
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
+            {
+              isWalletConnected && (
+                <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
+                <Button variant="text" onClick={handleMaxButtonClick} className="coin-field-max-button">
+                  Max
+                </Button>
+              </Box>
+              )
+            }
           <Input
             type="text"
             placeholder="0.0"

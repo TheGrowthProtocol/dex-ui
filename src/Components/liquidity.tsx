@@ -23,7 +23,7 @@ const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
   const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
-  const { token1, token2, loading } = useSelector(
+  const { token1, token2, amount1, amount2, loading } = useSelector(
     (state: RootState) => state.liquidity
   );
   const { tokens } = useSelector((state: RootState) => state.tokens as { tokens: TOKEN[] });
@@ -56,8 +56,7 @@ const Liquidity: React.FC<{}> = () => {
     setOpenToken1Dialog(false);
   };
   // Function to handle input change in the first field
-  const handleTokenAmount1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const amount = event.target.value.trim();
+  const handleTokenAmount1 = (amount: string) => {
     if (!isNaN(Number(amount))) {
       dispatch(setAmount1(amount));
     }
@@ -75,8 +74,7 @@ const Liquidity: React.FC<{}> = () => {
   };
 
   // Function to handle input change in the second field
-  const handleTokenAmount2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const amount = event.target.value.trim();
+  const handleTokenAmount2 = (amount: string) => {
     if (!isNaN(Number(amount))) {
       dispatch(setAmount2(amount));
     }
@@ -153,6 +151,7 @@ const Liquidity: React.FC<{}> = () => {
               </Box>
               <TokenInputField
                 tokens={tokens}
+                value={amount1.toString()}
                 selectedToken={token1}
                 onAmountChange={handleTokenAmount1}
                 isDisplayBalance={isWalletConnected}
@@ -170,6 +169,7 @@ const Liquidity: React.FC<{}> = () => {
               <TokenInputField
                 tokens={tokens}
                 selectedToken={token2}
+                value={amount2.toString()}
                 onAmountChange={handleTokenAmount2}
                 isDisplayBalance={isWalletConnected}
               />

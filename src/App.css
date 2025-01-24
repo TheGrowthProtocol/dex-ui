@@ -625,6 +625,36 @@ body {
   border: none !important;
 }
 
+.token-input-field-max-button {
+  padding: 0px !important;
+  margin: 0px !important;
+  text-transform: none !important;
+  color: var(--primary-color) !important;
+}
+
+.token-input-field-max-button:hover {
+  color: var(--secondary-color) !important;
+}
+
+.token-input-field-max-button .MuiButton-label {
+  justify-content: flex-start !important;
+}
+
+.coin-field-max-button {
+  padding: 0px !important;
+  margin: 0px !important;
+  text-transform: none !important;
+  color: var(--secondary-color) !important;
+}
+
+.coin-field-max-button:hover {
+  color: var(--primary-color) !important;
+}
+
+.coin-field-max-button .MuiButton-label {
+  justify-content: flex-end !important;
+}
+
 @media (max-width: 600px) {
   .main-container {
     padding-left: 16px !important;
