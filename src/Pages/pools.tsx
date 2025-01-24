@@ -13,12 +13,12 @@ import {
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { ethers } from "ethers";
-import CustomizedMenus from "./styledMenu";
+import CustomizedMenus from "../Components/styledMenu";
 import { MenuItemProps } from "../interfaces";
-import CoinPairIcons from "./coinPairIcons";
+import CoinPairIcons from "../Components/coinPairIcons";
 import { useWallet } from "../Hooks/useWallet";
-import ConnectWalletButton from "./connectWalletButton";
-import { PoolsNoItems } from "./poolsNoItems";
+import ConnectWalletButton from "../Components/connectWalletButton";
+import { PoolsNoItems } from "../Components/poolsNoItems";
 import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector , useDispatch} from "react-redux";

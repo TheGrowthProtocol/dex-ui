@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, Grid } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN } from "../interfaces";
-import Coindialog from "./coindialog";
-import TokenInputField from "./TokenInputField";
+import Coindialog from "../Components/coindialog";
+import TokenInputField from "../Components/TokenInputField";
 import { addLiquidity } from "../store/liquidity/liquidityThunks";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
@@ -13,10 +13,10 @@ import {
   setAmount1,
   setAmount2,
 } from "../store/liquidity/liquiditySlice";
-import CoinNoIcon from "./coinNoIcon";
+import CoinNoIcon from "../Components/coinNoIcon";
 import { useWallet } from "../Hooks/useWallet";
-import ConnectWalletButton from "./connectWalletButton";
-import { Tokenomics } from "./tokenomics";
+import ConnectWalletButton from "../Components/connectWalletButton";
+import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 
 const Liquidity: React.FC<{}> = () => {

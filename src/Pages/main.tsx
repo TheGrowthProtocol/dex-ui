@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Box, Tab, Tabs, CircularProgress } from "@material-ui/core";
 
-import Swap from "../Components/swap";
-import Liquidity from "../Components/liquidity";
-import PoolsList from "../Components/pools";
-import Staking from "../Components/staking";
+import Swap from "./swap";
+import Liquidity from "./liquidity";
+import PoolsList from "./pools";
+import Staking from "./staking";
 
 /**
  * @description redux state
@@ -12,7 +12,7 @@ import Staking from "../Components/staking";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchTokens } from '../store/tokens/tokenThunks'; 
-import RemoveLiquidity from "../Components/removeLiquidity";
+import RemoveLiquidity from "./removeLiquidity";
 import { fetchPools } from "../store/pool/poolThunks";
 
 interface TabPanelProps {

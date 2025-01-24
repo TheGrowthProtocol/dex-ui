@@ -16,16 +16,16 @@ import {
   Card,
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import CustomizedMenus from "./styledMenu";
+import CustomizedMenus from "../Components/styledMenu";
 import { ethers } from "ethers";
 import MASTER_CHEF_ABI from "../build/MasterChef.json";
 import POOL_FACTORY_ABI from "../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../build/IUniswapV2Pair.json";
 import { formatEther } from "ethers/lib/utils";
 import { MenuItemProps } from "../interfaces";
-import AddStakeDialog from "./addStackDialog";
-import RemoveStakeDialog from "./removeStackDialog";
-import CoinPairIcons from "./coinPairIcons";
+import AddStakeDialog from "../Components/addStackDialog";
+import RemoveStakeDialog from "../Components/removeStackDialog";
+import CoinPairIcons from "../Components/coinPairIcons";
 import { env } from "../env";
 
 const MASTER_CHEF_ADDRESS = env.contracts.masterChef;

@@ -4,11 +4,11 @@ import { Box, Typography, Button, Grid, Slider, Select, MenuItem, useMediaQuery,
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { useWallet } from "../Hooks/useWallet";
-import ConnectWalletButton from "./connectWalletButton";
-import { Tokenomics } from "./tokenomics";
-import LpTokenBalanceField from "./lpTokenBalanceField";
-import LpReceiveInputTokenField from "./lpReceiveInputTokenField";
-import CoinPairIcons from "./coinPairIcons";
+import ConnectWalletButton from "../Components/connectWalletButton";
+import { Tokenomics } from "../Components/tokenomics";
+import LpTokenBalanceField from "../Components/lpTokenBalanceField";
+import LpReceiveInputTokenField from "../Components/lpReceiveInputTokenField";
+import CoinPairIcons from "../Components/coinPairIcons";
 import { POOL } from "../interfaces";
 import { fetchMyPools, fetchShareBalances, removeLpToken, selectPool } from "../store/pool/poolThunks";
 

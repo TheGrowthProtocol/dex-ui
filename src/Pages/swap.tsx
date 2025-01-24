@@ -15,7 +15,7 @@ import {
   setAmount2,
 } from "../store/swap/swapSlice";
 import { getAmount2, swap } from "../store/swap/swapThunks";
-import { Tokenomics } from "./tokenomics";
+import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 
 const Swap: React.FC<{}> = () => {
