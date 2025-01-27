@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { POOL, TOKEN } from '../../interfaces';
+import { POOL, TOKEN, Tokenomics } from '../../interfaces';
 import { fetchPoolTokenomics, fetchShareBalances } from './poolThunks';
 
 interface PoolState {
@@ -10,7 +10,7 @@ interface PoolState {
   myPools: POOL[];
   removeLpToken0Share?: RemoveLpTokenShareState;
   removeLpToken1Share?: RemoveLpTokenShareState;
-  poolTokenomics: any | null;
+  poolTokenomics: Tokenomics | null;
   removeLpTokenBalance?: string;
 }
 

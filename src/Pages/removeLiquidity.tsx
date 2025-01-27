@@ -17,7 +17,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme(); 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error, removeLpTokenBalance } = useSelector((state: RootState) => state.pool);
+  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, removeLpTokenBalance } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
   const [ percentage, setPercentage ] = useState<number>(50);
 
@@ -158,17 +158,16 @@ const RemoveLiquidity: React.FC<{}> = () => {
                 </Box>
                 <Grid container>
                     <Grid item xs={12} md={12} lg={6}>
-                        <LpTokenBalanceField title="Wallet LP tokens" balance={selectedPool?.lpBalance || "--"} usdValue="(--USD)" />
+                        <LpTokenBalanceField title="Wallet LP tokens" balance={selectedPool?.lpBalance ?? "--"} usdValue="(--USD)" />
                     </Grid>
                     <Grid item xs={12} md={12} lg={6}>
-                        <LpTokenBalanceField title="Selected LP Tokens for removal" balance={removeLpTokenBalance || "--"} usdValue="(--USD)" />
+                        <LpTokenBalanceField title="Selected LP Tokens for removal" balance={removeLpTokenBalance ?? "--"} usdValue="(--USD)" />
                     </Grid>
                 </Grid>
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" className="pooled-tokens-receiving-container">
               <Typography variant="subtitle2">Pooled Tokens receiving</Typography>
-              {/* TODO: Pooled Tokens receiving */}
               {
                 removeLpToken0Share && removeLpToken1Share && (
                     <Box display="flex" flexDirection="row" className="pooled-tokens-receiving-input">

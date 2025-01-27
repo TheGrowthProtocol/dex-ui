@@ -1,8 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers, Contract } from "ethers";
-import COINS from "../../constants/coins";
-import WCERES from "../../build/WCERES.json";
-import ERC20 from "../../build/ERC20.json";
 import { setError, setLoading, setMyPools, setPools, setSelectedPool } from "./poolSlice";
 import { formatEther } from "ethers/lib/utils";
 import POOL_FACTORY_ABI from "../../build/IUniswapV2Factory.json";
@@ -389,7 +386,6 @@ export const fetchPoolTokenomics = createAsyncThunk(
   "pools/fetchPoolTokenomics",
   async (params: {pool: POOL, swapAmount1: number, swapAmount2: number}, { getState, dispatch }) => {
     try{
-      const state = getState() as RootState;
       const tokenomics = calculateTokenomics({pool: params.pool, swapAmount1: params.swapAmount1, swapAmount2: params.swapAmount2});
       return tokenomics;
     } catch (error: any) {
@@ -404,8 +400,6 @@ export const fetchPoolTokenomics = createAsyncThunk(
 
 const calculateTokenomics = (params: {pool: POOL, swapAmount1: number, swapAmount2: number}) => {
   const {pool, swapAmount1, swapAmount2} = params;
-  const token0 = pool.token0;
-  const token1 = pool.token1;
   const token0Reserve = pool.token0Reserve;
   const token1Reserve = pool.token1Reserve;
   const currentRatio = Number(token0Reserve) / Number(token1Reserve);

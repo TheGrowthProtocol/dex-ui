@@ -12,7 +12,6 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { ethers } from "ethers";
 import CustomizedMenus from "../Components/styledMenu";
 import { MenuItemProps } from "../interfaces";
 import CoinPairIcons from "../Components/coinPairIcons";
@@ -22,8 +21,7 @@ import { PoolsNoItems } from "../Components/poolsNoItems";
 import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector , useDispatch} from "react-redux";
-import { setSelectedPool } from "../store/pool/poolSlice";
-
+  
 
 const useStyles = makeStyles((theme) => ({
   root: {

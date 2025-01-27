@@ -3,13 +3,7 @@ import {
   Box,
   CircularProgress,
   Typography,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  Table,
   TableContainer,
-  TableHead,
   useMediaQuery,
   CardContent,
   Grid,
@@ -22,7 +16,6 @@ import MASTER_CHEF_ABI from "../build/MasterChef.json";
 import POOL_FACTORY_ABI from "../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../build/IUniswapV2Pair.json";
 import { formatEther } from "ethers/lib/utils";
-import { MenuItemProps } from "../interfaces";
 import AddStakeDialog from "../Components/addStackDialog";
 import RemoveStakeDialog from "../Components/removeStackDialog";
 import CoinPairIcons from "../Components/coinPairIcons";
