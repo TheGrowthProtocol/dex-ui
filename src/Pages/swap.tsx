@@ -26,7 +26,7 @@ const Swap: React.FC<{}> = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
-  const {selectedPool, pools} = useSelector((state: RootState) => state.pool);
+  const { selectedPool, pools } = useSelector((state: RootState) => state.pool);
 
   useEffect(() => {
     if (tokens.length > 0) {
@@ -37,14 +37,13 @@ const Swap: React.FC<{}> = () => {
 
   useEffect(() => {
     dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
-  }, [pools, token1, token2,  dispatch]);
+  }, [pools, token1, token2, dispatch]);
 
   useEffect(() => {
-      if (token1 && token2) {
-        dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
-      }
+    if (token1 && token2) {
+      dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+    }
   }, [token1, token2, dispatch]);
-  
 
   useEffect(() => {
     const setCoinfield2Amount = async () => {
@@ -56,13 +55,23 @@ const Swap: React.FC<{}> = () => {
     };
     if (amount1 > 0) {
       setCoinfield2Amount();
-
     }
   }, [amount1, dispatch, enqueueSnackbar]);
 
-
-  const handleSwap = () => {
-    dispatch(swap());
+  const handleSwap = async () => {
+    try {
+      await dispatch(swap()).unwrap();
+      enqueueSnackbar("Swap successful!", {
+        variant: "success",
+        autoHideDuration: 3000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+      });
+    } catch (error: any) {
+      enqueueSnackbar(error.message, { variant: "error" });
+    }
   };
 
   const handleSwitch = () => {
@@ -151,11 +160,11 @@ const Swap: React.FC<{}> = () => {
         </Box>
       </Grid>
       <Grid item xs={12} md={12} lg={6}>
-        <Tokenomics 
-        isConnected={isConnected}
-        type="swap"
-        selectedPool={selectedPool} 
-        />  
+        <Tokenomics
+          isConnected={isConnected}
+          type="swap"
+          selectedPool={selectedPool}
+        />
       </Grid>
     </Grid>
   );

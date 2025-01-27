@@ -32,13 +32,23 @@ export const swap = createAsyncThunk(
       const approvalTx = await token1Contract.approve(routerContract.address, amount1InWei); 
       await approvalTx.wait();
 
+      // Estimate gas
+      const gasEstimate = await routerContract.estimateGas.swapExactTokensForTokens(
+        amount1InWei,
+        amount2InWei,
+        [token1.address, token2.address],
+        account,
+        Math.floor(Date.now() / 1000) + 60 * 20
+      );
+
       // Perform the token swap
       const swapTx = await routerContract.swapExactTokensForTokens(
         amount1InWei,
         amount2InWei,
         [token1.address, token2.address],
         account,
-        Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
+        Math.floor(Date.now() / 1000) + 60 * 20,
+        { gasLimit: gasEstimate }
       );
       await swapTx.wait();
       dispatch(setLoading(false));

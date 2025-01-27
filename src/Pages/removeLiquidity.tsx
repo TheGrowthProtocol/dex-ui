@@ -17,7 +17,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme(); 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, removeLpTokenBalance } = useSelector((state: RootState) => state.pool);
+  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error, removeLpTokenBalance } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
   const [ percentage, setPercentage ] = useState<number>(50);
 
