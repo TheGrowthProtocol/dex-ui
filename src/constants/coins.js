@@ -4,13 +4,13 @@ const TGPCoins = [
   {
     name: "TOKEN1",
     abbr: "TK1",
-    address: "0x45fd4F6c7DB076dbB1296fD0718f396089E39A45", 
+    address: "0x58AC2e9d0CCEcd67686883aE81704608F5Ee5d81", 
     icon: "https://cryptologos.cc/logos/ethereum-name-service-ens-logo.png",
   },
   {
     name: "TOKEN2",
     abbr: "TK2",
-    address: "0x175309ec3F9DdCeC156a52E3603e78a4628e7405", 
+    address: "0x7E0F9B0fa9E72D9234C56ed50Ed1A639679A3bF1", 
     icon: "https://cryptologos.cc/logos/ethereum-name-service-ens-logo.png",
   },
   {
