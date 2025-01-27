@@ -11,21 +11,18 @@ import LpReceiveInputTokenField from "../Components/lpReceiveInputTokenField";
 import CoinPairIcons from "../Components/coinPairIcons";
 import { POOL } from "../interfaces";
 import { fetchMyPools, fetchShareBalances, removeLpToken, selectPool } from "../store/pool/poolThunks";
+import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme(); 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { tokens } = useSelector((state: RootState) => state.tokens);
-  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error } = useSelector((state: RootState) => state.pool);
+  const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error, removeLpTokenBalance } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
   const [ percentage, setPercentage ] = useState<number>(50);
-  const [ removeLpBalance, setRemoveLpBalance ] = useState<string>("--");
-  const [token0, setToken0] = useState<string>("");
-  const [token1, setToken1] = useState<string>("");
 
   // Add state for selected pool ID
-  const [selectedPoolId, setSelectedPoolId] = useState<string>("0");
+  const [selectedPoolId, setSelectedPoolId] = useState<string>("");
 
   useEffect(() => {
     if (isWalletConnected) {
@@ -34,26 +31,25 @@ const RemoveLiquidity: React.FC<{}> = () => {
   }, [dispatch, isWalletConnected]);
 
   useEffect(() => {
-    if (myPools.length > 0) {
-      dispatch(selectPool(myPools[0].id));
+    if (myPools.length > 0 && selectedPoolId === "") {
+      const initialPoolId = myPools[0].id;
+      setSelectedPoolId(initialPoolId);
+      dispatch(selectPool(initialPoolId));
     }
-  }, [myPools]);
-
-  useEffect(() => {
-    if (selectedPoolId === "") {
-      dispatch(selectPool(""));
-    } else {
-      dispatch(selectPool(selectedPoolId));
-    }
-  }, [dispatch, selectedPoolId]);
+  }, [myPools, selectedPoolId]);
 
   useEffect(() => {
     if (selectedPool) {
         let removeLpBalance = Number(selectedPool.lpBalance?? 0) * percentage / 100;
-        setRemoveLpBalance(removeLpBalance.toFixed(2));
-      dispatch(fetchShareBalances({ pool: selectedPool, lpBalance: removeLpBalance }));
+        dispatch(setRemoveLpTokenBalance(removeLpBalance.toFixed(2)));
     }
   }, [percentage, selectedPool]);
+
+  useEffect(() => {
+    if (removeLpTokenBalance && selectedPool) {
+      dispatch(fetchShareBalances({ pool: selectedPool, lpBalance: Number(removeLpTokenBalance) }));
+    }
+  }, [removeLpTokenBalance, selectedPool]);
 
   const handleSelectPool = (poolId: string) => {
     setSelectedPoolId(poolId); // Update local state
@@ -99,17 +95,42 @@ const RemoveLiquidity: React.FC<{}> = () => {
                     onChange={(event) => handleSelectPool(event.target.value as string)}
                     fullWidth
                     label="Select Pool"
+                    displayEmpty
+                    renderValue={(value) => {
+                      if (value === "") {
+                        return (
+                          <Typography>Select Pool</Typography>
+                        );
+                      }
+                      const pool = myPools.find((pool: POOL) => pool.id === value);
+                      return pool ? (
+                        <Box display="flex" flexDirection="row">
+                          <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
+                          <Typography className={"gradient-text token-symbol"}>
+                              {pool.token0.symbol} / {pool.token1.symbol}
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Typography>Select Pool</Typography>
+                      );
+                    }}
                 >
-                    {myPools.map((pool: POOL) => (
-                        <MenuItem key={pool.id} value={pool.id}>
-                            <Box display="flex" flexDirection="row">
-                                <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
-                                <Typography className={"gradient-text token-symbol"}>
-                                    {pool.token0.symbol} / {pool.token1.symbol}
-                                </Typography>
-                            </Box>
-                        </MenuItem>
-                    ))}
+                  {myPools.length === 0 ? (
+                    <MenuItem value="">
+                      <Typography>No pools found</Typography>
+                    </MenuItem>
+                  ) : (
+                    myPools.map((pool: POOL) => (
+                      <MenuItem key={pool.id} value={pool.id}>
+                          <Box display="flex" flexDirection="row">
+                              <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
+                              <Typography className={"gradient-text token-symbol"}>
+                                  {pool.token0.symbol} / {pool.token1.symbol}
+                              </Typography>
+                          </Box>
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </Box>
             </Box>
@@ -140,7 +161,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                         <LpTokenBalanceField title="Wallet LP tokens" balance={selectedPool?.lpBalance || "--"} usdValue="(--USD)" />
                     </Grid>
                     <Grid item xs={12} md={12} lg={6}>
-                        <LpTokenBalanceField title="Selected LP Tokens for removal" balance={removeLpBalance} usdValue="(--USD)" />
+                        <LpTokenBalanceField title="Selected LP Tokens for removal" balance={removeLpTokenBalance || "--"} usdValue="(--USD)" />
                     </Grid>
                 </Grid>
               </Box>

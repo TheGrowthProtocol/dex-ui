@@ -314,7 +314,7 @@ export const removeLpToken = createAsyncThunk(
       throw new Error("No selected pool");
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const pairContract = new Contract(selectedPool.pairAddress, PAIR_ABI.abi, provider);
+    
     const token0Share = state.pool.removeLpToken0Share?.amount;
     const token1Share = state.pool.removeLpToken1Share?.amount;
     const token0Decimals = selectedPool.token0.decimals;
@@ -323,9 +323,11 @@ export const removeLpToken = createAsyncThunk(
     const token1ShareAmount = ethers.utils.parseUnits(token1Share ?? "0", token1Decimals);
     const time = Math.floor(Date.now() / 1000) + 200000;
     const deadline = ethers.BigNumber.from(time);
-    const liquidity = ethers.utils.parseUnits(selectedPool.liquidity ?? "0", 18);
+    const liquidity = ethers.utils.parseUnits(state.pool.removeLpTokenBalance ?? "0", 18);
     const network = await provider.getNetwork();
+    const account = state.wallet.address;
     const signer = provider.getSigner();
+    const pairContract = new Contract(selectedPool.pairAddress, PAIR_ABI.abi, signer);
     const routerContract = new Contract(
       chains.routerAddress.get(network.chainId), 
       ROUTER.abi, 
@@ -335,7 +337,7 @@ export const removeLpToken = createAsyncThunk(
     try {
       const wethAddress = await routerContract.WCERES();
       
-      await pairContract.connect(provider.getSigner()).approve(routerContract.address, liquidity);
+      await pairContract.approve(routerContract.address, liquidity);
 
       if (selectedPool.token0.address === wethAddress) {
         await routerContract.removeLiquidityCERES(
@@ -343,9 +345,9 @@ export const removeLpToken = createAsyncThunk(
           liquidity, 
           token1ShareAmount, 
           token0ShareAmount, 
-          signer, 
+          account, 
           deadline,
-          { gasLimit: 500000 } // Add explicit gas limit
+          { gasLimit: 500000 }
         );
       } else if (selectedPool.token1.address === wethAddress) {
         await routerContract.removeLiquidityCERES(
@@ -353,7 +355,7 @@ export const removeLpToken = createAsyncThunk(
           liquidity, 
           token0ShareAmount, 
           token1ShareAmount, 
-          signer, 
+          account, 
           deadline,
           { gasLimit: 500000 }
         );
@@ -364,7 +366,7 @@ export const removeLpToken = createAsyncThunk(
           liquidity, 
           token0ShareAmount, 
           token1ShareAmount, 
-          signer, 
+          account, 
           deadline,
           { gasLimit: 500000 }
         );
@@ -452,11 +454,14 @@ const getVolume24h = async (
 
 const getTokenPrice = async (tokenSymbol: string): Promise<number> => {
   try {
-    const response = await fetch(`${PRICE_FEED_API}/${tokenSymbol}`);
-    const data = await response.json();
-    return data.price ?? 1;
+    /*const response = await fetch(`${PRICE_FEED_API}/${tokenSymbol}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch price for ${tokenSymbol}`);
+    }
+    const data = await response.json();*/
+    return 1;
   } catch (error) {
-    console.error(`Error fetching price for ${tokenSymbol}:`, error);
+    console.error(error);
     return 1;
   }
 };

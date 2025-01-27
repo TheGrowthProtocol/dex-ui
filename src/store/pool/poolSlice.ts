@@ -8,9 +8,10 @@ interface PoolState {
   loading: boolean;
   error: string | null;
   myPools: POOL[];
-  removeLpToken0Share: RemoveLpTokenShareState | undefined;
-  removeLpToken1Share: RemoveLpTokenShareState | undefined;
+  removeLpToken0Share?: RemoveLpTokenShareState;
+  removeLpToken1Share?: RemoveLpTokenShareState;
   poolTokenomics: any | null;
+  removeLpTokenBalance?: string;
 }
 
 const initialState: PoolState = {
@@ -22,12 +23,15 @@ const initialState: PoolState = {
   removeLpToken0Share: undefined,
   removeLpToken1Share: undefined,
   poolTokenomics: null,
+  removeLpTokenBalance: undefined,
 };
 
 interface RemoveLpTokenShareState {
     token: TOKEN;
     amount: string;
 }
+
+
 
 
 const poolSlice = createSlice({
@@ -49,6 +53,9 @@ const poolSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    setRemoveLpTokenBalance: (state, action: PayloadAction<string>) => {
+      state.removeLpTokenBalance = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchShareBalances.fulfilled, (state, action) => {
@@ -67,6 +74,7 @@ export const {
   setMyPools,
   setLoading,
   setError,
+  setRemoveLpTokenBalance,
 } = poolSlice.actions;
 
 export default poolSlice.reducer;
