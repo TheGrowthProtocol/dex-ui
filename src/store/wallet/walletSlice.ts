@@ -5,6 +5,7 @@ interface WalletState {
   address: string | null;
   loading: boolean;
   error: string | null;
+
 }
 
 const initialState: WalletState = {

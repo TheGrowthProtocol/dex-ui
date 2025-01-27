@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers, Contract } from "ethers";
-import { setError, setLoading, setMyPools, setPools, setSelectedPool } from "./poolSlice";
+import { resetSelectedPool, setError, setLoading, setMyPools, setPools, setSelectedPool } from "./poolSlice";
 import { formatEther } from "ethers/lib/utils";
 import POOL_FACTORY_ABI from "../../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../../build/IUniswapV2Pair.json";
@@ -236,10 +236,18 @@ export const fetchMyPools = createAsyncThunk(
 export const fetchPoolByTokenAddresses = createAsyncThunk(
   "pools/fetchPoolByTokenAddresses",
   async (tokenAddresses: string[], { getState, dispatch }) => {
-    const state = getState() as RootState;
-    const pool = state.pool.pools.find((pool: POOL) => tokenAddresses.includes(pool.token0.address ?? "") && tokenAddresses.includes(pool.token1.address ?? ""  ));
-    if (pool) {
-      dispatch(setSelectedPool(pool));
+    try {
+      const state = getState() as RootState;
+      const pool = state.pool.pools.find((pool: POOL) => tokenAddresses.includes(pool.token0.address ?? "") && tokenAddresses.includes(pool.token1.address ?? ""  ));
+      console.log("pool", pool);
+      if (pool) {
+        dispatch(setSelectedPool(pool));
+      } else {
+        dispatch(resetSelectedPool());
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 );

@@ -17,6 +17,7 @@ import {
 import { getAmount2, swap } from "../store/swap/swapThunks";
 import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
+import { resetSelectedPool } from "../store/pool/poolSlice";
 
 const Swap: React.FC<{}> = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -31,19 +32,26 @@ const Swap: React.FC<{}> = () => {
   useEffect(() => {
     if (tokens.length > 0) {
       dispatch(setToken1(tokens[0]));
-      dispatch(setToken2(tokens[1]));
     }
   }, [tokens, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
-  }, [pools, token1, token2, dispatch]);
-
-  useEffect(() => {
-    if (token1 && token2) {
-      dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+    if (token1.address && token2.address) {
+        if ( token1.address !== token2.address) {
+            fetchPool();
+        } else {
+            enqueueSnackbar("Cannot swap the same token", { 
+              variant: "error",
+              autoHideDuration: 2000,
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "left",
+              },
+            });
+            dispatch(resetSelectedPool());
+          }
     }
-  }, [token1, token2, dispatch]);
+  }, [pools, token1, token2, dispatch]);
 
   useEffect(() => {
     const setCoinfield2Amount = async () => {
@@ -53,10 +61,22 @@ const Swap: React.FC<{}> = () => {
         enqueueSnackbar(error.message, { variant: "error" });
       }
     };
-    if (amount1 > 0) {
+    if (amount1 >0) {
       setCoinfield2Amount();
+    } else {
+      setAmount2(0);
     }
   }, [amount1, dispatch, enqueueSnackbar]);
+
+
+  const fetchPool = async () => {
+    try {
+      console.log("fetching pool", token1.address, token2.address);
+      await dispatch(fetchPoolByTokenAddresses([token1.address, token2.address])).unwrap();
+    } catch (error: any) {
+      enqueueSnackbar(error.message, { variant: "error" });
+    }
+  };
 
   const handleSwap = async () => {
     try {

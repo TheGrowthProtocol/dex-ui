@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  Input,
-} from "@material-ui/core";
+import { Box, Button, Typography, Input } from "@material-ui/core";
 import { ethers, Contract } from "ethers";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
@@ -23,20 +18,21 @@ const Coinfield: React.FC<COINFIELD> = ({
   setSelectedToken,
   setAmount,
   value,
-  selectedToken
+  selectedToken,
 }) => {
   const [openTokenDialog, setOpenTokenDialog] = useState(false);
   const [balance, setBalance] = useState("0.00"); // State to store the balance
   const { enqueueSnackbar } = useSnackbar();
-  const { tokens } = useSelector((state: RootState) => state.tokens); 
-  const {isConnected: isWalletConnected} = useSelector((state: RootState) => state.wallet);
+  const { tokens } = useSelector((state: RootState) => state.tokens);
+  const { isConnected: isWalletConnected } = useSelector(
+    (state: RootState) => state.wallet
+  );
 
   useEffect(() => {
     if (selectedToken.address && isWalletConnected) {
       fetchBalance();
     }
   }, [selectedToken, isWalletConnected]);
-  
 
   /**
    * Fetches the balance of the connected wallet and updates the state.
@@ -66,12 +62,16 @@ const Coinfield: React.FC<COINFIELD> = ({
 
       if (tokenSymbol === "WCERS") {
         const balance = await provider.getBalance(address);
-        const formattedBalance = Number(ethers.utils.formatEther(balance)).toFixed(2); // Assuming 18 decimals for CERES
+        const formattedBalance = Number(
+          ethers.utils.formatEther(balance)
+        ).toFixed(2); // Assuming 18 decimals for CERES
         setBalance(formattedBalance);
       } else {
         const tokenContract = new Contract(tokenAddress, ERC20.abi, provider);
         const balance = await tokenContract.balanceOf(address);
-        const formattedBalance = Number(ethers.utils.formatUnits(balance, 18)).toFixed(2); // Assuming 18 decimals for the token
+        const formattedBalance = Number(
+          ethers.utils.formatUnits(balance, 18)
+        ).toFixed(2); // Assuming 18 decimals for the token
         setBalance(formattedBalance);
       }
     } catch (error) {
@@ -88,7 +88,18 @@ const Coinfield: React.FC<COINFIELD> = ({
   };
 
   const handleTokenSelect = (token: TOKEN) => {
-    setSelectedToken(token);
+    if (selectedToken.symbol !== token.symbol) {
+      if (title === "Sell") {
+        enqueueSnackbar(
+          <Box display="flex" alignItems="center">
+            {token.icon && <CoinIcon icon={token.icon} />}
+            <Typography>Switching to {token.symbol}</Typography>
+          </Box>,
+          { variant: "info" }
+        );
+      }
+      setSelectedToken(token);
+    }
     handleTokenDialogClose();
   };
 
@@ -98,7 +109,9 @@ const Coinfield: React.FC<COINFIELD> = ({
   ) => {
     const amount = event.target.value.trim();
     if (isNaN(Number(amount))) {
-      enqueueSnackbar("Invalid amount entered", { variant: "error" });
+      enqueueSnackbar("Invalid Input. Please enter a valid number.", {
+        variant: "error",
+      });
       return;
     }
     setAmount(amount);
@@ -138,31 +151,42 @@ const Coinfield: React.FC<COINFIELD> = ({
             <Typography className={"token-symbol gradient-text"}>
               {selectedToken.symbol || "Select Token"}
             </Typography>
-
           </Button>
           {isWalletConnected && (
-          <Box
-            sx={{ display: "flex", flexDirection: "row" }}
-            className="coin-field-balance"
-            alignItems="center"
-          >
-            <AccountBalanceWalletIcon fontSize="small" />
-            <Typography variant="subtitle1" className="coin-field-balance-text">
-              {balance}
+            <Box
+              sx={{ display: "flex", flexDirection: "row" }}
+              className="coin-field-balance"
+              alignItems="center"
+            >
+              <AccountBalanceWalletIcon fontSize="small" />
+              <Typography
+                variant="subtitle1"
+                className="coin-field-balance-text"
+              >
+                {balance}
               </Typography>
             </Box>
           )}
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {
-              isWalletConnected && (
-                <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
-                <Button variant="text" onClick={handleMaxButtonClick} className="coin-field-max-button">
-                  Max
-                </Button>
-              </Box>
-              )
-            }
+          {isWalletConnected && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                variant="text"
+                onClick={handleMaxButtonClick}
+                className="coin-field-max-button"
+              >
+                Max
+              </Button>
+            </Box>
+          )}
           <Input
             type="text"
             placeholder="0.0"
@@ -171,7 +195,13 @@ const Coinfield: React.FC<COINFIELD> = ({
             className="coin-field-input"
             disabled={!selectedToken.symbol} // Disable the input if no token is selected
           />
-          <Typography variant="subtitle1" align="right" className="coin-field-input-value">$0.00</Typography>
+          <Typography
+            variant="subtitle1"
+            align="right"
+            className="coin-field-input-value"
+          >
+            $0.00
+          </Typography>
         </Box>
       </Box>
       <Coindialog

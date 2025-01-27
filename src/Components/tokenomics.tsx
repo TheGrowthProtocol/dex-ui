@@ -4,6 +4,7 @@ import { POOL, Tokenomics as TokenomicsType } from "../interfaces";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPoolTokenomics } from "../store/pool/poolThunks";
 import { AppDispatch, RootState } from "../store/store";
+import { resetPoolTokenomics } from "../store/pool/poolSlice";
 
 
 
@@ -25,17 +26,19 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
             const amount1 = type === "swap" ? swapAmount1 : Number(liquidityAmount1);
             const amount2 = type === "swap" ? swapAmount2 : Number(liquidityAmount2);
             
-            if (isConnected) {
+            //if (isConnected) {
                 dispatch(fetchPoolTokenomics({
                     pool: selectedPool, 
                     swapAmount1: amount1, 
                     swapAmount2: amount2
                 }));
-            }
+            //}
+        } else {
+            dispatch(resetPoolTokenomics());
         }
     }, [
         dispatch, 
-        isConnected, 
+        //isConnected, 
         type, 
         selectedPool, 
         swapAmount1, 

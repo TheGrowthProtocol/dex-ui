@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { POOL, TOKEN, Tokenomics } from '../../interfaces';
-import { fetchPoolTokenomics, fetchShareBalances } from './poolThunks';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { POOL, TOKEN, Tokenomics } from "../../interfaces";
+import { fetchPoolTokenomics, fetchShareBalances } from "./poolThunks";
 
 interface PoolState {
   pools: POOL[];
@@ -27,15 +27,12 @@ const initialState: PoolState = {
 };
 
 interface RemoveLpTokenShareState {
-    token: TOKEN;
-    amount: string;
+  token: TOKEN;
+  amount: string;
 }
 
-
-
-
 const poolSlice = createSlice({
-  name: 'pool',
+  name: "pool",
   initialState,
   reducers: {
     setSelectedPool: (state, action: PayloadAction<POOL>) => {
@@ -56,20 +53,28 @@ const poolSlice = createSlice({
     setRemoveLpTokenBalance: (state, action: PayloadAction<string>) => {
       state.removeLpTokenBalance = action.payload;
     },
+    resetSelectedPool: (state) => {
+      state.selectedPool = null;
+    },
+    resetPoolTokenomics: (state) => {
+      state.poolTokenomics = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchShareBalances.fulfilled, (state, action) => {
-        state.removeLpToken0Share = action.payload.token0Share;
-        state.removeLpToken1Share = action.payload.token1Share;
+      state.removeLpToken0Share = action.payload.token0Share;
+      state.removeLpToken1Share = action.payload.token1Share;
     });
     builder.addCase(fetchPoolTokenomics.fulfilled, (state, action) => {
-        state.poolTokenomics = action.payload;
+      state.poolTokenomics = action.payload;
     });
   },
 });
 
 export const {
-    setSelectedPool,
+  setSelectedPool,
+  resetSelectedPool,
+  resetPoolTokenomics,
   setPools,
   setMyPools,
   setLoading,
@@ -78,4 +83,3 @@ export const {
 } = poolSlice.actions;
 
 export default poolSlice.reducer;
-
