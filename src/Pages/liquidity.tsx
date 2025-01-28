@@ -98,7 +98,7 @@ const Liquidity: React.FC<{}> = () => {
               className="coin-field-container coin-field-pair-block"
             >
               <Typography variant="subtitle2">Select Token Pair</Typography>
-              <Box display="flex" className="coin-field-pair-container">
+              <Box display="flex" className="coin-field-pair-container" alignItems="center">
                 <Button
                   variant="contained"
                   onClick={() => setOpenToken1Dialog(true)}
