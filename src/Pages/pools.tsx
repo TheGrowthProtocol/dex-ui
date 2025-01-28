@@ -111,6 +111,8 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
     );
   }
 
+  console.log("pools", pools);
+
   return (
     <Box className={`${classes.root} tabpanel-container`}>
       <Box className="tabpanel-content">

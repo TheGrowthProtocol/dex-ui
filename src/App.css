@@ -552,6 +552,7 @@ body {
 
 .coin-pair-icons .coin-pair-icons__coin:first-child img {
   border: 1px solid var(--primary-color);
+  background: #1A1A1A;
   border-radius: 20px;
   width: 24px;
   height: 24px;
@@ -570,6 +571,7 @@ body {
 
 .coin-pair-icons .coin-pair-icons__coin:last-child img {
   border: 1px solid var(--primary-color);
+  background: #1A1A1A;
   border-radius: 20px;
   width: 32px;
   height: 32px;
