@@ -30,6 +30,12 @@ export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async () => {
                 COINS.get(chainId).map(async (coinObject: any) => {
                     const address = coinObject.address;
                     const tokenContract = new Contract(address, coinObject.name === "WCERES" ? WCERES.abi : ERC20.abi, provider);
+                    if(coinObject.name === "WCERES") {
+                        const name = 'CERES';
+                        const symbol = 'CERES';
+                        const decimals = 18;
+                        return { name, symbol, address, decimals, icon: coinObject.icon };
+                    }
                     const name = await tokenContract.name();
                     const symbol = await tokenContract.symbol();
                     const decimals = await tokenContract.decimals().then((result: any) => {

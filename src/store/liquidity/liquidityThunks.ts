@@ -2,12 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers, Contract } from 'ethers';
 import { setLoading, setError } from './liquiditySlice';
 import { RootState } from '../store';
-import IUniswapV2Router02 from '../../build/IUniswapV2Router02.json';
+import UniswapV2Router02 from '../../build/UniswapV2Router02.json';
 import * as chains from '../../constants/chains';
 import { TOKEN } from '../../interfaces';
-
-const ERC20 = require('../../build/ERC20.json');
-const WCERES = require('../../build/WCERES.json');
+import ERC20 from '../../build/ERC20.json';
+import WCERES from '../../build/WCERES.json';
 
 export const addLiquidity = createAsyncThunk(
   'liquidity/addLiquidity',
@@ -29,8 +28,8 @@ export const addLiquidity = createAsyncThunk(
       await approveTokens(tokenDetails.token1Contract, tokenDetails.token2Contract, routerContract, tokenDetails.amountIn1, tokenDetails.amountIn2);
       
       await executeLiquidityTransaction(routerContract, {
-        token1Address: token1.address!,
-        token2Address: token2.address!,
+        token1Address: token1.address,
+        token2Address: token2.address,
         ...tokenDetails,
         account,
       });
@@ -48,7 +47,7 @@ export const addLiquidity = createAsyncThunk(
 const setupContracts = async (signer: ethers.Signer) => {
   const network = await signer.provider!.getNetwork();
   const routerAddress = chains.routerAddress.get(network.chainId);
-  const routerContract = new Contract(routerAddress, IUniswapV2Router02.abi, signer);
+  const routerContract = new Contract(routerAddress, UniswapV2Router02.abi, signer);
   const account = await signer.getAddress();
   
   return { routerContract, account };
@@ -136,8 +135,8 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
       throw new Error("No selected token addresses.");
     }
 
-    const token1Contract = new Contract(token1.address, token1.name === "WCERES" ? WCERES.abi : ERC20.abi, signer);
-    const token2Contract = new Contract(token2.address, token2.name === "WCERES" ? WCERES.abi : ERC20.abi, signer);
+    const token1Contract = new Contract(token1.address, token1.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
+    const token2Contract = new Contract(token2.address, token2.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
 
     const [token1Decimals, token2Decimals] = await Promise.all([
       getTokenDecimals(token1Contract),

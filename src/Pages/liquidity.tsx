@@ -34,7 +34,7 @@ const Liquidity: React.FC<{}> = () => {
   useEffect(() => {
     if (tokens.length > 0) {
       dispatch(setToken1(tokens[0]));
-      dispatch(setToken2(tokens[1]));
+      //dispatch(setToken2(tokens[1]));
     }
   }, [dispatch, tokens]);
 

@@ -15,16 +15,11 @@ const PRICE_FEED_API = env.priceFeedApi;
 
 export const fetchPools = createAsyncThunk(
   "pools/fetchPools",
-  async (_, { getState, dispatch }) => {
+  async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const state = getState() as RootState;
-      const tokens = state.tokens.tokens;
       if (!window.ethereum) {
         throw new Error("Metamask not installed");
-      }
-      if(tokens.length < 1) {
-        throw new Error("No tokens found");
       }
       // Connect to provider
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -51,60 +46,106 @@ export const fetchPools = createAsyncThunk(
           const token0Address  = await pairContract.token0();
           const token1Address = await pairContract.token1();
          
-
-          const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
-          const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
-
-          // Get reserves
-          const reserves = await pairContract.getReserves();
-          const [reserve0, reserve1] = [reserves[0], reserves[1]];
-
-          const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
-          const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
-
-          // Get token prices
-          const [price0, price1] = await Promise.all([
-            getTokenPrice(token0?.symbol ?? ""),
-            getTokenPrice(token1?.symbol ?? ""),
-          ]);
-
-          // Get volume (Note: You'll need to implement your own volume tracking as
-          // Uniswap V2 doesn't track volume directly)
-          const volume = await getVolume24h(pairAddress, provider);
-
-          // Calculate TVL
-          const tvl =
-            parseFloat(formatEther(reserve0)) * price0 +
-            parseFloat(formatEther(reserve1)) * price1;
-
-          // Calculate APR
-          const apr = calculateAPR(formatEther(volume), tvl.toString());
-
-          // Calculate liquidity (using both reserves)
-          const liquidity = ethers.BigNumber.from(
-            Math.floor(
-              Math.sqrt(
-                parseFloat(formatEther(reserve0)) *
-                  parseFloat(formatEther(reserve1))
-              )
-            ).toString()
+          // Get token contract details
+          const token0Contract = new ethers.Contract(
+            token0Address,
+            [
+              'function name() view returns (string)',
+              'function symbol() view returns (string)',
+              'function decimals() view returns (uint8)'
+            ],
+            provider
+          );
+          const token1Contract = new ethers.Contract(
+            token1Address,
+            [
+              'function name() view returns (string)',
+              'function symbol() view returns (string)',
+              'function decimals() view returns (uint8)'
+            ],
+            provider
           );
 
-          let pool: POOL = {
-            id: pairID,
-            pairAddress: pairAddress,
-            token0: token0 ?? { name: "", symbol: "", decimals: 0, address: "" },
-            token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
-            token0Reserve: token0Reserve,
-            token1Reserve: token1Reserve,
-            //token0Symbol,
-            //token1Symbol,
-            liquidity: formatEther(liquidity),
-            volume24h: formatEther(volume),
-            tvl: Number(tvl).toFixed(2),
-            apr: apr.toString(),
+          // Fetch token details in parallel
+          const [
+            token0Name,
+            token0Symbol,
+            token0Decimals,
+            token1Name,
+            token1Symbol,
+            token1Decimals
+          ] = await Promise.all([
+            token0Contract.name(),
+            token0Contract.symbol(),
+            token0Contract.decimals(),
+            token1Contract.name(),
+            token1Contract.symbol(),
+            token1Contract.decimals()
+          ]);
+
+          const token0 = {
+            name: token0Name,
+            symbol: token0Symbol,
+            decimals: token0Decimals,
+            address: token0Address
           };
-          return pool;
+          const token1 = {
+            name: token1Name,
+            symbol: token1Symbol,
+            decimals: token1Decimals,
+            address: token1Address
+          };
+
+            // Get reserves
+            const reserves = await pairContract.getReserves();
+            const [reserve0, reserve1] = [reserves[0], reserves[1]];
+
+            const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
+            const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
+
+            // Get token prices
+            const [price0, price1] = await Promise.all([
+              getTokenPrice(token0?.symbol ?? ""),
+              getTokenPrice(token1?.symbol ?? ""),
+            ]);
+
+            // Get volume (Note: You'll need to implement your own volume tracking as
+            // Uniswap V2 doesn't track volume directly)
+            const volume = await getVolume24h(pairAddress, provider);
+
+            // Calculate TVL
+            const tvl =
+              parseFloat(formatEther(reserve0)) * price0 +
+              parseFloat(formatEther(reserve1)) * price1;
+
+            // Calculate APR
+            const apr = calculateAPR(formatEther(volume), tvl.toString());
+
+            // Calculate liquidity (using both reserves)
+            const liquidity = ethers.BigNumber.from(
+              Math.floor(
+                Math.sqrt(
+                  parseFloat(formatEther(reserve0)) *
+                    parseFloat(formatEther(reserve1))
+                )
+              ).toString()
+            );
+
+            let pool: POOL = {
+              id: pairID,
+              pairAddress: pairAddress,
+              token0: token0 ?? { name: "", symbol: "", decimals: 0, address: "" },
+              token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
+              token0Reserve: token0Reserve,
+              token1Reserve: token1Reserve,
+              //token0Symbol,
+              //token1Symbol,
+              liquidity: formatEther(liquidity),
+              volume24h: formatEther(volume),
+              tvl: Number(tvl).toFixed(2),
+              apr: apr.toString(),
+            };
+            return pool;
         })
       );
       dispatch(setPools(poolsData));
@@ -123,7 +164,6 @@ export const fetchMyPools = createAsyncThunk(
     try {
       dispatch(setLoading(true));
       const state = getState() as RootState;
-      const tokens = state.tokens.tokens;
       if (!window.ethereum) {
         throw new Error("Please install MetaMask or another Ethereum wallet.");
       }
@@ -153,8 +193,55 @@ export const fetchMyPools = createAsyncThunk(
           const token0Address = await pairContract.token0();
           const token1Address = await pairContract.token1();
 
-          const token0 = tokens.find((token: TOKEN) => token.address === token0Address);
-          const token1 = tokens.find((token: TOKEN) => token.address === token1Address);
+          // Get token contract details
+          const token0Contract = new ethers.Contract(
+            token0Address,
+            [
+              'function name() view returns (string)',
+              'function symbol() view returns (string)',
+              'function decimals() view returns (uint8)'
+            ],
+            provider
+          );
+          const token1Contract = new ethers.Contract(
+            token1Address,
+            [
+              'function name() view returns (string)',
+              'function symbol() view returns (string)',
+              'function decimals() view returns (uint8)'
+            ],
+            provider
+          );
+
+          // Fetch token details in parallel
+          const [
+            token0Name,
+            token0Symbol,
+            token0Decimals,
+            token1Name,
+            token1Symbol,
+            token1Decimals
+          ] = await Promise.all([
+            token0Contract.name(),
+            token0Contract.symbol(),
+            token0Contract.decimals(),
+            token1Contract.name(),
+            token1Contract.symbol(),
+            token1Contract.decimals()
+          ]);
+
+          const token0 = {
+            name: token0Name,
+            symbol: token0Symbol,
+            decimals: token0Decimals,
+            address: token0Address
+          };
+          const token1 = {
+            name: token1Name,
+            symbol: token1Symbol,
+            decimals: token1Decimals,
+            address: token1Address
+          };
 
           // Get reserves
           const reserves = await pairContract.getReserves();
@@ -210,8 +297,6 @@ export const fetchMyPools = createAsyncThunk(
             pairAddress: pairAddress,
             token0: token0 ?? { name: "", symbol: "", decimals: 0, address: "" },
             token1: token1 ?? { name: "", symbol: "", decimals: 0, address: "" },
-            //token0Symbol,
-            //token1Symbol,
             token0Reserve: token0Reserve,
             token1Reserve: token1Reserve,
             token0Share: Number(formatEther(token0Share)).toFixed(2),

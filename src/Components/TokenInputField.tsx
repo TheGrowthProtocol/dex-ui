@@ -53,7 +53,7 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
         return;
       }
 
-      if (tokenSymbol === "WCERS") {
+      if (tokenSymbol === "CERES") {
         const balance = await provider.getBalance(address);
         const formattedBalance = Number(
           ethers.utils.formatEther(balance)
