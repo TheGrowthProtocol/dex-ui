@@ -2,10 +2,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers, Contract } from "ethers";
 import { setLoading, setError, setAmount2 } from "./swapSlice";
 import { RootState } from "../store";
-import IUniswapV2Router02 from "../../build/IUniswapV2Router02.json";
+import UniswapV2Router02 from "../../build/UniswapV2Router02.json";
 import * as chains from "../../constants/chains";
-
-const ERC20 = require("../../build/ERC20.json");
+import ERC20 from "../../build/ERC20.json";
+import WCERES from "../../build/WCERES.json";
 
 export const swap = createAsyncThunk(
   "swap/swap",
@@ -80,19 +80,19 @@ export const getAmount2 = createAsyncThunk(
       const routerAddress = chains.routerAddress.get(network.chainId);
       const routerContract = new Contract(
         routerAddress,
-        IUniswapV2Router02.abi,
+        UniswapV2Router02.abi,
         signer
       );
-      const token1Contract = new Contract(token1.address, ERC20.abi, signer);
+      const token1Contract = new Contract(token1.address, token1.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
       const token1Decimals = await getTokenDecimals(token1Contract);
 
-      const token2Contract = new Contract(token2.address, ERC20.abi, signer);
+      const token2Contract = new Contract(token2.address, token2.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
       const token2Decimals = await getTokenDecimals(token2Contract);
       const values_out = await routerContract.getAmountsOut(
         ethers.utils.parseUnits(String(amount1), token1Decimals),
         [token1.address, token2.address]
       );
-      const amount_out = values_out[1] * 10 ** -token2Decimals;
+      const amount_out = values_out[1] * 10 ** - token2Decimals;
       dispatch(setAmount2(Number(amount_out.toFixed(2))));
       dispatch(setLoading(false));
     } catch (error: any) {
@@ -109,7 +109,7 @@ const setupContracts = async (signer: ethers.Signer) => {
   const routerAddress = chains.routerAddress.get(network.chainId);
   const routerContract = new Contract(
     routerAddress,
-    IUniswapV2Router02.abi,
+    UniswapV2Router02.abi,
     signer
   );
   const account = await signer.getAddress();

@@ -137,6 +137,7 @@ const Coinfield: React.FC<COINFIELD> = ({
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -158,12 +159,11 @@ const Coinfield: React.FC<COINFIELD> = ({
               className="coin-field-balance"
               alignItems="center"
             >
-              <AccountBalanceWalletIcon fontSize="small" />
               <Typography
                 variant="subtitle1"
                 className="coin-field-balance-text"
               >
-                {balance}
+                {balance} {selectedToken.symbol}
               </Typography>
             </Box>
           )}

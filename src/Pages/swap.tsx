@@ -51,22 +51,22 @@ const Swap: React.FC<{}> = () => {
             dispatch(resetSelectedPool());
           }
     }
-  }, [pools, token1, token2, dispatch]);
+  }, [token1, token2, dispatch]);
 
   useEffect(() => {
     const setCoinfield2Amount = async () => {
       try {
-        dispatch(getAmount2());
+        await dispatch(getAmount2()).unwrap();
       } catch (error: any) {
-        enqueueSnackbar(error.message, { variant: "error" });
+        dispatch(setAmount2(0));
       }
     };
-    if (amount1 >0) {
+    if (amount1 >0 && token2.address !== "") {
       setCoinfield2Amount();
     } else {
       setAmount2(0);
     }
-  }, [amount1, dispatch, enqueueSnackbar]);
+  }, [amount1, token2, dispatch, enqueueSnackbar]);
 
 
   const fetchPool = async () => {

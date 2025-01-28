@@ -47,9 +47,6 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
         liquidityAmount2
     ]);
 
-    if (swapError) {
-        return <div>Error: {swapError}</div>;
-    }
 
     let displayTokenomicsItemKeys = ['priceImpact','token0perToken1', 'token1perToken0', 'apr', 'tvl', 'currentRatio', 'newRatio', 'currentLPRate'];
     let displayTokenomicsItemLabels = ['Price Impact', 'Token 0 per Token 1', 'Token 1 per Token 0', 'APR', 'TVL', 'Current Ratio', 'New Ratio', 'Current LPRate'];
