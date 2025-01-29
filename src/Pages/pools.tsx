@@ -21,7 +21,8 @@ import { PoolsNoItems } from "../Components/poolsNoItems";
 import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector , useDispatch} from "react-redux";
-import { useProvider } from "../Hooks/useProvider";
+import { useNetwork } from "../Hooks/useNetwork";
+import { ethers } from "ethers";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,7 +76,7 @@ interface PoolsListProps {
 
 const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
   const dispatch = useDispatch<AppDispatch>();  
-  const provider = useProvider();
+  const {rpcProvider,web3Provider, setWeb3Provider, isConnected: isNetworkConnected} = useNetwork();
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -98,11 +99,12 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
   };
 
   useEffect(() => {
-    if (isWalletConnected) {  
-      dispatch(fetchMyPools(provider));
+    if(isNetworkConnected && window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      dispatch(fetchMyPools(web3Provider));
     }
-    dispatch(fetchPools(provider));
-  }, [isWalletConnected, dispatch]);
+    dispatch(fetchPools(rpcProvider));
+  }, [isWalletConnected, dispatch, web3Provider, setWeb3Provider, isNetworkConnected]); 
 
   if (loading) {
     return (

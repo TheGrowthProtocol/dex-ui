@@ -82,7 +82,7 @@ const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClo
       icon: metamaskIcon,
       description: 'Connect using browser wallet',
       onClick: async () => {
-        //await connectMetaMask();
+        await connectMetaMask();
         onClose();
       }
     },

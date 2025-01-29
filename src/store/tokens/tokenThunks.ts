@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers, Contract } from "ethers";
 import COINS from "../../constants/coins";
+import * as chains from "../../constants/chains";
 import WCERES from "../../build/WCERES.json";
 import ERC20 from "../../build/ERC20.json";
 import { env } from "../../env";
@@ -19,7 +20,7 @@ const TGP_NETWORK = {
   };
 
 export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async (
-  provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider
+  provider: ethers.providers.JsonRpcProvider
 ) => {
     try {
         const network = provider.getNetwork();

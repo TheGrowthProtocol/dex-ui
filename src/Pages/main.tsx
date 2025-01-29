@@ -14,7 +14,8 @@ import { RootState, AppDispatch } from '../store/store';
 import { fetchTokens } from '../store/tokens/tokenThunks'; 
 import RemoveLiquidity from "./removeLiquidity";
 import { fetchPools } from "../store/pool/poolThunks";
-import { useProvider } from "../Hooks/useProvider";
+import { useNetwork } from "../Hooks/useNetwork";
+import { ethers } from "ethers";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,17 +49,16 @@ function a11yProps(index: number) {
 const Main = () => {
   const [value, setValue] = useState(0);
   const dispatch = useDispatch<AppDispatch>();
-  const provider = useProvider();
+  const { rpcProvider, isConnected: isNetworkConnected, setWeb3Provider } = useNetwork();
   const { tokens, loading, error } = useSelector((state: RootState) => state.tokens);
 
   // @description fetch tokens
   useEffect(() => {
-    dispatch(fetchTokens(provider)); 
-    dispatch(fetchPools(provider));
+    dispatch(fetchTokens(rpcProvider)); 
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchPools(provider));
+    dispatch(fetchPools(rpcProvider));
   }, [tokens]);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {

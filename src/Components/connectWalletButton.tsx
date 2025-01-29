@@ -7,11 +7,12 @@ import { ArrowForward } from '@material-ui/icons';
 import WalletConnectorModal from "./walletConnectorModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { ethers } from "ethers";
 
 const ConnectWalletButton: React.FC<{}> = () => {
   const { disconnect } = useWallet();
   const { isConnected, address, loading, error: walletError } = useSelector((state: RootState) => state.wallet);
-  const { isConnected: isNetworkConnected} = useNetwork();
+  const { isConnected: isNetworkConnected, setWeb3Provider} = useNetwork();
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,6 +41,17 @@ const ConnectWalletButton: React.FC<{}> = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    const updateProviders = async () => {
+      if (isNetworkConnected && window.ethereum) {
+        const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+        setWeb3Provider(web3Provider);
+      }
+    };
+
+    updateProviders();
+  }, [isNetworkConnected, setWeb3Provider]);
 
 
   if(isConnected && address && isNetworkConnected) {   

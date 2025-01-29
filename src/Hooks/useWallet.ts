@@ -46,8 +46,6 @@ export const useWallet = () => {
         localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, accounts[0]);
 
         connectNetwork();
-      } else {
-        throw new Error("Please install MetaMask");
       }
     } catch (error) {
       dispatch(
@@ -107,7 +105,11 @@ export const useWallet = () => {
 
 
   const connectMetaMask = async (): Promise<void> => {
-    await connectWallet();
+    if(typeof window.ethereum !== "undefined") {
+      await connectWallet();
+    } else {
+      window.open("https://metamask.io/download/", "_blank");
+    }
   };
 
   return {

@@ -12,10 +12,13 @@ import CoinPairIcons from "../Components/coinPairIcons";
 import { POOL } from "../interfaces";
 import { fetchMyPools, fetchShareBalances, removeLpToken, selectPool } from "../store/pool/poolThunks";
 import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
+import { useNetwork } from "../Hooks/useNetwork";
+import { ethers } from "ethers";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme(); 
+  const {web3Provider, isConnected: isNetworkConnected} = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { myPools, selectedPool, removeLpToken0Share, removeLpToken1Share, error, removeLpTokenBalance } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
@@ -25,10 +28,11 @@ const RemoveLiquidity: React.FC<{}> = () => {
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
 
   useEffect(() => {
-    if (isWalletConnected) {
-      dispatch(fetchMyPools());  
+   if(isNetworkConnected && window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      dispatch(fetchMyPools(web3Provider));
     }
-  }, [dispatch, isWalletConnected]);
+  }, [dispatch, isWalletConnected, web3Provider, isNetworkConnected]);
 
   useEffect(() => {
     if (myPools.length > 0 && selectedPoolId === "") {
@@ -46,17 +50,19 @@ const RemoveLiquidity: React.FC<{}> = () => {
   }, [percentage, selectedPool]);
 
   useEffect(() => {
-    if (removeLpTokenBalance && selectedPool) {
-      dispatch(fetchShareBalances({ pool: selectedPool, lpBalance: Number(removeLpTokenBalance) }));
+    if (removeLpTokenBalance && selectedPool && web3Provider) {
+      dispatch(fetchShareBalances({ pool: selectedPool, lpBalance: Number(removeLpTokenBalance), provider: web3Provider }));
     }
-  }, [removeLpTokenBalance, selectedPool]);
+  }, [removeLpTokenBalance, selectedPool, web3Provider]);
 
   const handleSelectPool = (poolId: string) => {
     setSelectedPoolId(poolId); // Update local state
   }
 
   const handleRemoveLiquidityPool = () => {
-    dispatch(removeLpToken());
+    if (web3Provider !== null) {
+      dispatch(removeLpToken({ provider: web3Provider }));
+    }
   }
 
   return (

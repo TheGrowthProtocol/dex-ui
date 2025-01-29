@@ -182,13 +182,10 @@ export const fetchPools = createAsyncThunk(
 
 export const fetchMyPools = createAsyncThunk(
   "pools/fetchMyPools",
-  async (provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider, { getState, dispatch }) => {
+  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
     try {
       dispatch(setLoading(true));
       const state = getState() as RootState;
-      if (!window.ethereum) {
-        throw new Error("Please install MetaMask or another Ethereum wallet.");
-      }
       // Connect to provider
       const factory = new ethers.Contract(
         POOL_FACTORY_ADDRESS,
@@ -395,7 +392,7 @@ export const selectPool = createAsyncThunk(
 
 export const fetchShareBalances = createAsyncThunk(
   "pools/fetchShareBalances",
-  async (params: { pool: POOL; lpBalance: number , provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider}, { getState, dispatch }) => {
+  async (params: { pool: POOL; lpBalance: number , provider: ethers.providers.Web3Provider}, { getState, dispatch }) => {
     try {
       if (!window.ethereum) {
         throw new Error("Please install MetaMask or another Ethereum wallet.");
@@ -445,13 +442,10 @@ export const fetchShareBalances = createAsyncThunk(
 
 export const removeLpToken = createAsyncThunk(
   "pools/removeLpToken",
-  async (params: { provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider }, { getState, dispatch }) => {
+  async (params: { provider: ethers.providers.Web3Provider}, { getState, dispatch }) => {
     try {
       const state = getState() as RootState;
       const selectedPool = state.pool.selectedPool;
-      if (!window.ethereum) {
-        throw new Error("Please install MetaMask or another Ethereum wallet.");
-      }
       if (!selectedPool) {
         throw new Error("No selected pool");
       }
