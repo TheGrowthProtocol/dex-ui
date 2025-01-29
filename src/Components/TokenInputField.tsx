@@ -87,6 +87,7 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -104,14 +105,14 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
           onChange={handleInputChange}
           className="token-input-field"
         />
-        <Typography variant="subtitle1" className="token-input-field-value">
+        <Typography variant="subtitle1" className="token-input-field-value" color="textSecondary">
           $0.00
         </Typography>
       </Box>
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
         {selectedToken.name !== "" && (
           <Box
-            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+            sx={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}
           >
             {selectedToken.icon && <CoinIcon icon={selectedToken.icon} />}
             {!selectedToken.icon && <CoinNoIcon />}
@@ -122,15 +123,15 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
         )}
         {isDisplayBalance && (
           <Box
-            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+            sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}
             className="token-input-field-balance-container"
           >
-            <AccountBalanceWalletIcon fontSize="small" />
             <Typography
               variant="subtitle1"
               className="token-input-field-balance"
+              color="textSecondary"
             >
-              {balance}
+              {balance} {selectedToken.symbol}
             </Typography>
           </Box>
         )}

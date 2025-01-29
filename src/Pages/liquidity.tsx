@@ -159,23 +159,30 @@ const Liquidity: React.FC<{}> = () => {
                 onAmountChange={handleTokenAmount1}
                 isDisplayBalance={isWalletConnected}
               />
-              <Box
-                className="liquidity-token-divider"
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <Box className="liquidity-token-divider-plus" />
-              </Box>
-              <TokenInputField
-                tokens={tokens}
-                selectedToken={token2}
-                value={amount2.toString()}
-                onAmountChange={handleTokenAmount2}
-                isDisplayBalance={isWalletConnected}
-              />
+              {
+                token2.symbol !== "" && (
+                  <>
+                    <Box
+                      className="liquidity-token-divider"
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Box className="liquidity-token-divider-plus" />
+                    </Box>
+                    <TokenInputField
+                      tokens={tokens}
+                      selectedToken={token2}
+                      value={amount2.toString()}
+                      onAmountChange={handleTokenAmount2}
+                      isDisplayBalance={isWalletConnected}
+                    />
+                  </>
+                )
+              }
+              
             </Box>
           </Box>
         </Box>
