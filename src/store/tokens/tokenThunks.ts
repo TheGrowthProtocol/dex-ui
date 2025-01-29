@@ -18,12 +18,10 @@ const TGP_NETWORK = {
     blockExplorerUrls: [env.blockExplorerUrl],
   };
 
-export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async () => {
+export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async (
+  provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider
+) => {
     try {
-        if (!window.ethereum) {
-            throw new Error("Please install MetaMask or another Ethereum wallet.");
-        }
-        const provider = new ethers.providers.JsonRpcProvider(TGP_NETWORK.rpcUrls[0]);
         const network = provider.getNetwork();
         const chainId = (await network).chainId;
         const fetchedTokens = await Promise.all(

@@ -21,7 +21,7 @@ import { PoolsNoItems } from "../Components/poolsNoItems";
 import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector , useDispatch} from "react-redux";
-  
+import { useProvider } from "../Hooks/useProvider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +75,7 @@ interface PoolsListProps {
 
 const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
   const dispatch = useDispatch<AppDispatch>();  
+  const provider = useProvider();
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -98,9 +99,9 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
 
   useEffect(() => {
     if (isWalletConnected) {  
-      dispatch(fetchMyPools());
+      dispatch(fetchMyPools(provider));
     }
-    dispatch(fetchPools());
+    dispatch(fetchPools(provider));
   }, [isWalletConnected, dispatch]);
 
   if (loading) {
@@ -110,8 +111,6 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
       </Box>
     );
   }
-
-  console.log("pools", pools);
 
   return (
     <Box className={`${classes.root} tabpanel-container`}>

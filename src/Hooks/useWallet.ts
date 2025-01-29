@@ -66,7 +66,7 @@ export const useWallet = () => {
   }, [dispatch, disconnectNetwork]);
 
   const displayBalance = useCallback(() => {
-    console.log("displayBalance");
+
   }, [dispatch, connectNetwork]);
 
   // Add auto-connect on app load
@@ -105,6 +105,11 @@ export const useWallet = () => {
     }
   }, [dispatch]);
 
+
+  const connectMetaMask = async (): Promise<void> => {
+    await connectWallet();
+  };
+
   return {
     isConnected,
     address,
@@ -113,5 +118,6 @@ export const useWallet = () => {
     connectWallet,
     disconnect,
     displayBalance,
+    connectMetaMask,
   };
 };

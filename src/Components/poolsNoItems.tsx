@@ -11,7 +11,7 @@ export const PoolsNoItems: React.FC<{
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm")); 
     const handleAddLiquidityPool = () => {
-        console.log("Add Liquidity");
+        // TODO: Add Liquidity
     }
 
   return (

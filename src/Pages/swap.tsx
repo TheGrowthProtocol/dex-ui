@@ -6,7 +6,6 @@ import ConnectWalletButton from "../Components/connectWalletButton";
 import { useSnackbar } from "notistack";
 import { AppDispatch, RootState } from "../store/store";
 
-import { useWallet } from "../Hooks/useWallet";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setToken1,
@@ -19,11 +18,14 @@ import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import { resetSelectedPool } from "../store/pool/poolSlice";
 
+
 const Swap: React.FC<{}> = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const { isConnected } = useWallet();
   const { token1, token2, amount1, amount2, loading } = useSelector(
     (state: RootState) => state.swap
+  );
+  const { isConnected: isWalletConnected } = useSelector(
+    (state: RootState) => state.wallet
   );
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
@@ -71,7 +73,6 @@ const Swap: React.FC<{}> = () => {
 
   const fetchPool = async () => {
     try {
-      console.log("fetching pool", token1.address, token2.address);
       await dispatch(fetchPoolByTokenAddresses([token1.address, token2.address])).unwrap();
     } catch (error: any) {
       enqueueSnackbar(error.message, { variant: "error" });
@@ -162,7 +163,7 @@ const Swap: React.FC<{}> = () => {
           }}
           className="swap-button-container"
         >
-          {isConnected && (
+          {isWalletConnected && (
             <Button
               variant="contained"
               color="primary"
@@ -176,12 +177,12 @@ const Swap: React.FC<{}> = () => {
               </div>
             </Button>
           )}
-          {!isConnected && <ConnectWalletButton />}
+          {!isWalletConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
       <Grid item xs={12} md={12} lg={6}>
         <Tokenomics
-          isConnected={isConnected}
+          isConnected={isWalletConnected}
           type="swap"
           selectedPool={selectedPool}
         />

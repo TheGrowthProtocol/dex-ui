@@ -22,12 +22,14 @@ const TGP_NETWORK = {
   };
 
 export const useNetwork = () => {
+  console.log("useNetwork");
   const dispatch = useDispatch();
   const { isConnected, chainId, loading, error } = useSelector(
     (state: RootState) => state.network
   );
 
   const connect = useCallback(async () => {
+    console.log("useNetwork connect");
     dispatch(connectNetworkStart());
     try {
       if (typeof window.ethereum !== 'undefined') {

@@ -22,14 +22,10 @@ const PRICE_FEED_API = env.priceFeedApi;
 
 export const fetchPools = createAsyncThunk(
   "pools/fetchPools",
-  async (_, { dispatch }) => {
+  async (provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      if (!window.ethereum) {
-        throw new Error("Metamask not installed");
-      }
       // Connect to provider
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const factory = new ethers.Contract(
         POOL_FACTORY_ADDRESS,
         POOL_FACTORY_ABI.abi,
@@ -186,7 +182,7 @@ export const fetchPools = createAsyncThunk(
 
 export const fetchMyPools = createAsyncThunk(
   "pools/fetchMyPools",
-  async (_, { getState, dispatch }) => {
+  async (provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider, { getState, dispatch }) => {
     try {
       dispatch(setLoading(true));
       const state = getState() as RootState;
@@ -194,7 +190,6 @@ export const fetchMyPools = createAsyncThunk(
         throw new Error("Please install MetaMask or another Ethereum wallet.");
       }
       // Connect to provider
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const factory = new ethers.Contract(
         POOL_FACTORY_ADDRESS,
         POOL_FACTORY_ABI.abi,
@@ -375,7 +370,6 @@ export const fetchPoolByTokenAddresses = createAsyncThunk(
           tokenAddresses.includes(pool.token0.address ?? "") &&
           tokenAddresses.includes(pool.token1.address ?? "")
       );
-      console.log("pool", pool);
       if (pool) {
         dispatch(setSelectedPool(pool));
       } else {
@@ -401,16 +395,15 @@ export const selectPool = createAsyncThunk(
 
 export const fetchShareBalances = createAsyncThunk(
   "pools/fetchShareBalances",
-  async (params: { pool: POOL; lpBalance: number }, { getState, dispatch }) => {
+  async (params: { pool: POOL; lpBalance: number , provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider}, { getState, dispatch }) => {
     try {
       if (!window.ethereum) {
         throw new Error("Please install MetaMask or another Ethereum wallet.");
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const pairContract = new ethers.Contract(
         params.pool.pairAddress,
         PAIR_ABI.abi,
-        provider
+        params.provider
       );
       const reserves = await pairContract.getReserves();
       const [reserve0, reserve1] = [reserves[0], reserves[1]];
@@ -452,7 +445,7 @@ export const fetchShareBalances = createAsyncThunk(
 
 export const removeLpToken = createAsyncThunk(
   "pools/removeLpToken",
-  async (_, { getState, dispatch }) => {
+  async (params: { provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider }, { getState, dispatch }) => {
     try {
       const state = getState() as RootState;
       const selectedPool = state.pool.selectedPool;
@@ -462,7 +455,7 @@ export const removeLpToken = createAsyncThunk(
       if (!selectedPool) {
         throw new Error("No selected pool");
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = params.provider;
 
       const token0Share = state.pool.removeLpToken0Share?.amount;
       const token1Share = state.pool.removeLpToken1Share?.amount;
