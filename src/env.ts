@@ -10,7 +10,9 @@ export const env = {
   blockExplorerUrl: process.env.REACT_APP_BLOCK_EXPLORER_URL ?? 'https://subnets-test.avax.network/tgp',
   contracts: {
     masterChef: process.env.REACT_APP_MASTER_CHEF_ADDRESS ?? '0x481b2c832322F73Ec66e4f9e013001db9B55518a',
-    poolFactory: process.env.REACT_APP_POOL_FACTORY_ADDRESS ?? '0xeD3D02Dc6C18C2911D4fFc32ad6C6ABe3B279FE9'
+    poolFactory: process.env.REACT_APP_POOL_FACTORY_ADDRESS ?? '0x61210626D2010F09265224dBe219e04F1797B1B3'
   },
-  priceFeedApi: process.env.REACT_APP_PRICE_FEED_API ?? 'https://api.coingecko.com/api/v3/simple/price?ids=ceres&vs_currencies=usd'
+  priceFeedApi: process.env.REACT_APP_PRICE_FEED_API ?? 'https://api.coingecko.com/api/v3/simple/price?ids=ceres&vs_currencies=usd',
+  routerAddress: process.env.REACT_APP_ROUTER_ADDRESS ?? '0xA8F1013B5c23813999Dc909dc529B79EdaD033Ae'
 };
+
