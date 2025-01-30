@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNetwork } from "../Hooks/useNetwork";
 import { AppDispatch, RootState } from "../store/store";
 import { useWallet } from "../Hooks/useWallet";
+import { PoolsNoItems } from "../Components/poolsNoItems";
 
 const MASTER_CHEF_ADDRESS = env.contracts.masterChef;
 
@@ -182,6 +183,9 @@ const Staking: React.FC<{}> = () => {
     <Box className={`${classes.root} tabpanel-container`}>
       <Box className="tabpanel-content">
         {isMobile && (
+          pools.length === 0 ? (
+            <PoolsNoItems description="No Liquidity added yet" />
+          ) : (
           <Box>
           {pools.map((pool) => (
             <Card key={pool.id} className="pool-card">
@@ -263,8 +267,12 @@ const Staking: React.FC<{}> = () => {
             </Card>
           ))}
         </Box>
+          )
         )}
         {!isMobile && (
+          pools.length === 0 ? (
+            <PoolsNoItems description="No Liquidity added yet" />
+          ) : (
         <TableContainer className='pools-table'>
         <Box className='pools-table__container'>
           <Box className='pools-table__header'>
@@ -325,6 +333,7 @@ const Staking: React.FC<{}> = () => {
           </Box>
         </Box>
       </TableContainer>
+          )
         )}
       </Box>
       <AddStakeDialog

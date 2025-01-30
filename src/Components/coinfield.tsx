@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Typography, Input } from "@material-ui/core";
+import { Box, Button, Typography, Input, styled } from "@material-ui/core";
 import { ethers, Contract } from "ethers";
-import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN, COINFIELD } from "../interfaces";
 import Coindialog from "./coindialog";
@@ -12,6 +11,29 @@ import CoinNoIcon from "./coinNoIcon";
 import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
 import CoinIcon from "./coinIcon";
+
+const StyledCoinFieldBalance = styled(Box)({
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  marginTop: "16px",
+});
+
+const StyledCoinFieldSymbol = styled(Typography)({
+  color: "var(--secondary-color)",
+  marginLeft: "4px",
+});
+
+const StyledCoinFieldBalanceText = styled(Typography)({
+  color: "var(--secondary-color)",
+});
+
+const StyledCoinFieldHeader = styled(Box)({
+  marginBottom: "16px",
+  display: "flex",
+  flexDirection: "column",
+});
 
 const Coinfield: React.FC<COINFIELD> = ({
   title,
@@ -127,12 +149,9 @@ const Coinfield: React.FC<COINFIELD> = ({
       sx={{ display: "flex", flexDirection: "column" }}
       className="coin-field-container"
     >
-      <Box
-        sx={{ display: "flex", flexDirection: "column" }}
-        className="coin-field-header"
-      >
+      <StyledCoinFieldHeader>
         <Typography variant="subtitle2">{title}</Typography>
-      </Box>
+      </StyledCoinFieldHeader>
       <Box
         sx={{
           display: "flex",
@@ -142,40 +161,12 @@ const Coinfield: React.FC<COINFIELD> = ({
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Button
-            variant="contained"
-            onClick={handleTokenDialogOpen}
-            endIcon={<KeyboardArrowDownIcon color="primary" />}
-            className="coin-field-button"
-          >
-            {selectedToken.icon && <CoinIcon icon={selectedToken.icon} />}
-            {!selectedToken.icon && <CoinNoIcon />}
-            <Typography className={"token-symbol gradient-text"}>
-              {selectedToken.symbol || "Select Token"}
-            </Typography>
-          </Button>
-          {isWalletConnected && (
-            <Box
-              sx={{ display: "flex", flexDirection: "row" }}
-              className="coin-field-balance"
-              alignItems="center"
-            >
-              <Typography
-                variant="subtitle1"
-                className="coin-field-balance-text"
-              >
-                {balance} {selectedToken.symbol}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
           {isWalletConnected && (
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 alignItems: "center",
               }}
             >
@@ -198,12 +189,37 @@ const Coinfield: React.FC<COINFIELD> = ({
           />
           <Typography
             variant="subtitle1"
-            align="right"
+            align="left"
             className="coin-field-input-value"
           >
             $0.00
           </Typography>
         </Box>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Button
+            variant="contained"
+            onClick={handleTokenDialogOpen}
+            endIcon={<KeyboardArrowDownIcon color="primary" />}
+            className="coin-field-button"
+          >
+            {selectedToken.icon && <CoinIcon icon={selectedToken.icon} />}
+            {!selectedToken.icon && <CoinNoIcon />}
+            <Typography className={"token-symbol gradient-text"}>
+              {selectedToken.symbol || "Select Token"}
+            </Typography>
+          </Button>
+          {isWalletConnected && (
+            <StyledCoinFieldBalance>
+              <StyledCoinFieldBalanceText variant="subtitle1">
+                {balance}
+              </StyledCoinFieldBalanceText>
+              <StyledCoinFieldSymbol variant="subtitle1">
+                {selectedToken.symbol}
+              </StyledCoinFieldSymbol>
+            </StyledCoinFieldBalance>
+          )}
+        </Box>
+        
       </Box>
       <Coindialog
         tokens={tokens}

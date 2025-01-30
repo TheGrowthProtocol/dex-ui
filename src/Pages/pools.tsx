@@ -125,6 +125,9 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         </Box>
         <CustomTabPanel value={value} index={0}>
           {isMobile && (
+            pools.length === 0 ? (
+              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
+            ) : (
             <Box>
               {pools.map((pool) => (
                 <Card key={pool.id} className="pool-card">
@@ -189,11 +192,15 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                 </Card>
               ))}
             </Box>
+            )
           )}
           {!isMobile && (
-            <TableContainer className='pools-table'>
-              <Box className='pools-table__container'>
-                <Box className='pools-table__header'>
+            pools.length === 0 ? (
+              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
+            ) : (
+              <TableContainer className='pools-table'>
+                <Box className='pools-table__container'>
+                  <Box className='pools-table__header'>
                   <Box className='pools-table__row' sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box className='pools-table__cell' sx={{ flex: '2' }}>Pools</Box>
                     <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>APR</Box>
@@ -234,13 +241,14 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
                 </Box>
               </Box>
             </TableContainer>
+            )
           )}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
         {isMobile && isWalletConnected && (
           <Box>
             {myPools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" />
+              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
             ) : (
               <Box>
                 {myPools.map((pool) => (
@@ -307,7 +315,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         )}
         {!isMobile && isWalletConnected && (
           myPools.length === 0 ? (
-            <PoolsNoItems description="No Liquidity added yet" />
+            <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
           ) : (
             <TableContainer className='pools-table'>
             <Box className='pools-table__container'>

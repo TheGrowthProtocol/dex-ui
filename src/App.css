@@ -170,24 +170,11 @@ body {
   padding: 32px;
 }
 
-.coin-field-header {
-  margin-bottom: 24px;
-}
-
 .coin-field-button {
   background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%);
   border-radius: 24px !important;
   text-transform: none !important;
   min-width: max-content !important;
-}
-
-.coin-field-balance {
-  margin-top: 16px;
-  color: var(--secondary-color);
-}
-
-.coin-field-balance-text {
-  margin-left: 8px !important;
 }
 
 .coin-field-container {
@@ -202,7 +189,7 @@ body {
 }
 
 .coin-field-input input {
-  text-align: end;
+  text-align: start;
   font-size: 24px;
   color: var(--secondary-color);
 }
@@ -628,7 +615,7 @@ body {
 }
 
 .coin-field-max-button .MuiButton-label {
-  justify-content: flex-end !important;
+  justify-content: flex-start !important;
 }
 .percentage-block-button {
   background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%) !important;

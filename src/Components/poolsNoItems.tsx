@@ -6,12 +6,15 @@ import CoinPairIcons from "./coinPairIcons";
 
 export const PoolsNoItems: React.FC<{
   description: string;
-
-}> = ({ description }) => {
+  addLiquidityButtonOnClick?: () => void;
+}> = ({ description, addLiquidityButtonOnClick }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm")); 
     const handleAddLiquidityPool = () => {
         // TODO: Add Liquidity
+        if(addLiquidityButtonOnClick) {
+            addLiquidityButtonOnClick();
+        }
     }
 
   return (
@@ -20,6 +23,7 @@ export const PoolsNoItems: React.FC<{
             <CoinPairIcons />
             <Typography variant="body2">{description}</Typography>
         </Box>
+        {addLiquidityButtonOnClick && (
         <Box>
            <Button
               variant="contained"
@@ -34,6 +38,7 @@ export const PoolsNoItems: React.FC<{
               </div>
             </Button> 
         </Box>
+        )}
     </Box>
   );
 };
