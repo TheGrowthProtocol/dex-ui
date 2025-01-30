@@ -76,12 +76,8 @@ body {
   margin-left: 16px !important;
 }
 
-.disconnect-wallet-button {
-  text-transform: none !important;
-}
 .disconnect-wallet-button__text {
   margin-right: 4px !important;
-  border-bottom: 1px solid var(--primary-color);
 }
 
 .header {

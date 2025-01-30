@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Typography } from "@material-ui/core";
+import { Button, styled, Typography, useTheme } from "@material-ui/core";
 import { useWallet } from "../Hooks/useWallet";
 import { useSnackbar } from "notistack";
 import { useNetwork } from "../Hooks/useNetwork";
@@ -7,6 +7,26 @@ import { ArrowForward } from "@material-ui/icons";
 import WalletConnectorModal from "./walletConnectorModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+
+const StyledAccountBalanceWalletIcon = styled(AccountBalanceWalletIcon)(({ theme }) => ({
+  marginRight: "4px",
+  border: `1px solid ${theme.palette.primary.main}`,
+  borderRadius: "50%",
+  padding: "2px",
+}));
+
+const StyledConnectWalletButton = styled(Button)(() => ({
+  textTransform: "none",
+  padding: "4px 8px",
+}));
+
+const StyledDisconnectWalletButton = styled(Button)(() => ({
+  textTransform: "none",
+  marginRight: "4px",
+  padding: "4px 8px",
+}));
 
 const ConnectWalletButton: React.FC<{}> = () => {
   const { disconnect } = useWallet();
@@ -49,29 +69,29 @@ const ConnectWalletButton: React.FC<{}> = () => {
 
   if (isConnected && address && isNetworkConnected) {
     return (
-      <Button
-        className="disconnect-wallet-button"
+      <StyledDisconnectWalletButton
         variant="text"
         onClick={disconnect}
       >
         <Typography className={"gradient-text disconnect-wallet-button__text"}>
-          Wallet Address: {shortenAddress(address)}
+          <StyledAccountBalanceWalletIcon fontSize="medium" color="primary"/>
+          {shortenAddress(address)}
         </Typography>
         <ArrowForward color="primary" fontSize="small" />
-      </Button>
+      </StyledDisconnectWalletButton>
     );
   }
 
   return (
     <>
-      <Button
+      <StyledConnectWalletButton
         className={"gradient-button connect-wallet-button"}
         onClick={handleOpenModal}
       >
         <div className="button-angled-clip">
           <Typography className={"gradient-text"}>{getButtonText()}</Typography>
         </div>
-      </Button>
+      </StyledConnectWalletButton>
       <WalletConnectorModal open={isModalOpen} onClose={handleCloseModal} />
     </>
   );
