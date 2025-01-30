@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Typography } from "@material-ui/core";
 import { useWallet } from "../Hooks/useWallet";
 import { useSnackbar } from "notistack";
 import { useNetwork } from "../Hooks/useNetwork";
-import { ArrowForward } from '@material-ui/icons'; 
+import { ArrowForward } from "@material-ui/icons";
 import WalletConnectorModal from "./walletConnectorModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { ethers } from "ethers";
 
 const ConnectWalletButton: React.FC<{}> = () => {
   const { disconnect } = useWallet();
-  const { isConnected, address, loading, error: walletError } = useSelector((state: RootState) => state.wallet);
-  const { isConnected: isNetworkConnected, setWeb3Provider} = useNetwork();
+  const {
+    isConnected,
+    address,
+    loading,
+    error: walletError,
+  } = useSelector((state: RootState) => state.wallet);
+  const { isConnected: isNetworkConnected } = useNetwork();
   const { enqueueSnackbar } = useSnackbar();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,8 +29,8 @@ const ConnectWalletButton: React.FC<{}> = () => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  if(walletError) {
-    enqueueSnackbar(walletError, { variant: "error" }); 
+  if (walletError) {
+    enqueueSnackbar(walletError, { variant: "error" });
   }
 
   const getButtonText = () => {
@@ -42,29 +46,18 @@ const ConnectWalletButton: React.FC<{}> = () => {
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    const updateProviders = async () => {
-      if (isNetworkConnected && window.ethereum) {
-        const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-        setWeb3Provider(web3Provider);
-      }
-    };
 
-    updateProviders();
-  }, [isNetworkConnected, setWeb3Provider]);
-
-
-  if(isConnected && address && isNetworkConnected) {   
+  if (isConnected && address && isNetworkConnected) {
     return (
       <Button
         className="disconnect-wallet-button"
         variant="text"
         onClick={disconnect}
       >
-          <Typography className={"gradient-text disconnect-wallet-button__text"}>
-              Wallet Address: {shortenAddress(address)}
-          </Typography>
-          <ArrowForward color="primary" fontSize="small"/>
+        <Typography className={"gradient-text disconnect-wallet-button__text"}>
+          Wallet Address: {shortenAddress(address)}
+        </Typography>
+        <ArrowForward color="primary" fontSize="small" />
       </Button>
     );
   }
@@ -72,19 +65,15 @@ const ConnectWalletButton: React.FC<{}> = () => {
   return (
     <>
       <Button
-      className={"gradient-button connect-wallet-button"}
-      onClick={handleOpenModal}
-    >
-      <div className="button-angled-clip">
-        <Typography className={"gradient-text"}>
-          {getButtonText()}
-        </Typography>
-      </div>
-
-    </Button>
-    <WalletConnectorModal open={isModalOpen} onClose={handleCloseModal} />
+        className={"gradient-button connect-wallet-button"}
+        onClick={handleOpenModal}
+      >
+        <div className="button-angled-clip">
+          <Typography className={"gradient-text"}>{getButtonText()}</Typography>
+        </div>
+      </Button>
+      <WalletConnectorModal open={isModalOpen} onClose={handleCloseModal} />
     </>
-    
   );
 };
 

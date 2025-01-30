@@ -58,10 +58,8 @@ export const useNetwork = () => {
             });
             dispatch(connectNetworkSuccess(currentChainId));
           }
-          //setWeb3Provider(new ethers.providers.Web3Provider(window.ethereum));
         } else {
           dispatch(connectNetworkSuccess(currentChainId));
-          //setWeb3Provider(new ethers.providers.Web3Provider(window.ethereum));
         }
       } else {
         throw new Error("Please install MetaMask");

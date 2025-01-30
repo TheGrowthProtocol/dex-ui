@@ -26,19 +26,16 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
             const amount1 = type === "swap" ? swapAmount1 : Number(liquidityAmount1);
             const amount2 = type === "swap" ? swapAmount2 : Number(liquidityAmount2);
             
-            //if (isConnected) {
                 dispatch(fetchPoolTokenomics({
                     pool: selectedPool, 
                     swapAmount1: amount1, 
                     swapAmount2: amount2
                 }));
-            //}
         } else {
             dispatch(resetPoolTokenomics());
         }
     }, [
         dispatch, 
-        //isConnected, 
         type, 
         selectedPool, 
         swapAmount1, 

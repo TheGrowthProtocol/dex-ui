@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Input, Button } from "@material-ui/core";
-import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { TokenInputFieldProps } from "../interfaces";
 import { ethers, Contract } from "ethers";
 

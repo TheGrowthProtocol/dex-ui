@@ -95,7 +95,8 @@ const Coinfield: React.FC<COINFIELD> = ({
             {token.icon && <CoinIcon icon={token.icon} />}
             <Typography>Switching to {token.symbol}</Typography>
           </Box>,
-          { variant: "info" }
+          { variant: "default",
+           }
         );
       }
       setSelectedToken(token);
