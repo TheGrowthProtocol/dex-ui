@@ -18,6 +18,22 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import CloseIcon from "@material-ui/icons/Close";
 import CoinIcon from "./coinIcon";
+import {styled} from "@material-ui/core/styles";
+
+const StyledCoinDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+    borderRadius: "12px",
+    padding: "1px",
+  }
+}));
+
+const StyledCoinDialogContainer = styled(Box)(({ theme }) => ({
+  background: "radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%)",
+  borderRadius: "12px",
+  padding: "24px",
+}));
+
 
 const Coindialog: React.FC<COINDIALOG> = ({
   tokens,
@@ -28,13 +44,14 @@ const Coindialog: React.FC<COINDIALOG> = ({
   const [tokenAddress, setTokenAddress] = useState<string>("");
 
   return (
-    <Dialog
+    <StyledCoinDialog
       open={isOpen}
       onClose={handleClose}
       maxWidth="sm"
       fullWidth={true}
       className="coin-dialog"
     >
+      <StyledCoinDialogContainer>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <DialogTitle id="alert-dialog-title" className="coin-dialog__title">
           {"Select a token"}
@@ -90,7 +107,8 @@ const Coindialog: React.FC<COINDIALOG> = ({
             </ListItem>
           ))}
       </List>
-    </Dialog>
+      </StyledCoinDialogContainer>
+    </StyledCoinDialog>
   );
 };
 

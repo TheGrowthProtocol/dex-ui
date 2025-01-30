@@ -5,59 +5,27 @@ import {
   Box, 
   Typography, 
   IconButton,
-  Grid
+  Grid,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, styled } from '@material-ui/core/styles';
 
 // Import wallet icons
 import metamaskIcon from '../assets/wallet/MetaMask.svg';
 import { useWallet } from '../Hooks/useWallet';
 
 const useStyles = makeStyles((theme) => ({
-  dialog: {
-    '& .MuiDialog-paper': {
-      backgroundColor: '#1A1A1A',
-      borderRadius: '24px',
-      maxWidth: '480px',
-      width: '100%'
-    }
-  },
-  title: {
-    padding: theme.spacing(2),
-    color: '#FFFFFF'
-  },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: '#FFFFFF'
-  },
-  walletOption: {
-    padding: theme.spacing(2),
-    margin: theme.spacing(1),
-    backgroundColor: '#2C2C2C',
-    borderRadius: '16px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      backgroundColor: '#3C3C3C',
-      transform: 'translateY(-2px)'
-    }
+    color: theme.palette.text.primary
   },
   walletIcon: {
     width: '32px',
     height: '32px',
     marginRight: theme.spacing(2)
   },
-  walletName: {
-    color: '#FFFFFF',
-    fontWeight: 500
-  },
-  walletDescription: {
-    color: '#9E9E9E',
-    fontSize: '0.875rem'
-  }
 }));
 
 interface WalletOption {
@@ -71,6 +39,63 @@ interface WalletConnectorModalProps {
   open: boolean;
   onClose: () => void;
 }
+
+const StyledWalletConnectorModal = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+    borderRadius: "12px",
+    padding: "1px",
+    width: "384px",
+  }
+}));
+
+const StyledWalletConnectorModalContainer = styled(Box)(({ theme }) => ({
+  background: "radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%)",
+  borderRadius: "12px",
+}));
+
+const StyledWalletConnectorModalTitle = styled(DialogTitle)(({ theme }) => ({
+  fontSize: '20px',
+  fontWeight: 'bold',
+  background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+  backgroundClip: "text",
+  color: "transparent",
+}));
+
+const StyledWalletOption = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+  margin: theme.spacing(1),
+  backgroundColor: theme.palette.background.paper,
+  borderRadius: '16px',
+  cursor: 'pointer',
+}));
+
+const StyledWalletName = styled(Typography)(({ theme }) => ({
+    background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+    backgroundClip: "text",
+    color: "transparent",
+    fontWeight: 500
+}));
+
+const StyledWalletDescription = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontSize: '0.875rem'
+}));
+
+const StyledWalletConnectorModalContent = styled(Box)(({ theme }) => ({
+  padding: "8px 16px",
+}));
+
+const StyledWalletConnectorModalFooter = styled(Box)(({ theme }) => ({
+  padding: "8px 16px",
+  color: theme.palette.text.secondary,
+  fontSize: "12px",
+}));
+
+
+
+
+
 
 const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClose }) => {
   const classes = useStyles();
@@ -98,25 +123,25 @@ const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClo
   };
 
   return (
-    <Dialog 
+    <StyledWalletConnectorModal 
       open={open} 
       onClose={onClose}
-      className={classes.dialog}
       fullWidth
     >
-      <DialogTitle className={classes.title}>
-        Connect Wallet
-        <IconButton className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+    
+      <StyledWalletConnectorModalContainer>
+        <StyledWalletConnectorModalTitle>
+            Connect a wallet
+            <IconButton className={classes.closeButton} onClick={onClose}>
+            <CloseIcon color='primary'/>
+            </IconButton>
+        </StyledWalletConnectorModalTitle>
       
-      <Box p={2}>
+      <StyledWalletConnectorModalContent>
         <Grid container direction="column" spacing={2}>
           {walletOptions.map((wallet) => (
             <Grid item key={wallet.name}>
-              <Box 
-                className={classes.walletOption}
+              <StyledWalletOption
                 onClick={() => handleWalletClick(wallet)}
                 display="flex"
                 alignItems="center"
@@ -127,19 +152,23 @@ const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClo
                   className={classes.walletIcon}
                 />
                 <Box>
-                  <Typography className={classes.walletName}>
+                  <StyledWalletName>
                     {wallet.name}
-                  </Typography>
-                  <Typography className={classes.walletDescription}>
+                  </StyledWalletName>
+                  <StyledWalletDescription>
                     {wallet.description}
-                  </Typography>
+                  </StyledWalletDescription>
                 </Box>
-              </Box>
+              </StyledWalletOption>
             </Grid>
           ))}
-        </Grid>
-      </Box>
-    </Dialog>
+          </Grid>
+          <StyledWalletConnectorModalFooter>
+          By connecting a wallet, you agree to TheGrowthProtocol Terms of Service and consent to its Privacy Policy.
+          </StyledWalletConnectorModalFooter>
+        </StyledWalletConnectorModalContent>
+      </StyledWalletConnectorModalContainer>
+    </StyledWalletConnectorModal>
   );
 };
 

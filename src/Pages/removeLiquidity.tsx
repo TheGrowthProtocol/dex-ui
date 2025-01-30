@@ -29,9 +29,11 @@ import {
 import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
 import { useNetwork } from "../Hooks/useNetwork";
 import { ethers } from "ethers";
+import { useSnackbar } from "notistack";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const { isConnected: isNetworkConnected } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -91,16 +93,17 @@ const RemoveLiquidity: React.FC<{}> = () => {
     setSelectedPoolId(poolId); // Update local state
   };
 
-  const handleRemoveLiquidityPool = () => {
+  const handleRemoveLiquidityPool = async () => {
     if (window.ethereum) {
       const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      dispatch(removeLpToken({ provider: web3Provider }));
+      try {
+        await dispatch(removeLpToken({ provider: web3Provider })).unwrap();
+        enqueueSnackbar("Liquidity removed successfully", { variant: "success" });
+    } catch (error) {
+        enqueueSnackbar("Error removing liquidity", { variant: "error" });
+      }
     }
   };
-
-  console.log(removeLpToken0Share, removeLpToken1Share);
-  console.log(selectedPool);
-  console.log(selectedPoolId);
 
   return (
     <Grid container>

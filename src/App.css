@@ -157,12 +157,6 @@ body {
   text-decoration: none !important;
 }
 
-.tab-header.Mui-selected {
-  color: var(--primary-color) !important;
-  line-height: 24px !important;
-  font-size: 20px !important;
-}
-
 .tabpanel-container {
   margin-top: 12px;
   background: linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%);
@@ -457,12 +451,6 @@ body {
 }
 /* Coin Dialog */
 
-.coin-dialog .MuiDialog-paper  {
-  background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%);
-  border-radius: var(--border-radius);
-  padding: 24px !important;
-}
-
 .coin-dialog__title {
   color: var(--primary-color) !important;
   padding: 0 !important;
@@ -511,26 +499,6 @@ body {
 
 .coin-dialog__list-item-icon {
   min-width: 32px !important;
-}
-
-.coin-noicon-placeholder {
-  width: 24px;
-  height: 24px;
-  background: #1A1A1A;
-  border-radius: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.coin-icon-placeholder {
-  width: 24px;
-  height: 24px;
-  background: #1A1A1A;
-  border-radius: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .coin-icon {

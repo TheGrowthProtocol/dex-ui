@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Box, Tab, Tabs, CircularProgress } from "@material-ui/core";
+import { Grid, Box, Tab, Tabs, CircularProgress, styled } from "@material-ui/core";
 
 import Swap from "./swap";
 import Liquidity from "./liquidity";
@@ -15,13 +15,27 @@ import { fetchTokens } from '../store/tokens/tokenThunks';
 import RemoveLiquidity from "./removeLiquidity";
 import { fetchPools } from "../store/pool/poolThunks";
 import { useNetwork } from "../Hooks/useNetwork";
-import { ethers } from "ethers";
+
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
+
+const StyledTabHeader = styled(Tab)(({ theme }) => ({
+  textTransform: "none",
+  fontWeight: "bold",
+  background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+  backgroundClip: "text",
+  color: "transparent !important",
+  fontSize: "16px !important",
+  textAlign: "center",
+
+  "&.Mui-selected": {
+    fontSize: "20px !important",
+  }
+}));
 
 const CustomTabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
@@ -49,7 +63,7 @@ function a11yProps(index: number) {
 const Main = () => {
   const [value, setValue] = useState(0);
   const dispatch = useDispatch<AppDispatch>();
-  const { rpcProvider, isConnected: isNetworkConnected, setWeb3Provider } = useNetwork();
+  const { rpcProvider } = useNetwork();
   const { tokens, loading, error } = useSelector((state: RootState) => state.tokens);
 
   // @description fetch tokens
@@ -84,15 +98,15 @@ const Main = () => {
               variant="fullWidth"
               textColor="primary"
             >
-              <Tab label="Swap Tokens" {...a11yProps(0)} className="tab-header" />
-              <Tab
+              <StyledTabHeader label="Swap Tokens" {...a11yProps(0)} className="tab-header" />
+              <StyledTabHeader
                 label="Add Liquidity"
                 {...a11yProps(1)}
                 className="tab-header"
               />
-              <Tab label="Liquidity Pools" {...a11yProps(2)} className="tab-header" />
-              <Tab label="Remove Liquidity" {...a11yProps(3)} className="tab-header" />
-              <Tab label="Staking" {...a11yProps(4)} className="tab-header" />
+              <StyledTabHeader label="Liquidity Pools" {...a11yProps(2)} className="tab-header" />
+              <StyledTabHeader label="Remove Liquidity" {...a11yProps(3)} className="tab-header" />
+              <StyledTabHeader label="Staking" {...a11yProps(4)} className="tab-header" />
             </Tabs>
           </Box>
           <CustomTabPanel value={value} index={0}>
