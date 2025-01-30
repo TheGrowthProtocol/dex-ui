@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Input, Button } from "@material-ui/core";
+import { Box, Typography, Input, Button, styled } from "@material-ui/core";
 import { TokenInputFieldProps } from "../interfaces";
 import { ethers, Contract } from "ethers";
 
@@ -8,6 +8,23 @@ import CoinNoIcon from "./coinNoIcon";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import CoinIcon from "./coinIcon";
+
+const StyledTokenInputFieldBalanceContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "flex-end",
+}));
+
+const StyledTokenInputFieldBalance = styled(Typography)(({ theme }) => ({
+  textAlign: "right",
+  color: theme.palette.secondary.main,
+}));
+
+const StyledTokenInputFieldTokenSymbol = styled(Typography)(({ theme }) => ({
+  color: theme.palette.secondary.main,
+  marginLeft: "4px",
+}));
 
 const TokenInputField: React.FC<TokenInputFieldProps> = ({
   tokens,
@@ -121,18 +138,16 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
           </Box>
         )}
         {isDisplayBalance && (
-          <Box
-            sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}
-            className="token-input-field-balance-container"
-          >
-            <Typography
+          <StyledTokenInputFieldBalanceContainer>
+            <StyledTokenInputFieldBalance
               variant="subtitle1"
-              className="token-input-field-balance"
-              color="textSecondary"
             >
-              {balance} {selectedToken.symbol}
-            </Typography>
-          </Box>
+              {balance}
+            </StyledTokenInputFieldBalance>
+            <StyledTokenInputFieldTokenSymbol>
+              {selectedToken.symbol}
+            </StyledTokenInputFieldTokenSymbol>
+          </StyledTokenInputFieldBalanceContainer>
         )}
       </Box>
     </Box>
