@@ -394,9 +394,6 @@ export const fetchShareBalances = createAsyncThunk(
   "pools/fetchShareBalances",
   async (params: { pool: POOL; lpBalance: number , provider: ethers.providers.Web3Provider}, { getState, dispatch }) => {
     try {
-      if (!window.ethereum) {
-        throw new Error("Please install MetaMask or another Ethereum wallet.");
-      }
       const pairContract = new ethers.Contract(
         params.pool.pairAddress,
         PAIR_ABI.abi,
