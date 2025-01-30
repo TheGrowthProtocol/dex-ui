@@ -75,7 +75,17 @@ interface LiquidityParams {
 const executeLiquidityTransaction = async (routerContract: Contract, params: LiquidityParams) => {
     const wethAddress = await routerContract.WCERES();
     
+    
     if (params.token1Address === wethAddress) {
+      /*let gasLimit = await routerContract.estimateGas.addLiquidityCERES(
+        params.token2Address,
+        params.amountIn2,
+        params.amount2Min,
+        params.amount1Min,
+        params.account,
+        params.deadline,
+        { value: params.amountIn1 },
+    );*/
       // ETH + Token
       await routerContract.addLiquidityCERES(
         params.token2Address,
@@ -84,9 +94,19 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.amount1Min,
         params.account,
         params.deadline,
-        { value: params.amountIn1 }
+        { value: params.amountIn1 },
+        { gasLimit: 5000000 }
       );
     } else if (params.token2Address === wethAddress) {
+      /*let gasLimit = await routerContract.estimateGas.addLiquidityCERES(
+        params.token1Address,
+        params.amountIn1,
+        params.amount1Min,
+        params.amount2Min,
+        params.account,
+        params.deadline,
+        { value: params.amountIn2 }
+      );*/
       // Token + ETH
       await routerContract.addLiquidityCERES(
         params.token1Address,
@@ -95,11 +115,12 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.amount2Min,
         params.account,
         params.deadline,
-        { value: params.amountIn2 }
+        { value: params.amountIn2 },
+        { gasLimit: 5000000 }
       );
     } else {
       // Token + Token
-      await routerContract.addLiquidity(
+      /*let gasLimit = await routerContract.estimateGas.addLiquidity(
         params.token1Address,
         params.token2Address,
         params.amountIn1,
@@ -108,6 +129,17 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.amount2Min,
         params.account,
         params.deadline
+      );*/
+      await routerContract.addLiquidity(
+        params.token1Address,
+        params.token2Address,
+        params.amountIn1,
+        params.amountIn2,
+        params.amount1Min,
+        params.amount2Min,
+        params.account,
+        params.deadline,
+        { gasLimit: 5000000 }
       );
     }
   };

@@ -493,7 +493,7 @@ export const removeLpToken = createAsyncThunk(
             token0ShareAmount,
             account,
             deadline,
-            { gasLimit: 500000 }
+            { gasLimit: 5000000 }
           );
         } else if (selectedPool.token1.address === wethAddress) {
           await routerContract.removeLiquidityCERES(
@@ -503,7 +503,7 @@ export const removeLpToken = createAsyncThunk(
             token1ShareAmount,
             account,
             deadline,
-            { gasLimit: 500000 }
+            { gasLimit: 5000000 }
           );
         } else {
           await routerContract.removeLiquidity(
@@ -514,7 +514,7 @@ export const removeLpToken = createAsyncThunk(
             token1ShareAmount,
             account,
             deadline,
-            { gasLimit: 500000 }
+            { gasLimit: 5000000 }
           );
         }
       } catch (error) {
