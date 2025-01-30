@@ -13,16 +13,18 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CustomizedMenus from "../Components/styledMenu";
 import { ethers } from "ethers";
 import MASTER_CHEF_ABI from "../build/MasterChef.json";
-import POOL_FACTORY_ABI from "../build/IUniswapV2Factory.json";
 import PAIR_ABI from "../build/IUniswapV2Pair.json";
-import { formatEther } from "ethers/lib/utils";
 import AddStakeDialog from "../Components/addStackDialog";
 import RemoveStakeDialog from "../Components/removeStackDialog";
 import CoinPairIcons from "../Components/coinPairIcons";
 import { env } from "../env";
+import { fetchPools } from "../store/pool/poolThunks";
+import { useDispatch, useSelector } from "react-redux";
+import { useNetwork } from "../Hooks/useNetwork";
+import { AppDispatch, RootState } from "../store/store";
+import { useWallet } from "../Hooks/useWallet";
 
 const MASTER_CHEF_ADDRESS = env.contracts.masterChef;
-const POOL_FACTORY_ADDRESS = env.contracts.poolFactory;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,9 +55,13 @@ interface Pool {
 }
 
 const Staking: React.FC<{}> = () => {
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
   const classes = useStyles();
-  const [allPools, setAllPools] = useState<Pool[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const {rpcProvider} = useNetwork();
+  const {pools, loading} = useSelector((state: RootState) => state.pool);
+  const { isConnected: isWalletConnected } = useWallet();
+  //const [allPools, setAllPools] = useState<Pool[]>([]);
   const [openAddStakeDialog, setOpenAddStakeDialog] = useState(false);
   const [openRemoveStakeDialog, setOpenRemoveStakeDialog] = useState(false);
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
@@ -63,90 +69,9 @@ const Staking: React.FC<{}> = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   
   useEffect(() => {
-    fetchPools();
-    setLoading(false);
-  }, []);
+    dispatch(fetchPools(rpcProvider));
+  }, [dispatch, rpcProvider]); 
 
-  const fetchPools = async () => {
-    try {
-      if (!window.ethereum) {
-        throw new Error("Metamask not installed");
-      }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const poolFactory = new ethers.Contract(
-        POOL_FACTORY_ADDRESS,
-        POOL_FACTORY_ABI.abi,
-        provider
-      );
-      const poolCount = await poolFactory.allPairsLength();
-      const poolsData = await Promise.all(
-        Array.from({ length: Number(poolCount) }, async (_, i) => {
-          // Get pair address
-          const pairAddress = await poolFactory.allPairs(i);
-          const pairContract = new ethers.Contract(
-            pairAddress,
-            PAIR_ABI.abi,
-            provider
-          );
-
-          // Get tokens
-          const token0Address = await pairContract.token0();
-          const token1Address = await pairContract.token1();
-          const [token0Symbol, token1Symbol] = await Promise.all([
-            getTokenSymbol(token0Address, provider),
-            getTokenSymbol(token1Address, provider),
-          ]);
-
-          // Get reserves
-          const reserves = await pairContract.getReserves();
-          const [reserve0, reserve1] = [reserves[0], reserves[1]];
-
-          // Get token prices
-          const [price0, price1] = await Promise.all([
-            getTokenPrice(token0Symbol),
-            getTokenPrice(token1Symbol),
-          ]);
-
-          // Get volume (Note: You'll need to implement your own volume tracking as
-          // Uniswap V2 doesn't track volume directly)
-          const volume = await getVolume24h(pairAddress, provider);
-
-          // Calculate TVL
-          const tvl =
-            parseFloat(formatEther(reserve0)) * price0 +
-            parseFloat(formatEther(reserve1)) * price1;
-
-          // Calculate APR
-          const apr = calculateAPR(formatEther(volume), tvl.toString());
-
-          // Calculate liquidity (using both reserves)
-          const liquidity = ethers.BigNumber.from(
-            Math.floor(
-              Math.sqrt(
-                parseFloat(formatEther(reserve0)) *
-                  parseFloat(formatEther(reserve1))
-              )
-            ).toString()
-          );
-
-          return {
-            id: pairAddress,
-            token0Address,
-            token1Address,
-            token0Symbol,
-            token1Symbol,
-            liquidity: formatEther(liquidity),
-            volume24h: formatEther(volume),
-            tvl: tvl.toString(),
-            apr: apr.toString(),
-          };
-        })
-      );
-      setAllPools(poolsData);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleTransact = async (value: string, poolId: string) => {
     try {
@@ -258,7 +183,7 @@ const Staking: React.FC<{}> = () => {
       <Box className="tabpanel-content">
         {isMobile && (
           <Box>
-          {allPools.map((pool) => (
+          {pools.map((pool) => (
             <Card key={pool.id} className="pool-card">
               <CardContent className="pool-card__content">
                 {/* Pool Pair */}
@@ -275,14 +200,14 @@ const Staking: React.FC<{}> = () => {
                     className="pool-card__pair"
                   >
                     <Box className="pool-card__icons">
-                      <CoinPairIcons />
+                      <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                     </Box>
                     <Typography variant="h6" className="pool-card__symbols gradient-text">
-                      {pool.token0Symbol}/{pool.token1Symbol}
+                      {pool.token0.symbol}/{pool.token1.symbol}
                     </Typography>
                   </Box>
                   <Box className="pool-card__menu">
-                    <CustomizedMenus menuItems={[
+                    {isWalletConnected && <CustomizedMenus menuItems={[
                         {
                           label: "Remove Stake",
                           onClick: () => {
@@ -303,7 +228,7 @@ const Staking: React.FC<{}> = () => {
                             handlePendingRewards(pool.id);
                           },
                         },
-                      ]} />
+                      ]} />}
                   </Box>
                 </Box>
 
@@ -353,7 +278,7 @@ const Staking: React.FC<{}> = () => {
           </Box>
 
           <Box className='pools-table__body'>
-            {allPools.map((pool) => (
+            {pools.map((pool) => (
               <Box key={pool.id} className='pools-table__row' sx={{ 
                 display: 'flex', 
                 justifyContent: 'space-between',
@@ -362,9 +287,9 @@ const Staking: React.FC<{}> = () => {
               }}>
                 <Box className='pools-table__cell' sx={{ flex: '2' }}>
                   <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
-                    <CoinPairIcons />
+                    <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
                     <Typography variant="body1" className="gradient-text pools-table__symbols">
-                      {pool.token0Symbol}/{pool.token1Symbol}
+                      {pool.token0.symbol}/{pool.token1.symbol}
                     </Typography>
                   </Box>
                 </Box>
@@ -372,7 +297,7 @@ const Staking: React.FC<{}> = () => {
                 <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.tvl}</Box>
                 <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.volume24h}</Box>
                 <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                  <CustomizedMenus menuItems={[
+                  {isWalletConnected && <CustomizedMenus menuItems={[
                         {
                           label: "Remove Stake",
                           onClick: () => {
@@ -393,7 +318,7 @@ const Staking: React.FC<{}> = () => {
                             handlePendingRewards(pool.id);
                           },
                         },
-                      ]} />
+                      ]} />}
                 </Box>
               </Box>
             ))}

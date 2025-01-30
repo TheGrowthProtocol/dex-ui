@@ -76,7 +76,7 @@ interface PoolsListProps {
 
 const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
   const dispatch = useDispatch<AppDispatch>();  
-  const {rpcProvider,web3Provider, setWeb3Provider, isConnected: isNetworkConnected} = useNetwork();
+  const {rpcProvider, isConnected: isNetworkConnected} = useNetwork();
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -104,7 +104,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
       dispatch(fetchMyPools(web3Provider));
     }
     dispatch(fetchPools(rpcProvider));
-  }, [isWalletConnected, dispatch, web3Provider, setWeb3Provider, isNetworkConnected]); 
+  }, [isWalletConnected, dispatch, isNetworkConnected]); 
 
   if (loading) {
     return (
