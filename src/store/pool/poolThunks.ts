@@ -486,6 +486,15 @@ export const removeLpToken = createAsyncThunk(
         await pairContract.approve(routerContract.address, liquidity);
 
         if (selectedPool.token0.address === wethAddress) {
+          /*let gasLimit = await routerContract.estimateGas.removeLiquidityCERES(
+            selectedPool.token1.address,
+            liquidity,
+            token1ShareAmount,
+            token0ShareAmount,
+            account,
+            deadline
+          );
+          console.log(gasLimit);*/
           await routerContract.removeLiquidityCERES(
             selectedPool.token1.address,
             liquidity,
@@ -493,9 +502,18 @@ export const removeLpToken = createAsyncThunk(
             token0ShareAmount,
             account,
             deadline,
-            { gasLimit: 5000000 }
+            //{ gasLimit: gasLimit }
           );
         } else if (selectedPool.token1.address === wethAddress) {
+          /*let gasLimit = await routerContract.estimateGas.removeLiquidityCERES(
+            selectedPool.token0.address,
+            liquidity,
+            token0ShareAmount,
+            token1ShareAmount,
+            account,
+            deadline
+          );
+          console.log(gasLimit);*/
           await routerContract.removeLiquidityCERES(
             selectedPool.token0.address,
             liquidity,
@@ -503,9 +521,19 @@ export const removeLpToken = createAsyncThunk(
             token1ShareAmount,
             account,
             deadline,
-            { gasLimit: 5000000 }
+            //{ gasLimit: gasLimit }
           );
         } else {
+          /*let gasLimit = await routerContract.estimateGas.removeLiquidity(
+            selectedPool.token0.address,
+            selectedPool.token1.address,
+            liquidity,
+            token0ShareAmount,
+            token1ShareAmount,
+            account,
+            deadline
+          );
+          console.log(gasLimit);*/
           await routerContract.removeLiquidity(
             selectedPool.token0.address,
             selectedPool.token1.address,
@@ -514,7 +542,7 @@ export const removeLpToken = createAsyncThunk(
             token1ShareAmount,
             account,
             deadline,
-            { gasLimit: 5000000 }
+            //{ gasLimit: gasLimit }
           );
         }
       } catch (error) {

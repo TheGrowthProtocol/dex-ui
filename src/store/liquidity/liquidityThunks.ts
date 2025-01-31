@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers, Contract } from 'ethers';
 import { setLoading, setError } from './liquiditySlice';
 import { RootState } from '../store';
-import UniswapV2Router02 from '../../build/UniswapV2Router02.json';
+import IUniswapV2Router02 from '../../build/IUniswapV2Router02.json';
 import * as chains from '../../constants/chains';
 import { TOKEN } from '../../interfaces';
 import ERC20 from '../../build/ERC20.json';
@@ -47,7 +47,7 @@ export const addLiquidity = createAsyncThunk(
 const setupContracts = async (signer: ethers.Signer) => {
   const network = await signer.provider!.getNetwork();
   const routerAddress = chains.routerAddress.get(network.chainId);
-  const routerContract = new Contract(routerAddress, UniswapV2Router02.abi, signer);
+  const routerContract = new Contract(routerAddress, IUniswapV2Router02.abi, signer);
   const account = await signer.getAddress();
   
   return { routerContract, account };
@@ -95,7 +95,7 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.account,
         params.deadline,
         { value: params.amountIn1 },
-        { gasLimit: 5000000 }
+        //{ gasLimit: 5000000 }
       );
     } else if (params.token2Address === wethAddress) {
       /*let gasLimit = await routerContract.estimateGas.addLiquidityCERES(
@@ -116,7 +116,7 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.account,
         params.deadline,
         { value: params.amountIn2 },
-        { gasLimit: 5000000 }
+        //{ gasLimit: 5000000 }
       );
     } else {
       // Token + Token
@@ -129,7 +129,9 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.amount2Min,
         params.account,
         params.deadline
-      );*/
+      );
+
+      console.log(gasLimit);*/
       await routerContract.addLiquidity(
         params.token1Address,
         params.token2Address,
@@ -139,7 +141,7 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
         params.amount2Min,
         params.account,
         params.deadline,
-        { gasLimit: 5000000 }
+        //{ gasLimit: gasLimit }
       );
     }
   };
