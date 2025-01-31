@@ -99,24 +99,17 @@ const Main = () => {
               textColor="primary"
             >
               <StyledTabHeader label="Swap Tokens" {...a11yProps(0)} className="tab-header" />
-              <StyledTabHeader
-                label="Add Liquidity"
-                {...a11yProps(1)}
-                className="tab-header"
-              />
-              <StyledTabHeader label="Liquidity Pools" {...a11yProps(2)} className="tab-header" />
-              <StyledTabHeader label="Remove Liquidity" {...a11yProps(3)} className="tab-header" />
-              <StyledTabHeader label="Staking" {...a11yProps(4)} className="tab-header" />
+              <StyledTabHeader label="Liquidity Pools" {...a11yProps(1)} className="tab-header" />
             </Tabs>
           </Box>
           <CustomTabPanel value={value} index={0}>
             <Swap />
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
+          <CustomTabPanel value={value} index={2}>
             <Liquidity />
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={2}>
-            <PoolsList handleTabChange={handleTabChange} />
+          <CustomTabPanel value={value} index={1}>
+            <PoolsList  />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
             <RemoveLiquidity />

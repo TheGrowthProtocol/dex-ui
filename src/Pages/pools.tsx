@@ -71,10 +71,10 @@ const a11yProps = (index: number) => {
 
 
 interface PoolsListProps {
-  handleTabChange: (newValue: number) => void;
+  
 }
 
-const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
+const PoolsList: React.FC<PoolsListProps> = () => {
   const dispatch = useDispatch<AppDispatch>();  
   const {rpcProvider, isConnected: isNetworkConnected} = useNetwork();
   const classes = useStyles();
@@ -86,17 +86,25 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
 
 
   const myPoolsMenuItems: MenuItemProps[] = [
-    { label: "Remove Liquidity", onClick: () => handleTabChange(3) },
-    { label: "Add Liquidity", onClick: () => handleTabChange(1)},
+    { label: "Remove Liquidity", onClick: () => handleRemoveLiquidity() },
+    { label: "Add Liquidity", onClick: () => handleAddLiquidity()},
   ];
 
   const allPoolsMenuItems: MenuItemProps[] = [
-    { label: "Add Liquidity", onClick: () => handleTabChange(1)},
+    { label: "Add Liquidity", onClick: () => handleAddLiquidity()},
   ];
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  const handleAddLiquidity = () => {
+    console.log("Add Liquidity");
+  }
+
+  const handleRemoveLiquidity = () => {
+    console.log("Remove Liquidity");
+  }
 
   useEffect(() => {
     if(isNetworkConnected && window.ethereum) {
@@ -126,7 +134,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         <CustomTabPanel value={value} index={0}>
           {isMobile && (
             pools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
+              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
             ) : (
             <Box>
               {pools.map((pool) => (
@@ -196,7 +204,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
           )}
           {!isMobile && (
             pools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
+              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
             ) : (
               <TableContainer className='pools-table'>
                 <Box className='pools-table__container'>
@@ -248,7 +256,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         {isMobile && isWalletConnected && (
           <Box>
             {myPools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
+              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
             ) : (
               <Box>
                 {myPools.map((pool) => (
@@ -315,7 +323,7 @@ const PoolsList: React.FC<PoolsListProps> = ({handleTabChange}) => {
         )}
         {!isMobile && isWalletConnected && (
           myPools.length === 0 ? (
-            <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => handleTabChange(1)} />
+            <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
           ) : (
             <TableContainer className='pools-table'>
             <Box className='pools-table__container'>
