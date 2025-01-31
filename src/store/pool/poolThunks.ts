@@ -193,11 +193,10 @@ export const fetchMyPools = createAsyncThunk(
         provider
       );
       const account = state.wallet.address;
-
+      let pairs = [];
       // Get all pools
       const poolCount = await factory.allPairsLength();
-      const poolsData = await Promise.all(
-        Array.from({ length: Number(poolCount) }, async (_, i) => {
+      for (let i = 0; i < poolCount; i++) {
           // Get pair address
           const pairID = i.toString();
           const pairAddress = await factory.allPairs(i);
@@ -207,6 +206,9 @@ export const fetchMyPools = createAsyncThunk(
             provider
           );
 
+          // Get user balance
+          const userLPBalance = await pairContract.balanceOf(account);
+          if (userLPBalance > 0) {
           // Get tokens
           const token0Address = await pairContract.token0();
           const token1Address = await pairContract.token1();
@@ -291,9 +293,6 @@ export const fetchMyPools = createAsyncThunk(
             Number(token1Reserve) * price1
           ).toFixed(2);
 
-          // Get user balance
-          const userLPBalance = await pairContract.balanceOf(account);
-
           // Calculate user's share percentage
           const userSharePercent = userLPBalance
             .mul(ethers.constants.WeiPerEther)
@@ -343,11 +342,12 @@ export const fetchMyPools = createAsyncThunk(
             liquidity: Number(formatEther(liquidity)).toFixed(2),
             lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
             tvl: Number(tvl).toFixed(2),
-          };
-          return pool;
-        })
-      );
-      dispatch(setMyPools(poolsData));
+            };
+            pairs.push(pool);
+          }
+        }
+
+      dispatch(setMyPools(pairs));
       dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(error.message));
