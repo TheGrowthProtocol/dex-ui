@@ -29,11 +29,11 @@ import {
 import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
 import { useNetwork } from "../Hooks/useNetwork";
 import { ethers } from "ethers";
-import { useSnackbar } from "notistack";
+import { useSnackbarContext } from "../Contexts/snackbarContext";
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbarContext();
   const theme = useTheme();
   const { isConnected: isNetworkConnected } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -42,7 +42,6 @@ const RemoveLiquidity: React.FC<{}> = () => {
     selectedPool,
     removeLpToken0Share,
     removeLpToken1Share,
-    error,
     removeLpTokenBalance,
   } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
@@ -98,9 +97,9 @@ const RemoveLiquidity: React.FC<{}> = () => {
       const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
       try {
         await dispatch(removeLpToken({ provider: web3Provider })).unwrap();
-        enqueueSnackbar("Liquidity removed successfully", { variant: "success" });
-    } catch (error) {
-        enqueueSnackbar("Error removing liquidity", { variant: "error" });
+        showSnackbar("Liquidity removed successfully", "success");
+      } catch (error) {
+        showSnackbar("Error removing liquidity", "error");
       }
     }
   };
@@ -219,7 +218,6 @@ const RemoveLiquidity: React.FC<{}> = () => {
                       Select Amount of Token Pair
                     </Typography>
                   </Box>
-                  {/* TODO: percentage block */}
                   <Box
                     display="flex"
                     flexDirection="column"

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { Button, styled, Typography, useTheme } from "@material-ui/core";
 import { useWallet } from "../Hooks/useWallet";
-import { useSnackbar } from "notistack";
 import { useNetwork } from "../Hooks/useNetwork";
 import { ArrowForward } from "@material-ui/icons";
 import WalletConnectorModal from "./walletConnectorModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-
+import { useSnackbarContext } from "../Contexts/snackbarContext";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 
 const StyledAccountBalanceWalletIcon = styled(AccountBalanceWalletIcon)(({ theme }) => ({
@@ -37,7 +36,7 @@ const ConnectWalletButton: React.FC<{}> = () => {
     error: walletError,
   } = useSelector((state: RootState) => state.wallet);
   const { isConnected: isNetworkConnected } = useNetwork();
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbarContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   /**
@@ -50,7 +49,7 @@ const ConnectWalletButton: React.FC<{}> = () => {
   };
 
   if (walletError) {
-    enqueueSnackbar(walletError, { variant: "error" });
+    showSnackbar(walletError, "error");
   }
 
   const getButtonText = () => {

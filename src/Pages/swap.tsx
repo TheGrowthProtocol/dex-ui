@@ -3,7 +3,6 @@ import { Box, Button, Grid, Typography } from "@material-ui/core";
 import Coinfield from "../Components/coinfield";
 import { TOKEN } from "../interfaces";
 import ConnectWalletButton from "../Components/connectWalletButton";
-import { useSnackbar } from "notistack";
 import { AppDispatch, RootState } from "../store/store";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -17,10 +16,11 @@ import { getAmount2, swap } from "../store/swap/swapThunks";
 import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import { resetSelectedPool } from "../store/pool/poolSlice";
+import { useSnackbarContext } from "../Contexts/snackbarContext";
 
 
 const Swap: React.FC<{}> = () => {
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbarContext();
   const { token1, token2, amount1, amount2, loading } = useSelector(
     (state: RootState) => state.swap
   );
@@ -29,7 +29,7 @@ const Swap: React.FC<{}> = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
-  const { selectedPool, pools } = useSelector((state: RootState) => state.pool);
+  const { selectedPool } = useSelector((state: RootState) => state.pool);
 
   useEffect(() => {
     if (tokens.length > 0) {
@@ -42,14 +42,7 @@ const Swap: React.FC<{}> = () => {
         if ( token1.address !== token2.address) {
             fetchPool();
         } else {
-            enqueueSnackbar("Cannot swap the same token", { 
-              variant: "error",
-              autoHideDuration: 2000,
-              anchorOrigin: {
-                vertical: "bottom",
-                horizontal: "left",
-              },
-            });
+            showSnackbar("Cannot swap the same token", "error");
             dispatch(resetSelectedPool());
           }
     }
@@ -68,30 +61,23 @@ const Swap: React.FC<{}> = () => {
     } else {
       setAmount2(0);
     }
-  }, [amount1, token2, dispatch, enqueueSnackbar]);
+  }, [amount1, token2, dispatch]);
 
 
   const fetchPool = async () => {
     try {
       await dispatch(fetchPoolByTokenAddresses([token1.address, token2.address])).unwrap();
     } catch (error: any) {
-      enqueueSnackbar(error.message, { variant: "error" });
+      showSnackbar(error.message, "error");
     }
   };
 
   const handleSwap = async () => {
     try {
       await dispatch(swap()).unwrap();
-      enqueueSnackbar("Swap successful!", {
-        variant: "success",
-        autoHideDuration: 3000,
-        anchorOrigin: {
-          vertical: "top",
-          horizontal: "right",
-        },
-      });
+      showSnackbar("Swap successful!", "success");
     } catch (error: any) {
-      enqueueSnackbar(error.message, { variant: "error" });
+      showSnackbar(error.message, "error");
     }
   };
 
@@ -135,23 +121,6 @@ const Swap: React.FC<{}> = () => {
                 setSelectedToken={(token: TOKEN) => dispatch(setToken2(token))}
                 selectedToken={token2}
               />
-              {/*<Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Box>
-                    <Typography variant="body1">
-                      1 BNB = 0.00016 CAKE ($ 7.02)
-                    </Typography>
-                    <Typography variant="body1">
-                      Price Impact: $ 1.14 (-2.26%)
-                    </Typography>
-                  </Box>
-                </Box>*/}
             </div>
           </Box>
         </Box>

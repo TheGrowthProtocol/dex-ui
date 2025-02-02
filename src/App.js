@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
-import { SnackbarProvider } from "notistack";
+//import { SnackbarProvider } from "notistack";
+import { SnackbarProvider } from "./Contexts/snackbarContext";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 
 /**
@@ -32,16 +33,16 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={3}>
-        <Header />
-        <div className="main-container">
-          <Main />
+    <ThemeProvider theme={theme}>
+      <SnackbarProvider>
+        <div className="App">
+          <Header />
+          <div className="main-container">
+            <Main />
+          </div>
         </div>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </div>
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 };
 

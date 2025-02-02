@@ -19,11 +19,11 @@ import ConnectWalletButton from "../Components/connectWalletButton";
 import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import CoinIcon from "../Components/coinIcon";
-import { useSnackbar } from "notistack";
+import { useSnackbarContext } from "../Contexts/snackbarContext";
 
 const Liquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbarContext();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
   const [openToken2Dialog, setOpenToken2Dialog] = useState(false);
   const { token1, token2, amount1, amount2, loading } = useSelector(
@@ -86,9 +86,9 @@ const Liquidity: React.FC<{}> = () => {
   const handleAddLiquidityPool = async () => {
     try {
       await dispatch(addLiquidity()).unwrap();
-      enqueueSnackbar("Liquidity added successfully", { variant: "success" });
+      showSnackbar("Liquidity added successfully", "success");
     } catch (error) {
-      enqueueSnackbar("Error adding liquidity", { variant: "error" });
+      showSnackbar("Error adding liquidity", "error");
     }
   };
 

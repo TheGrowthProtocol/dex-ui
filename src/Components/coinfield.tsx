@@ -4,7 +4,7 @@ import { ethers, Contract } from "ethers";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN, COINFIELD } from "../interfaces";
 import Coindialog from "./coindialog";
-import { useSnackbar } from "notistack";
+import { useSnackbarContext } from "../Contexts/snackbarContext";
 
 import ERC20 from "../build/ERC20.json";
 import CoinNoIcon from "./coinNoIcon";
@@ -44,7 +44,7 @@ const Coinfield: React.FC<COINFIELD> = ({
 }) => {
   const [openTokenDialog, setOpenTokenDialog] = useState(false);
   const [balance, setBalance] = useState("0.00"); // State to store the balance
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbarContext();
   const { tokens } = useSelector((state: RootState) => state.tokens);
   const { isConnected: isWalletConnected } = useSelector(
     (state: RootState) => state.wallet
@@ -112,13 +112,9 @@ const Coinfield: React.FC<COINFIELD> = ({
   const handleTokenSelect = (token: TOKEN) => {
     if (selectedToken.symbol !== token.symbol) {
       if (title === "Sell") {
-        enqueueSnackbar(
-          <Box display="flex" alignItems="center">
-            {token.icon && <CoinIcon icon={token.icon} />}
-            <Typography>Switching to {token.symbol}</Typography>
-          </Box>,
-          { variant: "default",
-           }
+        showSnackbar(
+          `Switching to ${token.symbol}`,
+          'info'
         );
       }
       setSelectedToken(token);
@@ -132,9 +128,7 @@ const Coinfield: React.FC<COINFIELD> = ({
   ) => {
     const amount = event.target.value.trim();
     if (isNaN(Number(amount))) {
-      enqueueSnackbar("Invalid Input. Please enter a valid number.", {
-        variant: "error",
-      });
+      showSnackbar("Invalid Input. Please enter a valid number.", 'error');
       return;
     }
     setAmount(amount);
