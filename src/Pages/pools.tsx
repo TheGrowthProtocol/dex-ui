@@ -112,7 +112,6 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   };
 
   const handleCloseRemoveLiquidityDialog = () => {
-    console.log("handleCloseRemoveLiquidityDialog");
     setIsRemoveLiquidityDialogOpen(false);
   };
 
@@ -121,7 +120,6 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   };
 
   const handleRemoveLiquidity = () => {
-    console.log("handleRemoveLiquidity");
     setIsRemoveLiquidityDialogOpen(true);
   };
 
@@ -145,7 +143,6 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   };
 
   const renderRemoveLiquidityDialog = () => {
-    //console.log("isRemoveLiquidityDialogOpen", isRemoveLiquidityDialogOpen);
     return (
       <Dialog
         open={isRemoveLiquidityDialogOpen}
