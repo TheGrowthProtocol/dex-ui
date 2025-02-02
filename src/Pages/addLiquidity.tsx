@@ -21,7 +21,7 @@ import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import CoinIcon from "../Components/coinIcon";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
 
-const Liquidity: React.FC<{}> = () => {
+const AddLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { showSnackbar } = useSnackbarContext();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
@@ -40,8 +40,12 @@ const Liquidity: React.FC<{}> = () => {
   }, [dispatch, tokens]);
 
   useEffect(() => { 
-      if (token1 && token2) {
-        dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+      if (token1.address!=="" && token2.address!=="") {
+        if (token1.address !== token2.address) {
+          dispatch(fetchPoolByTokenAddresses([token1.address, token2.address]));
+        } else {
+          showSnackbar("Please select two different tokens", "error");
+        }
       }
   }, [token1, token2, dispatch]);
 
@@ -95,7 +99,7 @@ const Liquidity: React.FC<{}> = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} md={12} lg={6}>
+      <Grid item xs={12} md={12} lg={12}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
             <Box
@@ -218,7 +222,7 @@ const Liquidity: React.FC<{}> = () => {
           {!isWalletConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
-      <Grid item xs={12} md={12} lg={6}>
+      <Grid item xs={12} md={12} lg={12}>
         <Tokenomics 
         isConnected={isWalletConnected}
         type="pool"
@@ -229,4 +233,4 @@ const Liquidity: React.FC<{}> = () => {
   );
 };
 
-export default Liquidity;
+export default AddLiquidity;

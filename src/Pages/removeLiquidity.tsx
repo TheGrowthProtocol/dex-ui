@@ -21,7 +21,6 @@ import LpReceiveInputTokenField from "../Components/lpReceiveInputTokenField";
 import CoinPairIcons from "../Components/coinPairIcons";
 import { POOL } from "../interfaces";
 import {
-  fetchMyPools,
   fetchShareBalances,
   removeLpToken,
   selectPool,
@@ -50,12 +49,12 @@ const RemoveLiquidity: React.FC<{}> = () => {
   // Add state for selected pool ID
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (isNetworkConnected && window.ethereum) {
       const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
       dispatch(fetchMyPools(web3Provider));
     }
-  }, [dispatch, isWalletConnected, isNetworkConnected]);
+  }, [dispatch, isWalletConnected, isNetworkConnected]);*/
 
   useEffect(() => {
     if (myPools.length > 0 && selectedPoolId === "") {
@@ -106,7 +105,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} md={12} lg={isWalletConnected ? 6 : 12}>
+      <Grid item xs={12} md={12} lg={12}>
         <Box className="tabpanel-container" sx={{ p: 3 }}>
           <Box className="tabpanel-content">
             {!isWalletConnected && (
@@ -374,7 +373,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
         </Box>
       </Grid>
       {isWalletConnected && (
-        <Grid item xs={12} md={12} lg={6}>
+        <Grid item xs={12} md={12} lg={12}>
           <Tokenomics
             isConnected={isWalletConnected}
             type="pool"

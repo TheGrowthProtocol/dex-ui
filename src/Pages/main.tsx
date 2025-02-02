@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Grid, Box, Tab, Tabs, CircularProgress, styled } from "@material-ui/core";
 
 import Swap from "./swap";
-import Liquidity from "./liquidity";
+import AddLiquidity from "./addLiquidity";
 import PoolsList from "./pools";
 import Staking from "./staking";
+import RemoveLiquidity from "./removeLiquidity";
 
 /**
  * @description redux state
@@ -12,7 +13,6 @@ import Staking from "./staking";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { fetchTokens } from '../store/tokens/tokenThunks'; 
-import RemoveLiquidity from "./removeLiquidity";
 import { fetchPools } from "../store/pool/poolThunks";
 import { useNetwork } from "../Hooks/useNetwork";
 
@@ -78,9 +78,7 @@ const Main = () => {
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-  const handleTabChange = (newValue: number) => {
-    setValue(newValue);
-  };
+
 
   if (loading) return <div className="loading-container">
     <CircularProgress />
@@ -106,7 +104,7 @@ const Main = () => {
             <Swap />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <Liquidity />
+            <AddLiquidity />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <PoolsList  />

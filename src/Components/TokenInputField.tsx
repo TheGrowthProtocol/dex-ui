@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Typography, Input, Button, styled } from "@material-ui/core";
 import { TokenInputFieldProps } from "../interfaces";
 import { ethers, Contract } from "ethers";
@@ -38,15 +38,10 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
   );
   const [balance, setBalance] = useState<string>("0.0");
 
-  useEffect(() => {
-    if (selectedToken.name !== "" && isDisplayBalance) {
-      fetchBalance();
-    }
-  }, [selectedToken, isDisplayBalance]);
   /**
    * Fetches the balance of the connected wallet and updates the state.
    */
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async () => {
     try {
       if (!window.ethereum) {
         console.error("MetaMask is not installed!");
@@ -86,7 +81,7 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
     } catch (error) {
       console.error("Error fetching balance:", error);
     }
-  };
+  }, [selectedToken, tokens]);
 
   const handleMaxButtonClick = () => {
     onAmountChange(balance);
@@ -97,6 +92,12 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
     onAmountChange(amount);
   };
 
+  useEffect(() => {
+    if (selectedToken.name !== "" && isDisplayBalance) {
+      fetchBalance();
+    }
+  }, [selectedToken, isDisplayBalance, fetchBalance]);
+  
   return (
     <Box
       sx={{

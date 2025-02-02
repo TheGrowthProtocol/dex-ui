@@ -42,7 +42,7 @@ const Swap: React.FC<{}> = () => {
         if ( token1.address !== token2.address) {
             fetchPool();
         } else {
-            showSnackbar("Cannot swap the same token", "error");
+            showSnackbar("Please select two different tokens", "error");
             dispatch(resetSelectedPool());
           }
     }

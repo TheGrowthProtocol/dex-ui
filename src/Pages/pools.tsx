@@ -10,19 +10,27 @@ import {
   Grid,
   Card,
   CardContent,
+  Dialog,
+  Button,
+  DialogContent,
+  DialogTitle,
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CustomizedMenus from "../Components/styledMenu";
 import { MenuItemProps } from "../interfaces";
 import CoinPairIcons from "../Components/coinPairIcons";
-import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "../Components/connectWalletButton";
 import { PoolsNoItems } from "../Components/poolsNoItems";
+import AddLiquidity from "./addLiquidity";
+import RemoveLiquidity from "./removeLiquidity";
 import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
-import { useSelector , useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
 import { useNetwork } from "../Hooks/useNetwork";
+import { useWallet } from "../Hooks/useWallet";
 import { ethers } from "ethers";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,51 +76,101 @@ const a11yProps = (index: number) => {
   };
 };
 
-
-
-interface PoolsListProps {
-  
-}
+interface PoolsListProps {}
 
 const PoolsList: React.FC<PoolsListProps> = () => {
-  const dispatch = useDispatch<AppDispatch>();  
-  const {rpcProvider, isConnected: isNetworkConnected} = useNetwork();
+  const dispatch = useDispatch<AppDispatch>();
+  const { rpcProvider, isConnected: isNetworkConnected } = useNetwork();
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { isConnected: isWalletConnected } = useWallet();
-  const { pools, loading , myPools} = useSelector((state: RootState) => state.pool);
+  const { pools, loading, myPools } = useSelector(
+    (state: RootState) => state.pool
+  );
   const [value, setValue] = useState(0);
-
+  const [isAddLiquidityDialogOpen, setIsAddLiquidityDialogOpen] =
+    useState(false);
+  const [isRemoveLiquidityDialogOpen, setIsRemoveLiquidityDialogOpen] =
+    useState(false);
 
   const myPoolsMenuItems: MenuItemProps[] = [
     { label: "Remove Liquidity", onClick: () => handleRemoveLiquidity() },
-    { label: "Add Liquidity", onClick: () => handleAddLiquidity()},
+    { label: "Add Liquidity", onClick: () => handleAddLiquidity() },
   ];
 
   const allPoolsMenuItems: MenuItemProps[] = [
-    { label: "Add Liquidity", onClick: () => handleAddLiquidity()},
+    { label: "Add Liquidity", onClick: () => handleAddLiquidity() },
   ];
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
 
+  const handleCloseAddLiquidityDialog = () => {
+    setIsAddLiquidityDialogOpen(false);
+  };
+
+  const handleCloseRemoveLiquidityDialog = () => {
+    console.log("handleCloseRemoveLiquidityDialog");
+    setIsRemoveLiquidityDialogOpen(false);
+  };
+
   const handleAddLiquidity = () => {
-    console.log("Add Liquidity");
-  }
+    setIsAddLiquidityDialogOpen(true);
+  };
 
   const handleRemoveLiquidity = () => {
-    console.log("Remove Liquidity");
-  }
+    console.log("handleRemoveLiquidity");
+    setIsRemoveLiquidityDialogOpen(true);
+  };
+
+  const renderAddLiquidityDialog = () => {
+    return (
+      <Dialog
+        open={isAddLiquidityDialogOpen}
+        onClose={handleCloseAddLiquidityDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Add Liquidity{" "}
+          <Button onClick={handleCloseAddLiquidityDialog}>Cancel</Button>
+        </DialogTitle>
+        <DialogContent>
+            <AddLiquidity />
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const renderRemoveLiquidityDialog = () => {
+    //console.log("isRemoveLiquidityDialogOpen", isRemoveLiquidityDialogOpen);
+    return (
+      <Dialog
+        open={isRemoveLiquidityDialogOpen}
+        onClose={handleCloseRemoveLiquidityDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Remove Liquidity{" "}
+          <Button onClick={handleCloseRemoveLiquidityDialog}>Cancel</Button>
+        </DialogTitle>
+        <DialogContent>
+            <RemoveLiquidity />
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
   useEffect(() => {
-    if(isNetworkConnected && window.ethereum) {
+    if (isNetworkConnected && window.ethereum) {
       const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
       dispatch(fetchMyPools(web3Provider));
     }
     dispatch(fetchPools(rpcProvider));
-  }, [isWalletConnected, dispatch, isNetworkConnected]); 
+  }, [isWalletConnected, dispatch, isNetworkConnected]);
 
   if (loading) {
     return (
@@ -132,134 +190,15 @@ const PoolsList: React.FC<PoolsListProps> = () => {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          {isMobile && (
-            pools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
-            ) : (
-            <Box>
-              {pools.map((pool) => (
-                <Card key={pool.id} className="pool-card">
-                  <CardContent className="pool-card__content">
-                    {/* Pool Pair */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                      className="pool-card__header"
-                    >
-                      <Box
-                        sx={{ display: "flex", flexDirection: "row" }}
-                        className="pool-card__pair"
-                      >
-                        <Box className="pool-card__icons">
-                          <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
-                        </Box>
-                        <Typography variant="h6" className="pool-card__symbols gradient-text">
-                          {pool.token0.symbol}/{pool.token1.symbol}
-                        </Typography>
-                      </Box>
-                      {
-                      isWalletConnected && (
-                        <Box className="pool-card__menu">
-                          <CustomizedMenus menuItems={allPoolsMenuItems} />
-                        </Box>
-                      )
-                    }
-                    </Box>
-
-                    {/* Stats Grid */}
-                    <Grid container spacing={2} className="pool-card__stats">
-                      <Grid item xs={4} className="pool-card__stat">
-                        <Typography className="pool-card__stat-label">
-                          APR
-                        </Typography>
-                        <Typography className="pool-card__stat-value">
-                          {pool.apr}%
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4} className="pool-card__stat">
-                        <Typography className="pool-card__stat-label">
-                          TVL
-                        </Typography>
-                        <Typography className="pool-card__stat-value">
-                          ${pool.tvl}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4} className="pool-card__stat">
-                        <Typography className="pool-card__stat-label">
-                          Volume 24h
-                        </Typography>
-                        <Typography className="pool-card__stat-value">
-                          ${pool.volume24h}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-            )
-          )}
-          {!isMobile && (
-            pools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
-            ) : (
-              <TableContainer className='pools-table'>
-                <Box className='pools-table__container'>
-                  <Box className='pools-table__header'>
-                  <Box className='pools-table__row' sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box className='pools-table__cell' sx={{ flex: '2' }}>Pools</Box>
-                    <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>APR</Box>
-                    <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>TVL</Box>
-                    <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Volume</Box>
-                    <Box className='pools-table__cell' sx={{ flex: '0.5', textAlign: 'right' }}></Box>
-                  </Box>
-                </Box>
-
-                <Box className='pools-table__body'>
-                  {pools.map((pool) => (
-                    <Box key={pool.id} className='pools-table__row' sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      
-                    }}>
-                      <Box className='pools-table__cell' sx={{ flex: '2' }}>
-                        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
-                          <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
-                          <Typography variant="body1" className="gradient-text pools-table__symbols">
-                            {pool.token0.symbol}/{pool.token1.symbol}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>{pool.apr}</Box>
-                      <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.tvl}</Box>
-                      <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.volume24h}</Box>
-                      {
-                      isWalletConnected && (
-                        <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                          <CustomizedMenus menuItems={allPoolsMenuItems} />
-                        </Box>
-                      )
-                    }
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            </TableContainer>
-            )
-          )}
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-        {isMobile && isWalletConnected && (
-          <Box>
-            {myPools.length === 0 ? (
-              <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
+          {isMobile &&
+            (pools.length === 0 ? (
+              <PoolsNoItems
+                description="No Liquidity added yet"
+                addLiquidityButtonOnClick={() => console.log("Add Liquidity")}
+              />
             ) : (
               <Box>
-                {myPools.map((pool) => (
+                {pools.map((pool) => (
                   <Card key={pool.id} className="pool-card">
                     <CardContent className="pool-card__content">
                       {/* Pool Pair */}
@@ -276,41 +215,49 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           className="pool-card__pair"
                         >
                           <Box className="pool-card__icons">
-                            <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
+                            <CoinPairIcons
+                              coin1Image={pool.token0.icon}
+                              coin2Image={pool.token1.icon}
+                            />
                           </Box>
-                          <Typography variant="h6" className="pool-card__symbols gradient-text">
+                          <Typography
+                            variant="h6"
+                            className="pool-card__symbols gradient-text"
+                          >
                             {pool.token0.symbol}/{pool.token1.symbol}
                           </Typography>
                         </Box>
-                        <Box className="pool-card__menu">
-                          <CustomizedMenus menuItems={myPoolsMenuItems} />
-                        </Box>
+                        {isWalletConnected && (
+                          <Box className="pool-card__menu">
+                            <CustomizedMenus menuItems={allPoolsMenuItems} />
+                          </Box>
+                        )}
                       </Box>
 
                       {/* Stats Grid */}
                       <Grid container spacing={2} className="pool-card__stats">
                         <Grid item xs={4} className="pool-card__stat">
                           <Typography className="pool-card__stat-label">
-                            Liquidity
+                            APR
                           </Typography>
                           <Typography className="pool-card__stat-value">
-                          ${formatNumber(pool.liquidity?? '')}
+                            {pool.apr}%
                           </Typography>
                         </Grid>
                         <Grid item xs={4} className="pool-card__stat">
                           <Typography className="pool-card__stat-label">
-                            Token 1
+                            TVL
                           </Typography>
                           <Typography className="pool-card__stat-value">
-                            ${pool.token0Share}
+                            ${pool.tvl}
                           </Typography>
                         </Grid>
                         <Grid item xs={4} className="pool-card__stat">
                           <Typography className="pool-card__stat-label">
-                            Token 2
+                            Volume 24h
                           </Typography>
                           <Typography className="pool-card__stat-value">
-                            ${pool.token1Share}
+                            ${pool.volume24h}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -318,63 +265,330 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                   </Card>
                 ))}
               </Box>
-            )}
-          </Box>
-        )}
-        {!isMobile && isWalletConnected && (
-          myPools.length === 0 ? (
-            <PoolsNoItems description="No Liquidity added yet" addLiquidityButtonOnClick={() => console.log("Add Liquidity")} />
-          ) : (
-            <TableContainer className='pools-table'>
-            <Box className='pools-table__container'>
-              <Box className='pools-table__header'>
-                <Box className='pools-table__row' sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box className='pools-table__cell' sx={{ flex: '2' }}>Pools</Box>
-                  <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Liquidity</Box>
-                  <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Token 1</Box>
-                  <Box className='pools-table__cell' sx={{ flex: '1', textAlign: 'right' }}>Token 2</Box>
-                  <Box className='pools-table__cell' sx={{ flex: '0.5', textAlign: 'right' }}></Box>
-                </Box>
-              </Box>
-
-              <Box className='pools-table__body'>
-                {myPools.map((pool) => (
-                  <Box key={pool.id} className='pools-table__row' sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    
-                  }}>
-                    <Box className='pools-table__cell' sx={{ flex: '2' }}>
-                      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }} className='pools-table__pair'>
-                        <CoinPairIcons coin1Image={pool.token0.icon} coin2Image={pool.token1.icon} />
-                        <Typography variant="body1" className="gradient-text pools-table__symbols">
-                          {pool.token0.symbol}/{pool.token1.symbol}
-                        </Typography>
+            ))}
+          {!isMobile &&
+            (pools.length === 0 ? (
+              <PoolsNoItems
+                description="No Liquidity added yet"
+                addLiquidityButtonOnClick={() => console.log("Add Liquidity")}
+              />
+            ) : (
+              <TableContainer className="pools-table">
+                <Box className="pools-table__container">
+                  <Box className="pools-table__header">
+                    <Box
+                      className="pools-table__row"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                        Pools
                       </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "right" }}
+                      >
+                        APR
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "right" }}
+                      >
+                        TVL
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "right" }}
+                      >
+                        Volume
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "0.5", textAlign: "right" }}
+                      ></Box>
                     </Box>
-                    <Box className='pools-table__cell pools-table__cell--apr' sx={{ flex: '1', textAlign: 'right' }}>${formatNumber(pool.liquidity?? '')}</Box>
-                    <Box className='pools-table__cell pools-table__cell--tvl' sx={{ flex: '1', textAlign: 'right' }}>{pool.token0Share}</Box>
-                    <Box className='pools-table__cell pools-table__cell--volume' sx={{ flex: '1', textAlign: 'right' }}>{pool.token1Share}</Box>
-                    {
-                      isWalletConnected && (
-                        <Box className='pools-table__cell pools-table__cell--menu' sx={{ flex: '0.5', textAlign: 'right' }}>
-                          <CustomizedMenus menuItems={myPoolsMenuItems} />
+                  </Box>
+
+                  <Box className="pools-table__body">
+                    {pools.map((pool) => (
+                      <Box
+                        key={pool.id}
+                        className="pools-table__row"
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                            className="pools-table__pair"
+                          >
+                            <CoinPairIcons
+                              coin1Image={pool.token0.icon}
+                              coin2Image={pool.token1.icon}
+                            />
+                            <Typography
+                              variant="body1"
+                              className="gradient-text pools-table__symbols"
+                            >
+                              {pool.token0.symbol}/{pool.token1.symbol}
+                            </Typography>
+                          </Box>
                         </Box>
-                      )
-                    }
-                    </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--apr"
+                          sx={{ flex: "1", textAlign: "right" }}
+                        >
+                          {pool.apr}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--tvl"
+                          sx={{ flex: "1", textAlign: "right" }}
+                        >
+                          {pool.tvl}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--volume"
+                          sx={{ flex: "1", textAlign: "right" }}
+                        >
+                          {pool.volume24h}
+                        </Box>
+                        {isWalletConnected && (
+                          <Box
+                            className="pools-table__cell pools-table__cell--menu"
+                            sx={{ flex: "0.5", textAlign: "right" }}
+                          >
+                            <CustomizedMenus menuItems={allPoolsMenuItems} />
+                          </Box>
+                        )}
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              </TableContainer>
+            ))}
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          {isMobile && isWalletConnected && (
+            <Box>
+              {myPools.length === 0 ? (
+                <PoolsNoItems
+                  description="No Liquidity added yet"
+                  addLiquidityButtonOnClick={() => handleAddLiquidity()}
+                />
+              ) : (
+                <Box>
+                  {myPools.map((pool) => (
+                    <Card key={pool.id} className="pool-card">
+                      <CardContent className="pool-card__content">
+                        {/* Pool Pair */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                          className="pool-card__header"
+                        >
+                          <Box
+                            sx={{ display: "flex", flexDirection: "row" }}
+                            className="pool-card__pair"
+                          >
+                            <Box className="pool-card__icons">
+                              <CoinPairIcons
+                                coin1Image={pool.token0.icon}
+                                coin2Image={pool.token1.icon}
+                              />
+                            </Box>
+                            <Typography
+                              variant="h6"
+                              className="pool-card__symbols gradient-text"
+                            >
+                              {pool.token0.symbol}/{pool.token1.symbol}
+                            </Typography>
+                          </Box>
+                          <Box className="pool-card__menu">
+                            <CustomizedMenus menuItems={myPoolsMenuItems} />
+                          </Box>
+                        </Box>
+
+                        {/* Stats Grid */}
+                        <Grid
+                          container
+                          spacing={2}
+                          className="pool-card__stats"
+                        >
+                          <Grid item xs={4} className="pool-card__stat">
+                            <Typography className="pool-card__stat-label">
+                              Liquidity
+                            </Typography>
+                            <Typography className="pool-card__stat-value">
+                              ${formatNumber(pool.liquidity ?? "")}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4} className="pool-card__stat">
+                            <Typography className="pool-card__stat-label">
+                              Token 1
+                            </Typography>
+                            <Typography className="pool-card__stat-value">
+                              ${pool.token0Share}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4} className="pool-card__stat">
+                            <Typography className="pool-card__stat-label">
+                              Token 2
+                            </Typography>
+                            <Typography className="pool-card__stat-value">
+                              ${pool.token1Share}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
                   ))}
                 </Box>
-              </Box>
-          </TableContainer>
-          ))}
+              )}
+            </Box>
+          )}
+          {!isMobile &&
+            isWalletConnected &&
+            (myPools.length === 0 ? (
+              <PoolsNoItems
+                description="No Liquidity added yet"
+                addLiquidityButtonOnClick={() => console.log("Add Liquidity")}
+              />
+            ) : (
+              <TableContainer className="pools-table">
+                <Box className="pools-table__container">
+                  <Box className="pools-table__header">
+                    <Box
+                      className="pools-table__row"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                        Pools
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "right" }}
+                      >
+                        Liquidity
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "right" }}
+                      >
+                        Token 1
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "right" }}
+                      >
+                        Token 2
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "0.5", textAlign: "right" }}
+                      ></Box>
+                    </Box>
+                  </Box>
+
+                  <Box className="pools-table__body">
+                    {myPools.map((pool) => (
+                      <Box
+                        key={pool.id}
+                        className="pools-table__row"
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                            className="pools-table__pair"
+                          >
+                            <CoinPairIcons
+                              coin1Image={pool.token0.icon}
+                              coin2Image={pool.token1.icon}
+                            />
+                            <Typography
+                              variant="body1"
+                              className="gradient-text pools-table__symbols"
+                            >
+                              {pool.token0.symbol}/{pool.token1.symbol}
+                            </Typography>
+                          </Box>
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--apr"
+                          sx={{ flex: "1", textAlign: "right" }}
+                        >
+                          ${formatNumber(pool.liquidity ?? "")}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--tvl"
+                          sx={{ flex: "1", textAlign: "right" }}
+                        >
+                          {pool.token0Share}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--volume"
+                          sx={{ flex: "1", textAlign: "right" }}
+                        >
+                          {pool.token1Share}
+                        </Box>
+                        {isWalletConnected && (
+                          <Box
+                            className="pools-table__cell pools-table__cell--menu"
+                            sx={{ flex: "0.5", textAlign: "right" }}
+                          >
+                            <CustomizedMenus menuItems={myPoolsMenuItems} />
+                          </Box>
+                        )}
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              </TableContainer>
+            ))}
           {!isWalletConnected && (
-            <Box display="flex" justifyContent="space-between" alignItems="center" height="100%" flexDirection={isMobile ? "column" : "row"} className="pools-table__empty">
-              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}> 
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              height="100%"
+              flexDirection={isMobile ? "column" : "row"}
+              className="pools-table__empty"
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
                 <CoinPairIcons />
                 <Typography variant="body1">
-                Connect wallet to see your pools
+                  Connect wallet to see your pools
                 </Typography>
               </Box>
               <ConnectWalletButton />
@@ -382,6 +596,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
           )}
         </CustomTabPanel>
       </Box>
+      {renderAddLiquidityDialog()}
+      {renderRemoveLiquidityDialog()}
     </Box>
   );
 };
