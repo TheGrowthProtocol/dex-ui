@@ -222,13 +222,13 @@ const AddLiquidity: React.FC<{}> = () => {
           {!isWalletConnected && <ConnectWalletButton />}
         </Box>
       </Grid>
-      <Grid item xs={12} md={12} lg={12}>
+      {/*<Grid item xs={12} md={12} lg={12}>
         <Tokenomics 
         isConnected={isWalletConnected}
         type="pool"
         selectedPool={selectedPool}
         />
-      </Grid>
+      </Grid>*/}
     </Grid>
   );
 };

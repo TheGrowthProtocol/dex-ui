@@ -372,7 +372,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
           )}
         </Box>
       </Grid>
-      {isWalletConnected && (
+      {/*{isWalletConnected && (
         <Grid item xs={12} md={12} lg={12}>
           <Tokenomics
             isConnected={isWalletConnected}
@@ -380,7 +380,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
             selectedPool={selectedPool}
           />
         </Grid>
-      )}
+      )}*/}
     </Grid>
   );
 };
