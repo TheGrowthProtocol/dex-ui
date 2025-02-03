@@ -106,8 +106,7 @@ const AddLiquidity: React.FC<{}> = () => {
   return (
     <Grid container>
       <Grid item xs={12} md={12} lg={12}>
-        <Box className="tabpanel-container" sx={{ p: 3 }}>
-          <Box className="tabpanel-content">
+          <Box>
             <Box
               display="flex"
               flexDirection="column"
@@ -201,7 +200,7 @@ const AddLiquidity: React.FC<{}> = () => {
               
             </Box>
           </Box>
-        </Box>
+        
         <Box
           sx={{
             display: "flex",
