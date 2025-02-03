@@ -8,6 +8,7 @@ import CoinNoIcon from "./coinNoIcon";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import CoinIcon from "./coinIcon";
+import { useSnackbarContext } from "../Contexts/snackbarContext";
 
 const StyledTokenInputFieldBalanceContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -33,6 +34,7 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
   isDisplayBalance,
   value,
 }) => {
+  const { showSnackbar } = useSnackbarContext();
   const { isConnected: isWalletConnected } = useSelector(
     (state: RootState) => state.wallet
   );
@@ -89,6 +91,10 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const amount = event.target.value.trim();
+    if (isNaN(Number(amount))) {
+      showSnackbar("Please enter a valid number.", 'error');
+      return;
+    }
     onAmountChange(amount);
   };
 

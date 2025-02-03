@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid } from "@material-ui/core";
+import { Box, Typography, Button, Grid, styled } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import { TOKEN } from "../interfaces";
 import Coindialog from "../Components/coindialog";
@@ -19,6 +19,13 @@ import ConnectWalletButton from "../Components/connectWalletButton";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import CoinIcon from "../Components/coinIcon";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
+
+const StyledAddLiquidityButtonContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "16px",
+}));
 
 const AddLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -201,14 +208,7 @@ const AddLiquidity: React.FC<{}> = () => {
             </Box>
           </Box>
         
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          className="liquidity-button-container"
-        >
+          <StyledAddLiquidityButtonContainer>
           {isWalletConnected && (
             <Button
               variant="contained"
@@ -225,7 +225,7 @@ const AddLiquidity: React.FC<{}> = () => {
             </Button>
           )}
           {!isWalletConnected && <ConnectWalletButton />}
-        </Box>
+        </StyledAddLiquidityButtonContainer>
       </Grid>
       {/*<Grid item xs={12} md={12} lg={12}>
         <Tokenomics 
