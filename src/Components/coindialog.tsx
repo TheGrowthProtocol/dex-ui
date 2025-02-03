@@ -34,6 +34,11 @@ const StyledCoinDialogContainer = styled(Box)(({ theme }) => ({
   padding: "24px",
 }));
 
+const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  color: `${theme.palette.primary.main} !important`,
+  padding: "0 !important",
+}));
+
 
 const Coindialog: React.FC<COINDIALOG> = ({
   tokens,
@@ -53,9 +58,9 @@ const Coindialog: React.FC<COINDIALOG> = ({
     >
       <StyledCoinDialogContainer>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <DialogTitle id="alert-dialog-title" className="coin-dialog__title">
+        <StyledDialogTitle id="alert-dialog-title">
           {"Select a token"}
-        </DialogTitle>
+        </StyledDialogTitle>
         <IconButton onClick={handleClose} className="coin-dialog__close-button">
           <CloseIcon color="primary" fontSize="medium" />
         </IconButton>

@@ -1,6 +1,5 @@
 import React from "react";
 import "./App.css";
-//import { SnackbarProvider } from "notistack";
 import { SnackbarProvider } from "./Contexts/snackbarContext";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 

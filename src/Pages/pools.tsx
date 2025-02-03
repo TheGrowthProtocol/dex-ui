@@ -11,13 +11,13 @@ import {
   Card,
   CardContent,
   Dialog,
-  Button,
   DialogContent,
   DialogTitle,
+  IconButton,
 } from "@material-ui/core";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles, styled, useTheme } from "@material-ui/core/styles";
+import CloseIcon from "@material-ui/icons/Close";
 import CustomizedMenus from "../Components/styledMenu";
-import { MenuItemProps } from "../interfaces";
 import CoinPairIcons from "../Components/coinPairIcons";
 import ConnectWalletButton from "../Components/connectWalletButton";
 import { PoolsNoItems } from "../Components/poolsNoItems";
@@ -30,6 +30,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNetwork } from "../Hooks/useNetwork";
 import { useWallet } from "../Hooks/useWallet";
 import { ethers } from "ethers";
+import { setSelectedPool } from "../store/pool/poolSlice";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,6 +52,29 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+    borderRadius: "12px",
+    padding: "1px",
+  }
+}));
+
+const StyledDialogContainer = styled(Box)(({ theme }) => ({
+  background: "radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%)",
+  borderRadius: "12px",
+}));
+
+const StyledDialogHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+}));
+
+const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  color: `${theme.palette.primary.main} !important`,
+}));
 
 const CustomTabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
@@ -94,15 +118,6 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   const [isRemoveLiquidityDialogOpen, setIsRemoveLiquidityDialogOpen] =
     useState(false);
 
-  const myPoolsMenuItems: MenuItemProps[] = [
-    { label: "Remove Liquidity", onClick: () => handleRemoveLiquidity() },
-    { label: "Add Liquidity", onClick: () => handleAddLiquidity() },
-  ];
-
-  const allPoolsMenuItems: MenuItemProps[] = [
-    { label: "Add Liquidity", onClick: () => handleAddLiquidity() },
-  ];
-
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
@@ -125,39 +140,52 @@ const PoolsList: React.FC<PoolsListProps> = () => {
 
   const renderAddLiquidityDialog = () => {
     return (
-      <Dialog
+      <StyledDialog
         open={isAddLiquidityDialogOpen}
         onClose={handleCloseAddLiquidityDialog}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Add Liquidity{" "}
-          <Button onClick={handleCloseAddLiquidityDialog}>Cancel</Button>
-        </DialogTitle>
+        <StyledDialogContainer>
+          <StyledDialogHeader>
+            <StyledDialogTitle>
+              Add Liquidity
+            </StyledDialogTitle>
+            <IconButton onClick={handleCloseAddLiquidityDialog}>
+              <CloseIcon color="primary" fontSize="medium" /> 
+            </IconButton>
+          </StyledDialogHeader>
         <DialogContent>
             <AddLiquidity />
         </DialogContent>
-      </Dialog>
+        </StyledDialogContainer>
+      </StyledDialog>
     );
   };
 
   const renderRemoveLiquidityDialog = () => {
     return (
-      <Dialog
+      <StyledDialog
         open={isRemoveLiquidityDialogOpen}
         onClose={handleCloseRemoveLiquidityDialog}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Remove Liquidity{" "}
-          <Button onClick={handleCloseRemoveLiquidityDialog}>Cancel</Button>
-        </DialogTitle>
+        <StyledDialogContainer>
+          <StyledDialogHeader>  
+            <StyledDialogTitle>
+              Remove Liquidity
+            </StyledDialogTitle>
+            <IconButton onClick={handleCloseRemoveLiquidityDialog}>
+              <CloseIcon color="primary" fontSize="medium" /> 
+            </IconButton>
+          </StyledDialogHeader>
+        
         <DialogContent>
             <RemoveLiquidity />
         </DialogContent>
-      </Dialog>
+        </StyledDialogContainer>
+      </StyledDialog>
     );
   };
 
@@ -226,7 +254,14 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                         </Box>
                         {isWalletConnected && (
                           <Box className="pool-card__menu">
-                            <CustomizedMenus menuItems={allPoolsMenuItems} />
+                            <CustomizedMenus menuItems={[
+                              { label: "Add Liquidity", onClick: () => {
+                                  dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity();
+                                },
+                              },
+                            ]}
+                          />
                           </Box>
                         )}
                       </Box>
@@ -267,7 +302,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
             (pools.length === 0 ? (
               <PoolsNoItems
                 description="No Liquidity added yet"
-                addLiquidityButtonOnClick={() => console.log("Add Liquidity")}
+                addLiquidityButtonOnClick={() => handleAddLiquidity()}
               />
             ) : (
               <TableContainer className="pools-table">
@@ -364,7 +399,13 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             className="pools-table__cell pools-table__cell--menu"
                             sx={{ flex: "0.5", textAlign: "right" }}
                           >
-                            <CustomizedMenus menuItems={allPoolsMenuItems} />
+                            <CustomizedMenus menuItems={[
+                              { label: "Add Liquidity", onClick: () => {
+                                  dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity();
+                                },
+                              },
+                            ]} />
                           </Box>
                         )}
                       </Box>
@@ -414,7 +455,18 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             </Typography>
                           </Box>
                           <Box className="pool-card__menu">
-                            <CustomizedMenus menuItems={myPoolsMenuItems} />
+                            <CustomizedMenus menuItems={[
+                              { label: "Add Liquidity", onClick: () => {
+                                  dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity();
+                                },
+                              },
+                              { label: "Remove Liquidity", onClick: () => {
+                                  dispatch(setSelectedPool(pool));
+                                  handleRemoveLiquidity();
+                                },
+                              },
+                            ]} />
                           </Box>
                         </Box>
 
@@ -461,7 +513,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
             (myPools.length === 0 ? (
               <PoolsNoItems
                 description="No Liquidity added yet"
-                addLiquidityButtonOnClick={() => console.log("Add Liquidity")}
+                addLiquidityButtonOnClick={() => handleAddLiquidity()}
               />
             ) : (
               <TableContainer className="pools-table">
@@ -558,7 +610,18 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             className="pools-table__cell pools-table__cell--menu"
                             sx={{ flex: "0.5", textAlign: "right" }}
                           >
-                            <CustomizedMenus menuItems={myPoolsMenuItems} />
+                            <CustomizedMenus menuItems={[
+                              { label: "Add Liquidity", onClick: () => {
+                                  dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity();
+                                },
+                              },
+                              { label: "Remove Liquidity", onClick: () => {
+                                  dispatch(setSelectedPool(pool));
+                                  handleRemoveLiquidity();
+                                },
+                              },
+                            ]} />
                           </Box>
                         )}
                       </Box>

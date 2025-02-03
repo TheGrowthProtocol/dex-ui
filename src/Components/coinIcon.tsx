@@ -12,10 +12,15 @@ const StyledCoinIconPlaceholder = styled(Box)(({ theme }) => ({
   alignItems: "center",
 }));
 
+const StyledCoinIcon = styled('img')(({ theme }) => ({
+  width: "24px",
+  height: "24px",
+}));
+
 const CoinIcon = ({ icon }: { icon: string }) => {
   return (
     <StyledCoinIconPlaceholder>
-      <img src={icon} alt="Coin Icon" className="coin-icon" />
+      <StyledCoinIcon src={icon} alt="Coin Icon" />
     </StyledCoinIconPlaceholder>
   );
 };

@@ -438,11 +438,6 @@ body {
 }
 /* Coin Dialog */
 
-.coin-dialog__title {
-  color: var(--primary-color) !important;
-  padding: 0 !important;
-}
-
 .coin-dialog__input {
   color: var(--primary-color) !important;
   background: var(--background-color) !important;
@@ -488,47 +483,6 @@ body {
   min-width: 32px !important;
 }
 
-.coin-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.coin-pair-icons {
-  margin-right: 12px;
-}
-
-.coin-pair-icons .coin-pair-icons__coin:first-child .coin-noicon-placeholder{
-  border: 1px solid var(--primary-color);
-  border-radius: 20px;
-}
-
-.coin-pair-icons .coin-pair-icons__coin:first-child img {
-  border: 1px solid var(--primary-color);
-  background: #1A1A1A;
-  border-radius: 20px;
-  width: 24px;
-  height: 24px;
-}
-
-.coin-pair-icons .coin-pair-icons__coin:last-child {
-  margin-left: 12px;
-  margin-top: -12px;
-}
-
-.coin-pair-icons .coin-pair-icons__coin:last-child .coin-noicon-placeholder{
-  border: 1px solid var(--primary-color);
-  border-radius: 20px;
-  padding: 12px;
-}
-
-.coin-pair-icons .coin-pair-icons__coin:last-child img {
-  border: 1px solid var(--primary-color);
-  background: #1A1A1A;
-  border-radius: 20px;
-  width: 32px;
-  height: 32px;
-}
-
 .tokenomics-container {
   border-radius: 14px;
   padding: 16px;
@@ -569,23 +523,6 @@ body {
 .lp-token-balance-field {
   margin-top: 16px;
   margin-bottom: 16px;
-}
-.pooled-tokens-receiving-input {
-  margin-top: 16px;
-  gap: 16px;
-}
-.select-pool-dropdown {
-  width: 100%;
-  background: radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%)!important;
-  border-radius: 24px !important;
-  padding: 8px !important;
-  color: var(--primary-color) !important;
-}
-.select-pool-dropdown::after {
-  border: none !important;
-}
-.select-pool-dropdown::before {
-  border: none !important;
 }
 
 .token-input-field-max-button {

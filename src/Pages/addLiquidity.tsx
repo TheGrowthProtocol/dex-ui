@@ -16,7 +16,6 @@ import {
 import CoinNoIcon from "../Components/coinNoIcon";
 import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "../Components/connectWalletButton";
-import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import CoinIcon from "../Components/coinIcon";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
@@ -38,6 +37,13 @@ const AddLiquidity: React.FC<{}> = () => {
       dispatch(setToken1(tokens[0]));
     }
   }, [dispatch, tokens]);
+
+  useEffect(() => {
+    if (selectedPool) {
+      dispatch(setToken1(selectedPool.token0));
+      dispatch(setToken2(selectedPool.token1));
+    }
+  }, [dispatch, selectedPool]);
 
   useEffect(() => { 
       if (token1.address!=="" && token2.address!=="") {

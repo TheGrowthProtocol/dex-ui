@@ -9,13 +9,13 @@ import {
   MenuItem,
   useMediaQuery,
   useTheme,
+  styled,
 } from "@material-ui/core";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { useWallet } from "../Hooks/useWallet";
 import ConnectWalletButton from "../Components/connectWalletButton";
-import { Tokenomics } from "../Components/tokenomics";
 import LpTokenBalanceField from "../Components/lpTokenBalanceField";
 import LpReceiveInputTokenField from "../Components/lpReceiveInputTokenField";
 import CoinPairIcons from "../Components/coinPairIcons";
@@ -26,15 +26,46 @@ import {
   selectPool,
 } from "../store/pool/poolThunks";
 import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
-import { useNetwork } from "../Hooks/useNetwork";
 import { ethers } from "ethers";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
+
+
+const StyledSelect = styled(Select)(({ theme}) => ({
+  width: "100%",
+  background: "radial-gradient(86.33% 299.52% at 13.67% 23.12%, #272727 0%, #0E0E0E 100%)!important",
+  borderRadius: "40px",
+  padding: "0px 24px",
+  color: theme.palette.primary.main,
+  "&:after": {
+    border: "none !important",
+  },
+  "&:before": {
+    border: "none !important",
+  },
+  "& .MuiSelect-icon": {
+    color: `${theme.palette.primary.main} !important`,
+  },
+}));
+
+const StyledRemoveLiquidityButtonContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "16px",
+}));
+
+const StyledPooledTokensReceivingInput = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "16px",
+  marginTop: "16px",
+}));
 
 const RemoveLiquidity: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { showSnackbar } = useSnackbarContext();
   const theme = useTheme();
-  const { isConnected: isNetworkConnected } = useNetwork();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const {
     myPools,
@@ -48,13 +79,6 @@ const RemoveLiquidity: React.FC<{}> = () => {
 
   // Add state for selected pool ID
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
-
-  /*useEffect(() => {
-    if (isNetworkConnected && window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      dispatch(fetchMyPools(web3Provider));
-    }
-  }, [dispatch, isWalletConnected, isNetworkConnected]);*/
 
   useEffect(() => {
     if (myPools.length > 0 && selectedPoolId === "") {
@@ -106,8 +130,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
   return (
     <Grid container>
       <Grid item xs={12} md={12} lg={12}>
-        <Box className="tabpanel-container" sx={{ p: 3 }}>
-          <Box className="tabpanel-content">
+          <Box>
             {!isWalletConnected && (
               <Box
                 display="flex"
@@ -143,9 +166,8 @@ const RemoveLiquidity: React.FC<{}> = () => {
                     Select Liquidity Pool to remove Liquidity
                   </Typography>
                   <Box display="flex" className="coin-field-pair-container">
-                    <Select
+                    <StyledSelect
                       color="primary"
-                      className="select-pool-dropdown"
                       id="demo-simple-select-standard"
                       value={selectedPoolId} // Use local state instead
                       defaultValue={selectedPoolId}
@@ -163,7 +185,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                           (pool: POOL) => pool.id === value
                         );
                         return pool ? (
-                          <Box display="flex" flexDirection="row">
+                          <Box display="flex" flexDirection="row" alignItems="center">
                             <CoinPairIcons
                               coin1Image={pool.token0.icon}
                               coin2Image={pool.token1.icon}
@@ -200,7 +222,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                           </MenuItem>
                         ))
                       )}
-                    </Select>
+                    </StyledSelect>
                   </Box>
                 </Box>
                 <Box
@@ -296,14 +318,14 @@ const RemoveLiquidity: React.FC<{}> = () => {
                       </Button>
                     </Box>
                     <Grid container>
-                      <Grid item xs={12} md={12} lg={6}>
+                      <Grid item xs={12} md={6} lg={6}>
                         <LpTokenBalanceField
                           title="Wallet LP tokens"
                           balance={selectedPool?.lpBalance ?? "--"}
                           usdValue="(--USD)"
                         />
                       </Grid>
-                      <Grid item xs={12} md={12} lg={6}>
+                      <Grid item xs={12} md={6} lg={6}>
                         <LpTokenBalanceField
                           title="Selected LP Tokens for removal"
                           balance={removeLpTokenBalance ?? "--"}
@@ -322,11 +344,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                     Pooled Tokens receiving
                   </Typography>
                   {removeLpToken0Share && removeLpToken1Share && (
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      className="pooled-tokens-receiving-input"
-                    >
+                    <StyledPooledTokensReceivingInput>
                       <LpReceiveInputTokenField
                         token={removeLpToken0Share.token}
                         balance={removeLpToken0Share.amount}
@@ -340,21 +358,14 @@ const RemoveLiquidity: React.FC<{}> = () => {
                         balance={removeLpToken1Share.amount}
                         usdValue={removeLpToken1Share.amount}
                       />
-                    </Box>
+                    </StyledPooledTokensReceivingInput>
                   )}
                 </Box>
               </>
             )}
           </Box>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          className="liquidity-button-container"
-        >
+        
+        <StyledRemoveLiquidityButtonContainer>
           {isWalletConnected && (
             <Button
               variant="contained"
@@ -370,7 +381,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
               </div>
             </Button>
           )}
-        </Box>
+        </StyledRemoveLiquidityButtonContainer>
       </Grid>
       {/*{isWalletConnected && (
         <Grid item xs={12} md={12} lg={12}>
