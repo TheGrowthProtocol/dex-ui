@@ -59,7 +59,7 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isCon
                         <CircularProgress />
                     </Box>
                 )}
-                {poolTokenomics && displayTokenomicsItemKeys.map((key) => (
+                {!swapLoading && !liquidityLoading && poolTokenomics && displayTokenomicsItemKeys.map((key) => (
                     <Box 
                         className="tokenomics-content__item" 
                         key={`tokenomics-${key}`} 
