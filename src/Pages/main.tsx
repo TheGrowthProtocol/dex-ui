@@ -69,11 +69,11 @@ const Main = () => {
   // @description fetch tokens
   useEffect(() => {
     dispatch(fetchTokens(rpcProvider)); 
-  }, [dispatch]);
+  }, [dispatch, rpcProvider]);
 
   useEffect(() => {
     dispatch(fetchPools(rpcProvider));
-  }, [tokens]);
+  }, [tokens, dispatch, rpcProvider]);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);

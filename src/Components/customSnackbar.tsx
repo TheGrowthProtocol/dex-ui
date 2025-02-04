@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode } from "react";
+import { forwardRef } from "react";
 import { Snackbar, styled, Box, Typography } from "@material-ui/core";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { useSnackbarContext } from "../Contexts/snackbarContext";

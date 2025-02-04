@@ -65,7 +65,7 @@ export const useWallet = () => {
 
   const displayBalance = useCallback(() => {
 
-  }, [dispatch, connectNetwork]);
+  }, []);
 
   // Add auto-connect on app load
   useEffect(() => {
@@ -101,7 +101,7 @@ export const useWallet = () => {
         );
       };
     }
-  }, [dispatch]);
+  }, [dispatch,disconnect]);
 
 
   const connectMetaMask = async (): Promise<void> => {

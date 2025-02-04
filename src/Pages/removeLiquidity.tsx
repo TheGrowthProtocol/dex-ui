@@ -96,7 +96,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
         (Number(selectedPool.lpBalance ?? 0) * percentage) / 100;
       dispatch(setRemoveLpTokenBalance(removeLpBalance.toFixed(2)));
     }
-  }, [percentage, selectedPool]);
+  }, [percentage, selectedPool, dispatch]);
 
   useEffect(() => {
     if (removeLpTokenBalance && selectedPool && window.ethereum) {
@@ -109,7 +109,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
         })
       );
     }
-  }, [removeLpTokenBalance, selectedPool]);
+  }, [removeLpTokenBalance, selectedPool, dispatch]);
 
   const handleSelectPool = (poolId: string) => {
     setSelectedPoolId(poolId); // Update local state

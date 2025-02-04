@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import Coinfield from "../Components/coinfield";
 import { TOKEN } from "../interfaces";
@@ -31,6 +31,14 @@ const Swap: React.FC<{}> = () => {
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
   const { selectedPool } = useSelector((state: RootState) => state.pool);
 
+  const fetchPool = useCallback(async () => {
+    try {
+      await dispatch(fetchPoolByTokenAddresses([token1.address, token2.address])).unwrap();
+    } catch (error: any) {
+      showSnackbar(error.message, "error");
+    }
+  }, [token1.address, token2.address, dispatch, showSnackbar]);
+
   useEffect(() => {
     if (tokens.length > 0) {
       dispatch(setToken1(tokens[0]));
@@ -46,7 +54,7 @@ const Swap: React.FC<{}> = () => {
             dispatch(resetSelectedPool());
           }
     }
-  }, [token1, token2, dispatch]);
+  }, [token1, token2, dispatch, showSnackbar, fetchPool]);
 
   useEffect(() => {
     const setCoinfield2Amount = async () => {
@@ -64,13 +72,7 @@ const Swap: React.FC<{}> = () => {
   }, [amount1, token2, dispatch]);
 
 
-  const fetchPool = async () => {
-    try {
-      await dispatch(fetchPoolByTokenAddresses([token1.address, token2.address])).unwrap();
-    } catch (error: any) {
-      showSnackbar(error.message, "error");
-    }
-  };
+  
 
   const handleSwap = async () => {
     try {

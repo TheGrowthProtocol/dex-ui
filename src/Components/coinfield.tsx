@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Box, Button, Typography, Input, styled } from "@material-ui/core";
 import { ethers, Contract } from "ethers";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
@@ -50,16 +50,10 @@ const Coinfield: React.FC<COINFIELD> = ({
     (state: RootState) => state.wallet
   );
 
-  useEffect(() => {
-    if (selectedToken.address && isWalletConnected) {
-      fetchBalance();
-    }
-  }, [selectedToken, isWalletConnected]);
-
   /**
    * Fetches the balance of the connected wallet and updates the state.
    */
-  const fetchBalance = async () => {
+    const fetchBalance = useCallback(async () => {
     try {
       if (!window.ethereum) {
         console.error("MetaMask is not installed!");
@@ -99,7 +93,15 @@ const Coinfield: React.FC<COINFIELD> = ({
     } catch (error) {
       console.error("Error fetching balance:", error);
     }
-  };
+  }, [selectedToken, tokens]);
+
+  useEffect(() => {
+    if (selectedToken.address && isWalletConnected) {
+      fetchBalance();
+    }
+  }, [selectedToken, isWalletConnected, fetchBalance]);
+
+  
 
   const handleTokenDialogOpen = () => {
     setOpenTokenDialog(true);

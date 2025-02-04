@@ -18,7 +18,7 @@ import COINS from "../../constants/coins";
 import ROUTER from "../../build/UniswapV2Router02.json";
 import { env } from "../../env";
 const POOL_FACTORY_ADDRESS = env.contracts.poolFactory;
-const PRICE_FEED_API = env.priceFeedApi;
+//const PRICE_FEED_API = env.priceFeedApi;
 
 export const fetchPools = createAsyncThunk(
   "pools/fetchPools",

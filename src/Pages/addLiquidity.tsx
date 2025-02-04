@@ -60,7 +60,7 @@ const AddLiquidity: React.FC<{}> = () => {
           showSnackbar("Please select two different tokens", "error");
         }
       }
-  }, [token1, token2, dispatch]);
+  }, [token1, token2, dispatch, showSnackbar]);
 
 
 

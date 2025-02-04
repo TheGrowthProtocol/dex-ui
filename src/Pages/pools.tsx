@@ -207,7 +207,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
       dispatch(fetchMyPools(web3Provider));
     }
     dispatch(fetchPools(rpcProvider));
-  }, [isWalletConnected, dispatch, isNetworkConnected]);
+  }, [isWalletConnected, dispatch, isNetworkConnected, rpcProvider]);
 
   if (loading) {
     return (

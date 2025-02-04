@@ -1,23 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers, Contract } from "ethers";
 import COINS from "../../constants/coins";
-import * as chains from "../../constants/chains";
 import WCERES from "../../build/WCERES.json";
 import ERC20 from "../../build/ERC20.json";
-import { env } from "../../env";
-
-
-const TGP_NETWORK = {
-    chainId: env.chainId, // Convert 97433 to hex
-    chainName: env.networkName,
-    rpcUrls: [env.rpcUrl],
-    nativeCurrency: {
-      name: env.currency.name,
-      symbol: env.currency.symbol,
-      decimals: env.currency.decimals,
-    },
-    blockExplorerUrls: [env.blockExplorerUrl],
-  };
 
 export const fetchTokens = createAsyncThunk("tokens/fetchTokens", async (
   provider: ethers.providers.JsonRpcProvider

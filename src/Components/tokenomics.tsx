@@ -15,10 +15,10 @@ interface TokenomicsProps {
 }
 
 
-export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool, isConnected}) => {
+export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool}) => {
     const dispatch = useDispatch<AppDispatch>(); 
-    const { amount1: swapAmount1, amount2: swapAmount2, loading:swapLoading, error:swapError} = useSelector((state: RootState) => state.swap);
-    const { amount1: liquidityAmount1, amount2: liquidityAmount2, loading:liquidityLoading, error:liquidityError} = useSelector((state: RootState) => state.liquidity);
+    const { amount1: swapAmount1, amount2: swapAmount2, loading:swapLoading } = useSelector((state: RootState) => state.swap);
+    const { amount1: liquidityAmount1, amount2: liquidityAmount2, loading:liquidityLoading } = useSelector((state: RootState) => state.liquidity);
     const poolTokenomics:TokenomicsType | null = useSelector((state: RootState) => state.pool.poolTokenomics);
 
     useEffect(() => {

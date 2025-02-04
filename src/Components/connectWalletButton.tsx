@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, styled, Typography, useTheme } from "@material-ui/core";
+import { Button, styled, Typography } from "@material-ui/core";
 import { useWallet } from "../Hooks/useWallet";
 import { useNetwork } from "../Hooks/useNetwork";
 import { ArrowForward } from "@material-ui/icons";
