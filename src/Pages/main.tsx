@@ -86,7 +86,7 @@ const Main = () => {
   if (error) return <div>Error: {error}</div>;  
 
   return (
-    <Grid container>
+    <Grid container justifyContent="center">
       <Grid item xs={12} md={12} lg={8}>
         <Box sx={{ width: "100%" }} className="main-content-area">
           <Box>
