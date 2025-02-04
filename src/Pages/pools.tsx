@@ -124,10 +124,22 @@ const PoolsList: React.FC<PoolsListProps> = () => {
 
   const handleCloseAddLiquidityDialog = () => {
     setIsAddLiquidityDialogOpen(false);
+    //refresh pools data when dialog closes
+    if (isNetworkConnected && window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      dispatch(fetchMyPools(web3Provider));
+    }
+    dispatch(fetchPools(rpcProvider));
   };
 
   const handleCloseRemoveLiquidityDialog = () => {
     setIsRemoveLiquidityDialogOpen(false);
+    //refresh pools data when dialog closes
+    if (isNetworkConnected && window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      dispatch(fetchMyPools(web3Provider));
+    }
+    dispatch(fetchPools(rpcProvider));
   };
 
   const handleAddLiquidity = () => {
