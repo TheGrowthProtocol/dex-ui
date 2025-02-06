@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles, styled } from '@material-ui/core/styles';
 
 // Import wallet icons
-import metamaskIcon from '../assets/wallet/MetaMask.svg';
+import metamaskIcon from '../assets/wallet/Metamask.svg';
 import { useWallet } from '../Hooks/useWallet';
 
 const useStyles = makeStyles((theme) => ({
