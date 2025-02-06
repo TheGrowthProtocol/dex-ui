@@ -27,6 +27,8 @@ export const useWallet = () => {
           method: "eth_accounts",
         });
 
+        console.log('useNetwork-->>', accounts);
+
         if (accounts.length > 0) {
           dispatch(connectWalletSuccess(accounts[0]));
           // Save connection state
@@ -53,6 +55,7 @@ export const useWallet = () => {
           error instanceof Error ? error.message : "Failed to connect wallet"
         )
       );
+      throw error;
     }
   }, [dispatch, connectNetwork]);
 

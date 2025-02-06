@@ -13,7 +13,7 @@ import { makeStyles, styled } from '@material-ui/core/styles';
 // Import wallet icons
 import metamaskIcon from '../assets/wallet/Metamask.svg';
 import { useWallet } from '../Hooks/useWallet';
-
+import { useSnackbarContext } from '../Contexts/snackbarContext';
 const useStyles = makeStyles((theme) => ({
   closeButton: {
     position: 'absolute',
@@ -94,21 +94,18 @@ const StyledWalletConnectorModalFooter = styled(Box)(({ theme }) => ({
 
 
 
-
-
-
 const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClose }) => {
   const classes = useStyles();
-  const { connectMetaMask } = useWallet();
-
+  const { connectMetaMask,error } = useWallet();
+  const { showSnackbar } = useSnackbarContext();
   const walletOptions: WalletOption[] = [
     {
       name: 'MetaMask',
       icon: metamaskIcon,
       description: 'Connect using browser wallet',
       onClick: async () => {
-        await connectMetaMask();
-        onClose();
+          await connectMetaMask();
+          onClose();
       }
     },
   ];
@@ -117,10 +114,61 @@ const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClo
     try {
       await wallet.onClick();
       onClose();
-    } catch (error) {
-      console.error('Failed to connect wallet:', error);
+    } catch (error: any) {
+      showSnackbar(error.message, 'error');
     }
   };
+
+  const handleWalletConnection = async () => {
+    try {
+      // Check if any ethereum provider exists
+      if (typeof window.ethereum !== 'undefined') {
+        // Get all available ethereum providers
+        const providers = window.ethereum.providers || [window.ethereum];
+        
+        // Find MetaMask provider specifically
+        const metaMaskProvider = providers.find((provider: any) => 
+          provider.isMetaMask
+        );
+
+        if (!metaMaskProvider) {
+          throw new Error('MetaMask not found. Please install MetaMask.');
+        }
+
+        // Request account access using the MetaMask provider
+        const accounts = await metaMaskProvider.request({ 
+          method: 'eth_requestAccounts' 
+        });
+        
+        // Connect using the first account
+        const account = accounts[0];
+        // ... handle successful connection
+        
+      } else {
+        throw new Error('No Ethereum provider found. Please install MetaMask.');
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      // Handle error appropriately
+    }
+  };
+
+  const detectWallets = () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const providers = window.ethereum.providers || [window.ethereum];
+      console.log(providers);
+      const availableWallets = providers.map((provider: any) => ({
+        //isMetaMask: provider.isMetaMask,
+        provider: provider
+      }));
+
+      return availableWallets;
+    }
+    return [];
+  };
+
+  // You can use this to show available options to users
+  const availableWallets = detectWallets();
 
   return (
     <StyledWalletConnectorModal 

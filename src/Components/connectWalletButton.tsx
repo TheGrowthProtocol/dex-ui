@@ -48,10 +48,6 @@ const ConnectWalletButton: React.FC<{}> = () => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  if (walletError) {
-    showSnackbar(walletError, "error");
-  }
-
   const getButtonText = () => {
     if (loading) return "Connecting...";
     return "Connect Wallet";
