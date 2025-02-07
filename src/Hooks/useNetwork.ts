@@ -29,23 +29,23 @@ export const useNetwork = () => {
 
   const [web3Provider, setWeb3Provider] = useState<ethers.providers.Web3Provider | null>(null);
 
-  const connect = useCallback(async () => {
+  const connect = useCallback(async (provider: any) => {
     dispatch(connectNetworkStart());
     try {
       if (typeof window.ethereum !== "undefined") {
-        const currentChainId = await window.ethereum.request({
+        const currentChainId = await provider.request({
           method: "eth_chainId",
         });
         if (currentChainId !== TGP_NETWORK.chainId) {
           try {
-            await window.ethereum.request({
+            await provider.request({
               method: "wallet_switchEthereumChain",
               params: [{ chainId: TGP_NETWORK.chainId }],
             });
           } catch (switchError: any) {
             // This error code indicates that the chain has not been added to MetaMask
             if (switchError.code === 4902) {
-              await window.ethereum.request({
+              await provider.request({
                 method: "wallet_addEthereumChain",
                 params: [TGP_NETWORK],
               });
@@ -53,10 +53,10 @@ export const useNetwork = () => {
               throw switchError;
             }
           } finally {
-            const currentChainId = await window.ethereum.request({
+            const currentChainId = await provider.request({
               method: "eth_chainId",
             });
-            dispatch(connectNetworkSuccess(currentChainId));
+            dispatch(connectNetworkSuccess(currentChainId)); 
           }
         } else {
           dispatch(connectNetworkSuccess(currentChainId));

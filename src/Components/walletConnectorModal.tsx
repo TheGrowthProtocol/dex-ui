@@ -96,7 +96,7 @@ const StyledWalletConnectorModalFooter = styled(Box)(({ theme }) => ({
 
 const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClose }) => {
   const classes = useStyles();
-  const { connectMetaMask,error } = useWallet();
+  const { connectMetaMask } = useWallet();
   const { showSnackbar } = useSnackbarContext();
   const walletOptions: WalletOption[] = [
     {
@@ -119,48 +119,47 @@ const WalletConnectorModal: React.FC<WalletConnectorModalProps> = ({ open, onClo
     }
   };
 
-  const handleWalletConnection = async () => {
+  /*const handleWalletConnection = async () => {
     try {
-      // Check if any ethereum provider exists
       if (typeof window.ethereum !== 'undefined') {
         // Get all available ethereum providers
         const providers = window.ethereum.providers || [window.ethereum];
         
-        // Find MetaMask provider specifically
-        const metaMaskProvider = providers.find((provider: any) => 
-          provider.isMetaMask
-        );
-
-        if (!metaMaskProvider) {
+        // Set target provider as MetaMask
+        const targetProvider = providers.find(provider => provider.isMetaMask);
+        
+        if (!targetProvider) {
           throw new Error('MetaMask not found. Please install MetaMask.');
         }
 
-        // Request account access using the MetaMask provider
-        const accounts = await metaMaskProvider.request({ 
+        // Set as window.ethereum provider
+        if (Array.isArray(window.ethereum.providers)) {
+          window.ethereum = targetProvider;
+        }
+
+        const accounts = await targetProvider.request({ 
           method: 'eth_requestAccounts' 
         });
-        
+
         // Connect using the first account
         const account = accounts[0];
-        // ... handle successful connection
-        
       } else {
         throw new Error('No Ethereum provider found. Please install MetaMask.');
       }
     } catch (error) {
       console.error('Error connecting wallet:', error);
-      // Handle error appropriately
     }
-  };
+  };*/
 
   const detectWallets = () => {
     if (typeof window.ethereum !== 'undefined') {
       const providers = window.ethereum.providers || [window.ethereum];
-      console.log(providers);
-      const availableWallets = providers.map((provider: any) => ({
-        //isMetaMask: provider.isMetaMask,
-        provider: provider
-      }));
+      const availableWallets = providers.map((provider: any) => {
+        return {
+          isMetaMask: provider.isMetaMask?? false,
+          provider: provider
+        }
+      });
 
       return availableWallets;
     }

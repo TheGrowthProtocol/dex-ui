@@ -11,6 +11,7 @@ import CoinNoIcon from "./coinNoIcon";
 import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
 import CoinIcon from "./coinIcon";
+import { useProviderContext } from "../Contexts/providerContext";
 
 const StyledCoinFieldBalance = styled(Box)({
   display: "flex",
@@ -49,19 +50,19 @@ const Coinfield: React.FC<COINFIELD> = ({
   const { isConnected: isWalletConnected } = useSelector(
     (state: RootState) => state.wallet
   );
-
+  const { provider } = useProviderContext();
   /**
    * Fetches the balance of the connected wallet and updates the state.
    */
     const fetchBalance = useCallback(async () => {
     try {
-      if (!window.ethereum) {
+      if (!provider) {
         console.error("MetaMask is not installed!");
         return;
       }
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
+      console.log('web3Provider-->>', provider);
+      const web3Provider = new ethers.providers.Web3Provider(provider);
+      const signer = web3Provider.getSigner();
       const address = await signer.getAddress();
 
       // Fetch the selected token's contract
@@ -77,13 +78,13 @@ const Coinfield: React.FC<COINFIELD> = ({
       }
 
       if (tokenSymbol === "CERES") {
-        const balance = await provider.getBalance(address);
+        const balance = await web3Provider.getBalance(address);
         const formattedBalance = Number(
           ethers.utils.formatEther(balance)
         ).toFixed(2); // Assuming 18 decimals for CERES
         setBalance(formattedBalance);
       } else {
-        const tokenContract = new Contract(tokenAddress, ERC20.abi, provider);
+        const tokenContract = new Contract(tokenAddress, ERC20.abi, web3Provider);
         const balance = await tokenContract.balanceOf(address);
         const formattedBalance = Number(
           ethers.utils.formatUnits(balance, 18)
@@ -96,10 +97,11 @@ const Coinfield: React.FC<COINFIELD> = ({
   }, [selectedToken, tokens]);
 
   useEffect(() => {
+    console.log('web3Provider-->>', provider);
     if (selectedToken.address && isWalletConnected) {
       fetchBalance();
     }
-  }, [selectedToken, isWalletConnected, fetchBalance]);
+  }, [selectedToken, isWalletConnected, fetchBalance, provider]);
 
   
 

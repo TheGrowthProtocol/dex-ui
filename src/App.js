@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import { SnackbarProvider } from "./Contexts/snackbarContext";
+import { ProviderContextProvider } from "./Contexts/providerContext";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 
 /**
@@ -34,12 +35,14 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider>
+        <ProviderContextProvider>
         <div className="App">
           <Header />
           <div className="main-container">
             <Main />
+            </div>
           </div>
-        </div>
+        </ProviderContextProvider>
       </SnackbarProvider>
     </ThemeProvider>
   );

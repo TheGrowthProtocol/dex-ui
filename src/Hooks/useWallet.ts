@@ -9,6 +9,7 @@ import {
 import { RootState } from "../store/store";
 import { useNetwork } from "./useNetwork";
 import { LOCAL_STORAGE_KEYS } from "../constants/localstoragekeys";
+import { useProviderContext } from '../Contexts/providerContext';
 
 export const useWallet = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ export const useWallet = () => {
   );
   const { connect: connectNetwork, disconnect: disconnectNetwork } =
     useNetwork();
+  const { setProvider } = useProviderContext();
 
   const connectWallet = useCallback(async () => {
     dispatch(connectWalletStart());
@@ -34,7 +36,7 @@ export const useWallet = () => {
           // Save connection state
           localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_CONNECTED, "true");
           localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, accounts[0]);
-          connectNetwork();
+          //connectNetwork();
           return;
         }
 
@@ -47,7 +49,7 @@ export const useWallet = () => {
         localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_CONNECTED, "true");
         localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, accounts[0]);
 
-        connectNetwork();
+        //connectNetwork();
       }
     } catch (error) {
       dispatch(
@@ -64,7 +66,8 @@ export const useWallet = () => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_CONNECTED, "false");
     localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, "");
     disconnectNetwork();
-  }, [dispatch, disconnectNetwork]);
+    setProvider(null);
+  }, [dispatch, disconnectNetwork, setProvider]);
 
   const displayBalance = useCallback(() => {
 
@@ -76,7 +79,8 @@ export const useWallet = () => {
       LOCAL_STORAGE_KEYS.WALLET_CONNECTED
     );
     if (wasConnected === "true") {
-      connectWallet();
+      //connectWallet();
+      connectMetaMask();
     }
   }, [connectWallet]);
 
@@ -108,10 +112,60 @@ export const useWallet = () => {
 
 
   const connectMetaMask = async (): Promise<void> => {
-    if(typeof window.ethereum !== "undefined") {
-      await connectWallet();
-    } else {
-      window.open("https://metamask.io/download/", "_blank");
+    try {
+      if(typeof window.ethereum !== "undefined") {
+        const providers = window.ethereum.providers || [window.ethereum];
+        
+        const targetProvider = providers.find(
+          (provider): provider is MetaMaskProvider => {
+            const isMetaMask = 'isMetaMask' in provider && provider.isMetaMask;
+            const isTrust = 'isTrust' in provider && provider.isTrust;
+            return isMetaMask && !isTrust;
+          }
+        );
+        
+        if (!targetProvider) {
+          throw new Error('MetaMask not found. Please install MetaMask.');
+        } else {
+          if (window.ethereum.providers) {
+            window.ethereum = targetProvider;
+            // Set the provider in context
+            setProvider(targetProvider);
+            
+            await targetProvider.request({
+              method: 'wallet_requestPermissions',
+              params: [{ eth_accounts: {} }],
+            });
+            const accounts = await targetProvider.request({
+              method: "eth_accounts",
+            });
+            if (accounts.length > 0) {
+              dispatch(connectWalletSuccess(accounts[0]));
+              // Save connection state
+              localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_CONNECTED, "true");
+              localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, accounts[0]);
+              connectNetwork(targetProvider);
+              return;
+            }
+            const newAccounts = await targetProvider.request({
+              method: "eth_requestAccounts",
+            });
+            dispatch(connectWalletSuccess(newAccounts[0]));
+    
+            // Save connection state
+            localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_CONNECTED, "true");
+            localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, newAccounts[0]);
+    
+            connectNetwork(targetProvider);
+          }
+          //await connectWallet();
+        }
+      } else {
+        window.open("https://metamask.io/download/", "_blank");
+      }
+    } catch (error) {
+      console.error('Failed to connect MetaMask:', error);
+      throw error;
     }
   };
 
