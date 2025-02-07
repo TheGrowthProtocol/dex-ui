@@ -47,20 +47,27 @@ const Coinfield: React.FC<COINFIELD> = ({
   const [balance, setBalance] = useState("0.00"); // State to store the balance
   const { showSnackbar } = useSnackbarContext();
   const { tokens } = useSelector((state: RootState) => state.tokens);
-  const { isConnected: isWalletConnected } = useSelector(
+  const { isConnected } = useSelector(
     (state: RootState) => state.wallet
   );
+
+  const [selectedTokenObj, setSelectedTokenObj] = useState<TOKEN>({ name: "", address: "", symbol: "", decimals: 0, icon: "" });
+
   const { provider } = useProviderContext();
+
+  /** Local State */
+  const [isProviderConnected, setIsProviderConnected] = useState(false);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+
   /**
    * Fetches the balance of the connected wallet and updates the state.
    */
     const fetchBalance = useCallback(async () => {
     try {
       if (!provider) {
-        console.error("MetaMask is not installed!");
+        console.error("Web3 provider not found!");
         return;
       }
-      console.log('web3Provider-->>', provider);
       const web3Provider = new ethers.providers.Web3Provider(provider);
       const signer = web3Provider.getSigner();
       const address = await signer.getAddress();
@@ -97,13 +104,51 @@ const Coinfield: React.FC<COINFIELD> = ({
   }, [selectedToken, tokens]);
 
   useEffect(() => {
-    console.log('web3Provider-->>', provider);
-    if (selectedToken.address && isWalletConnected) {
-      fetchBalance();
+    if(provider) {
+      setIsProviderConnected(true);
+    } else {
+      setIsProviderConnected(false);
     }
-  }, [selectedToken, isWalletConnected, fetchBalance, provider]);
+  }, [provider]);
 
-  
+  useEffect(() => {
+    if(isConnected) {
+      setIsWalletConnected(true);
+    } else {
+      setIsWalletConnected(false);
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if(selectedTokenObj.address && isProviderConnected && isWalletConnected && provider) {
+      try{
+        const web3Provider = new ethers.providers.Web3Provider(provider);
+        const signer = web3Provider.getSigner();
+        const address = await signer.getAddress();
+        if(selectedTokenObj.symbol === "CERES") {
+          const balance = await web3Provider.getBalance(address);
+          const formattedBalance = Number(
+            ethers.utils.formatEther(balance)
+          ).toFixed(2); // Assuming 18 decimals for CERES
+          setBalance(formattedBalance);
+        } else {
+          const tokenContract = new Contract(selectedTokenObj.address, ERC20.abi, web3Provider);
+          const balance = await tokenContract.balanceOf(address);
+          const formattedBalance = Number(ethers.utils.formatUnits(balance, 18)).toFixed(2);
+          setBalance(formattedBalance);
+        }
+      } catch (error) {
+          showSnackbar("Error fetching balance", "error");
+        }
+      }
+    };
+    fetchBalance();
+  }, [selectedTokenObj, isProviderConnected, isWalletConnected, provider]);
+
+  useEffect(() => {
+    setSelectedTokenObj(selectedToken);
+  }, [selectedToken]);
 
   const handleTokenDialogOpen = () => {
     setOpenTokenDialog(true);

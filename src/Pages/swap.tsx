@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import Coinfield from "../Components/coinfield";
 import { TOKEN } from "../interfaces";
@@ -71,8 +71,6 @@ const Swap: React.FC<{}> = () => {
     }
   }, [amount1, token2, dispatch]);
 
-
-  
 
   const handleSwap = async () => {
     try {

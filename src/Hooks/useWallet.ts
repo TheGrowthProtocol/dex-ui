@@ -127,15 +127,11 @@ export const useWallet = () => {
         if (!targetProvider) {
           throw new Error('MetaMask not found. Please install MetaMask.');
         } else {
-          if (window.ethereum.providers) {
-            window.ethereum = targetProvider;
+            //window.ethereum = targetProvider;
             // Set the provider in context
             setProvider(targetProvider);
             
-            await targetProvider.request({
-              method: 'wallet_requestPermissions',
-              params: [{ eth_accounts: {} }],
-            });
+            
             const accounts = await targetProvider.request({
               method: "eth_accounts",
             });
@@ -147,6 +143,10 @@ export const useWallet = () => {
               connectNetwork(targetProvider);
               return;
             }
+            await targetProvider.request({
+              method: 'wallet_requestPermissions',
+              params: [{ eth_accounts: {} }],
+            });
             const newAccounts = await targetProvider.request({
               method: "eth_requestAccounts",
             });
@@ -157,7 +157,7 @@ export const useWallet = () => {
             localStorage.setItem(LOCAL_STORAGE_KEYS.WALLET_ADDRESS, newAccounts[0]);
     
             connectNetwork(targetProvider);
-          }
+          
           //await connectWallet();
         }
       } else {

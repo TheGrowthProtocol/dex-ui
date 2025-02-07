@@ -31,6 +31,7 @@ import { useNetwork } from "../Hooks/useNetwork";
 import { useWallet } from "../Hooks/useWallet";
 import { ethers } from "ethers";
 import { setSelectedPool } from "../store/pool/poolSlice";
+import { useProviderContext } from "../Contexts/providerContext";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -118,6 +119,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   const [isRemoveLiquidityDialogOpen, setIsRemoveLiquidityDialogOpen] =
     useState(false);
 
+  const { provider } = useProviderContext(); 
+
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
@@ -125,8 +128,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   const handleCloseAddLiquidityDialog = () => {
     setIsAddLiquidityDialogOpen(false);
     //refresh pools data when dialog closes
-    if (isNetworkConnected && window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (isNetworkConnected && provider) {
+      const web3Provider = new ethers.providers.Web3Provider(provider);
       dispatch(fetchMyPools(web3Provider));
     }
     dispatch(fetchPools(rpcProvider));
@@ -135,8 +138,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   const handleCloseRemoveLiquidityDialog = () => {
     setIsRemoveLiquidityDialogOpen(false);
     //refresh pools data when dialog closes
-    if (isNetworkConnected && window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (isNetworkConnected && provider) {
+      const web3Provider = new ethers.providers.Web3Provider(provider);
       dispatch(fetchMyPools(web3Provider));
     }
     dispatch(fetchPools(rpcProvider));
@@ -202,8 +205,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   };
 
   useEffect(() => {
-    if (isNetworkConnected && window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (isNetworkConnected && provider) {
+      const web3Provider = new ethers.providers.Web3Provider(provider);
       dispatch(fetchMyPools(web3Provider));
     }
     dispatch(fetchPools(rpcProvider));
