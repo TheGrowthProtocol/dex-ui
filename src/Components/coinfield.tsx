@@ -59,50 +59,6 @@ const Coinfield: React.FC<COINFIELD> = ({
   const [isProviderConnected, setIsProviderConnected] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
-  /**
-   * Fetches the balance of the connected wallet and updates the state.
-   */
-    const fetchBalance = useCallback(async () => {
-    try {
-      if (!provider) {
-        console.error("Web3 provider not found!");
-        return;
-      }
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      const signer = web3Provider.getSigner();
-      const address = await signer.getAddress();
-
-      // Fetch the selected token's contract
-      const tokenAddress = tokens.find(
-        (token) => token.name === selectedToken.name
-      )?.address;
-      const tokenSymbol = tokens.find(
-        (token) => token.name === selectedToken.name
-      )?.symbol;
-      if (!tokenAddress) {
-        console.error("Selected token address not found!");
-        return;
-      }
-
-      if (tokenSymbol === "CERES") {
-        const balance = await web3Provider.getBalance(address);
-        const formattedBalance = Number(
-          ethers.utils.formatEther(balance)
-        ).toFixed(2); // Assuming 18 decimals for CERES
-        setBalance(formattedBalance);
-      } else {
-        const tokenContract = new Contract(tokenAddress, ERC20.abi, web3Provider);
-        const balance = await tokenContract.balanceOf(address);
-        const formattedBalance = Number(
-          ethers.utils.formatUnits(balance, 18)
-        ).toFixed(2); // Assuming 18 decimals for the token
-        setBalance(formattedBalance);
-      }
-    } catch (error) {
-      console.error("Error fetching balance:", error);
-    }
-  }, [selectedToken, tokens]);
-
   useEffect(() => {
     if(provider) {
       setIsProviderConnected(true);

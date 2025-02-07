@@ -28,6 +28,7 @@ import {
 import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
 import { ethers } from "ethers";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
+import { useProviderContext } from "../Contexts/providerContext";
 
 
 const StyledSelect = styled(Select)(({ theme}) => ({
@@ -79,16 +80,23 @@ const RemoveLiquidity: React.FC<{}> = () => {
 
   // Add state for selected pool ID
   const [selectedPoolId, setSelectedPoolId] = useState<string>("");
+  const { provider } = useProviderContext(); 
+
 
   useEffect(() => {
     if (myPools.length > 0 && selectedPoolId === "") {
-      const initialPoolId = myPools[0].id;
-      setSelectedPoolId(initialPoolId);
-      dispatch(selectPool(initialPoolId));
+      if( selectedPool) {
+        setSelectedPoolId(selectedPool.id);
+        dispatch(selectPool(selectedPool.id));
+      } else {
+        const initialPoolId = myPools[0].id; 
+        setSelectedPoolId(initialPoolId);
+        dispatch(selectPool(initialPoolId));
+      }
     } else if (myPools.length > 0 && selectedPoolId !== "") {
       dispatch(selectPool(selectedPoolId));
     }
-  }, [myPools, selectedPoolId, dispatch]);
+  }, [myPools, selectedPoolId, selectedPool, dispatch]);
 
   useEffect(() => {
     if (selectedPool) {
@@ -99,8 +107,8 @@ const RemoveLiquidity: React.FC<{}> = () => {
   }, [percentage, selectedPool, dispatch]);
 
   useEffect(() => {
-    if (removeLpTokenBalance && selectedPool && window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (removeLpTokenBalance && selectedPool && provider) {
+      const web3Provider = new ethers.providers.Web3Provider(provider);
       dispatch(
         fetchShareBalances({
           pool: selectedPool,
@@ -109,15 +117,15 @@ const RemoveLiquidity: React.FC<{}> = () => {
         })
       );
     }
-  }, [removeLpTokenBalance, selectedPool, dispatch]);
+  }, [removeLpTokenBalance, selectedPool, dispatch, provider]);
 
   const handleSelectPool = (poolId: string) => {
     setSelectedPoolId(poolId); // Update local state
   };
 
   const handleRemoveLiquidityPool = async () => {
-    if (window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (provider) {
+      const web3Provider = new ethers.providers.Web3Provider(provider);
       try {
         await dispatch(removeLpToken({ provider: web3Provider })).unwrap();
         showSnackbar("Liquidity removed successfully", "success");
@@ -169,8 +177,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
                     <StyledSelect
                       color="primary"
                       id="demo-simple-select-standard"
-                      value={selectedPoolId} // Use local state instead
-                      defaultValue={selectedPoolId}
+                      value={selectedPoolId || ""} // Use local state instead
                       onChange={(event) =>
                         handleSelectPool(event.target.value as string)
                       }

@@ -19,6 +19,8 @@ import ConnectWalletButton from "../Components/connectWalletButton";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import CoinIcon from "../Components/coinIcon";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
+import { useProviderContext } from "../Contexts/providerContext";
+import { ethers } from "ethers";
 
 const StyledAddLiquidityButtonContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -38,6 +40,7 @@ const AddLiquidity: React.FC<{}> = () => {
   const { tokens } = useSelector((state: RootState) => state.tokens as { tokens: TOKEN[] });
   const { selectedPool } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
+  const { provider } = useProviderContext(); 
 
   useEffect(() => {
     if (tokens.length > 0) {
@@ -102,13 +105,17 @@ const AddLiquidity: React.FC<{}> = () => {
   // Function to add liquidity pool
   const handleAddLiquidityPool = async () => {
     try {
-      await dispatch(addLiquidity()).unwrap();
+      if (!provider) {
+        showSnackbar("Please connect your wallet", "error");
+        return;
+      }
+      const web3Provider = new ethers.providers.Web3Provider(provider); 
+      await dispatch(addLiquidity(web3Provider)).unwrap();
       showSnackbar("Liquidity added successfully", "success");
     } catch (error) {
       showSnackbar("Error adding liquidity", "error");
     }
   };
-
 
   return (
     <Grid container>
@@ -130,7 +137,7 @@ const AddLiquidity: React.FC<{}> = () => {
                   {token1.icon && <CoinIcon icon={token1.icon} />}
                   {!token1.icon && <CoinNoIcon />}
                   <Typography className={"gradient-text token-symbol"}>
-                    {token1.symbol || "Select Token"}
+                    {token1.symbol === 'WCERS' ? 'CERES' : token1.symbol || "Select Token"}
                   </Typography>
                 </Button>
                 <Coindialog
@@ -151,7 +158,7 @@ const AddLiquidity: React.FC<{}> = () => {
                   {token2.icon && <CoinIcon icon={token2.icon} />}
                   {!token2.icon && <CoinNoIcon />}
                   <Typography className={"token-symbol gradient-text"}>
-                    {token2.symbol || "Select Token"}
+                    {token2.symbol === 'WCERS' ? 'CERES' : token2.symbol || "Select Token"}
                   </Typography>
                 </Button>
                 <Coindialog

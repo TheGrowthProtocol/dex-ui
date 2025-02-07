@@ -234,7 +234,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
             (pools.length === 0 ? (
               <PoolsNoItems
                 description="No Liquidity added yet"
-                addLiquidityButtonOnClick={() => console.log("Add Liquidity")}
+                addLiquidityButtonOnClick={() => handleAddLiquidity()}
               />
             ) : (
               <Box>

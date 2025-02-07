@@ -10,7 +10,7 @@ import WCERES from '../../build/WCERES.json';
 
 export const addLiquidity = createAsyncThunk(
   'liquidity/addLiquidity',
-  async (_, { getState, dispatch }) => {
+  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
     const state = getState() as RootState;
     const { token1, token2, amount1, amount2, amount1Min, amount2Min } = state.liquidity;
 
@@ -19,7 +19,6 @@ export const addLiquidity = createAsyncThunk(
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed!');
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       
       const { routerContract, account } = await setupContracts(signer);

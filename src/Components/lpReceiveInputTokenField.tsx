@@ -38,7 +38,7 @@ const StyledLpReceiveInputTokenFieldUsdValue = styled(Typography)(({ theme }) =>
 const LpReceiveInputTokenField: React.FC<LpReceiveInputTokenFieldProps> = ({ token, balance, usdValue }) => {
     return (
         <StyledLpReceiveInputTokenField>
-            <StyledLpReceiveInputTokenFieldSymbol variant="subtitle1">{token.symbol}</StyledLpReceiveInputTokenFieldSymbol> 
+            <StyledLpReceiveInputTokenFieldSymbol variant="subtitle1">{token.symbol === 'WCERS' ? 'CERES' : token.symbol}</StyledLpReceiveInputTokenFieldSymbol> 
             <StyledLpReceiveInputTokenFieldBalance variant="subtitle2">{balance}</StyledLpReceiveInputTokenFieldBalance>
             <StyledLpReceiveInputTokenFieldUsdValue variant="subtitle2">{usdValue}</StyledLpReceiveInputTokenFieldUsdValue>
         </StyledLpReceiveInputTokenField>
