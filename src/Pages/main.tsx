@@ -104,13 +104,13 @@ const Main = () => {
             <Swap />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <AddLiquidity />
+            <AddLiquidity onClose={() => {}} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <PoolsList  />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={3}>
-            <RemoveLiquidity />
+            <RemoveLiquidity onClose={() => {}} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={4}>
             <Staking />

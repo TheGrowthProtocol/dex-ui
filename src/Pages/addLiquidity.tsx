@@ -29,7 +29,7 @@ const StyledAddLiquidityButtonContainer = styled(Box)(({ theme }) => ({
   marginTop: "16px",
 }));
 
-const AddLiquidity: React.FC<{}> = () => {
+const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { showSnackbar } = useSnackbarContext();
   const [openToken1Dialog, setOpenToken1Dialog] = useState(false);
@@ -81,6 +81,18 @@ const AddLiquidity: React.FC<{}> = () => {
   const handleTokenAmount1 = (amount: string) => {
     if (!isNaN(Number(amount))) {
       dispatch(setAmount1(amount));
+
+      // Calculate and set amount2 based on pool ratio
+      if (selectedPool && amount) {
+        const poolRatio = Number(selectedPool.token1Reserve) / Number(selectedPool.token0Reserve);
+        const calculatedAmount2 = (Number(amount) * poolRatio).toString();
+        dispatch(setAmount2(calculatedAmount2));
+      } else {
+        dispatch(setAmount2(""));
+      }
+    } else {
+      dispatch(setAmount1(""));
+      dispatch(setAmount2(""));
     }
   };
 
@@ -99,6 +111,18 @@ const AddLiquidity: React.FC<{}> = () => {
   const handleTokenAmount2 = (amount: string) => {
     if (!isNaN(Number(amount))) {
       dispatch(setAmount2(amount));
+
+      // Calculate and set amount1 based on pool ratio
+      if (selectedPool && amount) {
+        const poolRatio = Number(selectedPool.token0Reserve) / Number(selectedPool.token1Reserve);
+        const calculatedAmount1 = (Number(amount) * poolRatio).toString();
+        dispatch(setAmount1(calculatedAmount1));
+      } else {
+        dispatch(setAmount1(""));
+      }
+    } else {
+      dispatch(setAmount2(""));
+      dispatch(setAmount1(""));
     }
   };
 
@@ -112,7 +136,9 @@ const AddLiquidity: React.FC<{}> = () => {
       const web3Provider = new ethers.providers.Web3Provider(provider); 
       await dispatch(addLiquidity(web3Provider)).unwrap();
       showSnackbar("Liquidity added successfully", "success");
+      onClose();
     } catch (error) {
+      console.log('error', error);
       showSnackbar("Error adding liquidity", "error");
     }
   };
@@ -183,7 +209,7 @@ const AddLiquidity: React.FC<{}> = () => {
               </Box>
               <TokenInputField
                 tokens={tokens}
-                value={amount1.toString()}
+                value={amount1 === "0" ? "" : amount1.toString()}
                 selectedToken={token1}
                 onAmountChange={handleTokenAmount1}
                 isDisplayBalance={isWalletConnected}
@@ -204,7 +230,7 @@ const AddLiquidity: React.FC<{}> = () => {
                     <TokenInputField
                       tokens={tokens}
                       selectedToken={token2}
-                      value={amount2.toString()}
+                      value={amount2 === "0" ? "" : amount2.toString()}
                       onAmountChange={handleTokenAmount2}
                       isDisplayBalance={isWalletConnected}
                     />

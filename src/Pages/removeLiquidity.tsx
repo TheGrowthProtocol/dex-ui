@@ -63,7 +63,7 @@ const StyledPooledTokensReceivingInput = styled(Box)(({ theme }) => ({
   marginTop: "16px",
 }));
 
-const RemoveLiquidity: React.FC<{}> = () => {
+const RemoveLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { showSnackbar } = useSnackbarContext();
   const theme = useTheme();
@@ -129,6 +129,7 @@ const RemoveLiquidity: React.FC<{}> = () => {
       try {
         await dispatch(removeLpToken({ provider: web3Provider })).unwrap();
         showSnackbar("Liquidity removed successfully", "success");
+        onClose();
       } catch (error) {
         showSnackbar("Error removing liquidity", "error");
       }

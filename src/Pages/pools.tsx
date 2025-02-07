@@ -125,6 +125,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     setValue(newValue);
   };
 
+  //console.log('myPools', myPools);
+
   const handleCloseAddLiquidityDialog = () => {
     setIsAddLiquidityDialogOpen(false);
     //refresh pools data when dialog closes
@@ -171,7 +173,9 @@ const PoolsList: React.FC<PoolsListProps> = () => {
             </IconButton>
           </StyledDialogHeader>
         <DialogContent>
-            <AddLiquidity />
+            <AddLiquidity onClose={() => {
+              handleCloseAddLiquidityDialog();
+            }}/>
         </DialogContent>
         </StyledDialogContainer>
       </StyledDialog>
