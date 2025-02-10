@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { POOL, TOKEN, Tokenomics } from "../../interfaces";
-import { fetchPoolTokenomics, fetchShareBalances } from "./poolThunks";
+import { fetchMyPools, fetchPoolTokenomics, fetchShareBalances } from "./poolThunks";
 
 interface PoolState {
   pools: POOL[];

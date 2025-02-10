@@ -136,6 +136,7 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
       const web3Provider = new ethers.providers.Web3Provider(provider); 
       await dispatch(addLiquidity(web3Provider)).unwrap();
       showSnackbar("Liquidity added successfully", "success");
+      //refresh pools data
       onClose();
     } catch (error) {
       console.log('error', error);

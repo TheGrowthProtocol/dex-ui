@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Button,
 } from "@material-ui/core";
 import { makeStyles, styled, useTheme } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
@@ -32,7 +33,6 @@ import { useWallet } from "../Hooks/useWallet";
 import { ethers } from "ethers";
 import { setSelectedPool } from "../store/pool/poolSlice";
 import { useProviderContext } from "../Contexts/providerContext";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +75,15 @@ const StyledDialogHeader = styled(Box)(({ theme }) => ({
 
 const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
   color: `${theme.palette.primary.main} !important`,
+}));
+
+const StyledPoolTabContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  borderBottom: 1, 
+  borderColor: "divider",
+  marginBottom: "16px"
 }));
 
 const CustomTabPanel = (props: TabPanelProps) => {
@@ -125,16 +134,22 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     setValue(newValue);
   };
 
-  //console.log('myPools', myPools);
-
-  const handleCloseAddLiquidityDialog = () => {
+  const handleCloseAddLiquidityDialog = async() => {
     setIsAddLiquidityDialogOpen(false);
-    //refresh pools data when dialog closes
-    if (isNetworkConnected && provider) {
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      dispatch(fetchMyPools(web3Provider));
+    try {
+      //refresh pools data when dialog closes
+      if (isNetworkConnected && provider) {
+        const web3Provider = new ethers.providers.Web3Provider(provider);
+        setTimeout(async () => {
+          await dispatch(fetchMyPools(web3Provider)).unwrap();
+        }, 1000);
+      }
+      setTimeout(async () => {
+        await dispatch(fetchPools(rpcProvider)).unwrap();
+      }, 1000);
+    } catch (error) {
+      console.error('Error updating pools after adding liquidity:', error);
     }
-    dispatch(fetchPools(rpcProvider));
   };
 
   const handleCloseRemoveLiquidityDialog = () => {
@@ -142,9 +157,13 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     //refresh pools data when dialog closes
     if (isNetworkConnected && provider) {
       const web3Provider = new ethers.providers.Web3Provider(provider);
-      dispatch(fetchMyPools(web3Provider));
+      setTimeout(() => {
+        dispatch(fetchMyPools(web3Provider)).unwrap();
+      }, 1000);
     }
-    dispatch(fetchPools(rpcProvider));
+    setTimeout(() => {
+      dispatch(fetchPools(rpcProvider)).unwrap();
+    }, 1000);
   };
 
   const handleAddLiquidity = () => {
@@ -173,8 +192,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
             </IconButton>
           </StyledDialogHeader>
         <DialogContent>
-            <AddLiquidity onClose={() => {
-              handleCloseAddLiquidityDialog();
+            <AddLiquidity onClose={async () => {
+              await handleCloseAddLiquidityDialog();
             }}/>
         </DialogContent>
         </StyledDialogContainer>
@@ -201,7 +220,9 @@ const PoolsList: React.FC<PoolsListProps> = () => {
           </StyledDialogHeader>
         
         <DialogContent>
-            <RemoveLiquidity />
+            <RemoveLiquidity onClose={() => {
+              handleCloseRemoveLiquidityDialog();
+            }}/>
         </DialogContent>
         </StyledDialogContainer>
       </StyledDialog>
@@ -211,7 +232,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   useEffect(() => {
     if (isNetworkConnected && provider) {
       const web3Provider = new ethers.providers.Web3Provider(provider);
-      dispatch(fetchMyPools(web3Provider));
+      dispatch(fetchMyPools(web3Provider)).unwrap();
     }
     dispatch(fetchPools(rpcProvider));
   }, [isWalletConnected, dispatch, isNetworkConnected, rpcProvider]);
@@ -227,12 +248,24 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   return (
     <Box className={`${classes.root} tabpanel-container`}>
       <Box className="tabpanel-content">
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <StyledPoolTabContainer>
           <Tabs value={value} onChange={handleChange} className="pool-tabs">
             <Tab label="All Pools" {...a11yProps(0)} />
             <Tab label="My Pools" {...a11yProps(1)} />
           </Tabs>
-        </Box>
+          <Button
+              variant="contained"
+              color="primary"
+              className={"gradient-button liquidity-add-button"}
+              onClick={handleAddLiquidity}
+            >
+              <div className="button-angled-clip">
+                <Typography className={"gradient-text"}>
+                  Add Position
+                </Typography>
+              </div>
+            </Button>  
+        </StyledPoolTabContainer>
         <CustomTabPanel value={value} index={0}>
           {isMobile &&
             (pools.length === 0 ? (

@@ -193,7 +193,7 @@ export const fetchMyPools = createAsyncThunk(
         provider
       );
       const account = state.wallet.address;
-      let pairs = [];
+      let pairs: POOL[] = [];
       // Get all pools
       const poolCount = await factory.allPairsLength();
       for (let i = 0; i < poolCount; i++) {
@@ -206,8 +206,9 @@ export const fetchMyPools = createAsyncThunk(
             provider
           );
 
-          // Get user balance
-          const userLPBalance = await pairContract.balanceOf(account);
+          // Get user balance with latest block
+          const latestBlock = await provider.getBlockNumber();
+          const userLPBalance = await pairContract.balanceOf(account, { blockTag: latestBlock });
           if (userLPBalance > 0) {
           // Get tokens
           const token0Address = await pairContract.token0();
@@ -271,15 +272,16 @@ export const fetchMyPools = createAsyncThunk(
             icon: token1Icon,
           };
 
-          // Get reserves
-          const reserves = await pairContract.getReserves();
+          // Get reserves with latest block
+          const reserves = await pairContract.getReserves({ blockTag: latestBlock });
           const [reserve0, reserve1] = [reserves[0], reserves[1]];
 
+          // Format reserves
           const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
           const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
 
-          // Get total supply
-          const totalSupply = await pairContract.totalSupply();
+          // Get total supply with latest block
+          const totalSupply = await pairContract.totalSupply({ blockTag: latestBlock });
 
           // Get token prices
           const [price0, price1] = await Promise.all([
@@ -347,8 +349,11 @@ export const fetchMyPools = createAsyncThunk(
           }
         }
 
-      dispatch(setMyPools(pairs));
+      //dispatch(setMyPools(pairs));
       dispatch(setLoading(false));
+      console.log('pairs from fetchMyPools', pairs);
+      dispatch(setMyPools(pairs));
+      //return pairs;
     } catch (error: any) {
       dispatch(setError(error.message));
       dispatch(setLoading(false));

@@ -369,7 +369,6 @@ body {
 }
 
 .pool-tabs {
-  margin-bottom: 16px !important;
   background: var(--background-color) !important;
   border-radius: 24px !important;
   padding: 1px !important;
