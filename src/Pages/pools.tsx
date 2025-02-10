@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   TableContainer,
   Typography,
@@ -127,6 +127,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     useState(false);
   const [isRemoveLiquidityDialogOpen, setIsRemoveLiquidityDialogOpen] =
     useState(false);
+  const [isPolling, setIsPolling] = useState(false);
 
   const { provider } = useProviderContext(); 
 
@@ -134,36 +135,55 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     setValue(newValue);
   };
 
-  const handleCloseAddLiquidityDialog = async() => {
-    setIsAddLiquidityDialogOpen(false);
+  // Create a reusable fetch function
+  const fetchPoolsData = useCallback(async () => {
     try {
-      //refresh pools data when dialog closes
       if (isNetworkConnected && provider) {
         const web3Provider = new ethers.providers.Web3Provider(provider);
-        setTimeout(async () => {
-          await dispatch(fetchMyPools(web3Provider)).unwrap();
-        }, 1000);
+        await dispatch(fetchMyPools(web3Provider)).unwrap();
       }
-      setTimeout(async () => {
+      if (rpcProvider) {
         await dispatch(fetchPools(rpcProvider)).unwrap();
-      }, 1000);
+      }
     } catch (error) {
-      console.error('Error updating pools after adding liquidity:', error);
+      console.error('Error fetching pools data:', error);
     }
+  }, [dispatch, isNetworkConnected, provider, rpcProvider]);
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchPoolsData();
+  }, [fetchPoolsData, isWalletConnected]);
+
+  // Start polling after liquidity changes
+  const startPolling = useCallback(() => {
+    setIsPolling(true);
+    let pollCount = 0;
+    const maxPolls = 1;
+    const pollInterval = 3000;
+
+    const poll = async () => {
+      if (pollCount < maxPolls) {
+        await fetchPoolsData();
+        pollCount++;
+        setTimeout(poll, pollInterval);
+      } else {
+        setIsPolling(false);
+      }
+    };
+
+    poll();
+  }, [fetchPoolsData]);
+
+  // Update handlers to use polling
+  const handleCloseAddLiquidityDialog = async () => {
+    setIsAddLiquidityDialogOpen(false);
+    startPolling();
   };
 
-  const handleCloseRemoveLiquidityDialog = () => {
+  const handleCloseRemoveLiquidityDialog = async () => {
     setIsRemoveLiquidityDialogOpen(false);
-    //refresh pools data when dialog closes
-    if (isNetworkConnected && provider) {
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      setTimeout(() => {
-        dispatch(fetchMyPools(web3Provider)).unwrap();
-      }, 1000);
-    }
-    setTimeout(() => {
-      dispatch(fetchPools(rpcProvider)).unwrap();
-    }, 1000);
+    startPolling();
   };
 
   const handleAddLiquidity = () => {
@@ -229,15 +249,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     );
   };
 
-  useEffect(() => {
-    if (isNetworkConnected && provider) {
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      dispatch(fetchMyPools(web3Provider)).unwrap();
-    }
-    dispatch(fetchPools(rpcProvider));
-  }, [isWalletConnected, dispatch, isNetworkConnected, rpcProvider]);
-
-  if (loading) {
+  if (isPolling) {
     return (
       <Box className="loading-container">
         <CircularProgress />

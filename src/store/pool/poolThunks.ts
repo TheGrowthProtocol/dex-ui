@@ -351,7 +351,6 @@ export const fetchMyPools = createAsyncThunk(
 
       //dispatch(setMyPools(pairs));
       dispatch(setLoading(false));
-      console.log('pairs from fetchMyPools', pairs);
       dispatch(setMyPools(pairs));
       //return pairs;
     } catch (error: any) {
