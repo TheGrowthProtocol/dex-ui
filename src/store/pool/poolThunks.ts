@@ -583,6 +583,310 @@ export const fetchPoolTokenomics = createAsyncThunk(
   }
 );
 
+export const fetchSinglePool = createAsyncThunk(
+  'pool/fetchSinglePool',
+  async ({ rpcProvider, poolId }: { rpcProvider: any, poolId: string }) => {
+    // Implement fetching single pool data
+    const factory = new ethers.Contract(
+      POOL_FACTORY_ADDRESS,
+      POOL_FACTORY_ABI.abi,
+      rpcProvider
+    );
+    const pairAddress = await factory.allPairs(poolId);
+    const pairContract = new ethers.Contract(
+      pairAddress,
+      PAIR_ABI.abi,
+      rpcProvider
+    );
+    // Get tokens
+    const token0Address = await pairContract.token0();
+    const token1Address = await pairContract.token1();
+
+    // Get token contract details
+    const token0Contract = new ethers.Contract(
+      token0Address,
+      [
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function decimals() view returns (uint8)",
+      ],
+      rpcProvider
+    );
+    const token1Contract = new ethers.Contract(
+      token1Address,
+      [
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function decimals() view returns (uint8)",
+      ],
+      rpcProvider
+    );
+
+    // Fetch token details in parallel
+    const [
+      token0Name,
+      token0Symbol,
+      token0Decimals,
+      token1Name,
+      token1Symbol,
+      token1Decimals,
+    ] = await Promise.all([
+      token0Contract.name(),
+      token0Contract.symbol(),
+      token0Contract.decimals(),
+      token1Contract.name(),
+      token1Contract.symbol(),
+      token1Contract.decimals(),
+    ]);
+
+    const token0Icon = COINS.get(chains.ChainId.TGP)?.find(
+      (coin: any) => coin.address === token0Address
+    )?.icon;
+    const token1Icon = COINS.get(chains.ChainId.TGP)?.find(
+      (coin: any) => coin.address === token1Address
+    )?.icon;
+
+    const token0: TOKEN = {
+      name: token0Name,
+      symbol: token0Symbol,
+      decimals: token0Decimals,
+      address: token0Address,
+      icon: token0Icon,
+    };
+    const token1: TOKEN = {
+      name: token1Name,
+      symbol: token1Symbol,
+      decimals: token1Decimals,
+      address: token1Address,
+      icon: token1Icon,
+    };
+
+    // Get reserves
+    const reserves = await pairContract.getReserves();
+    const [reserve0, reserve1] = [reserves[0], reserves[1]];
+
+    const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
+    const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
+
+    // Get token prices
+    const [price0, price1] = await Promise.all([
+      getTokenPrice(token0?.symbol ?? ""),
+      getTokenPrice(token1?.symbol ?? ""),
+    ]);
+
+    // Get volume (Note: You'll need to implement your own volume tracking as
+    // Uniswap V2 doesn't track volume directly)
+    const volume = await getVolume24h(pairAddress, rpcProvider);
+
+    // Calculate TVL
+    const tvl =
+      parseFloat(formatEther(reserve0)) * price0 +
+      parseFloat(formatEther(reserve1)) * price1;
+
+    // Calculate APR
+    const apr = calculateAPR(formatEther(volume), tvl.toString());
+
+    // Calculate liquidity (using both reserves)
+    const liquidity = ethers.BigNumber.from(
+      Math.floor(
+        Math.sqrt(
+          parseFloat(formatEther(reserve0)) *
+            parseFloat(formatEther(reserve1))
+        )
+      ).toString()
+    );
+
+    let pool: POOL = {
+      id: poolId,
+      pairAddress: pairAddress,
+      token0: token0 ?? {
+        name: "",
+        symbol: "",
+        decimals: 0,
+        address: "",
+      },
+      token1: token1 ?? {
+        name: "",
+        symbol: "",
+        decimals: 0,
+        address: "",
+      },
+      token0Reserve: token0Reserve,
+      token1Reserve: token1Reserve,
+      //token0Symbol,
+      //token1Symbol,
+      liquidity: formatEther(liquidity),
+      volume24h: formatEther(volume),
+      tvl: Number(tvl).toFixed(2),
+      apr: apr.toString(),
+    };
+    return pool;
+  }
+);
+
+export const fetchSingleUserPool = createAsyncThunk(
+  'pool/fetchSingleUserPool',
+  async ({ provider, poolId }: { provider: any, poolId: string }, { getState }) => {
+    // Implement fetching single user pool position
+    const state = getState() as RootState;
+    const account = state.wallet.address;
+    
+    const factory = new ethers.Contract(
+      POOL_FACTORY_ADDRESS,
+      POOL_FACTORY_ABI.abi,
+      provider
+    );
+    const pairAddress = await factory.allPairs(poolId);
+    const pairContract = new ethers.Contract(
+      pairAddress,
+      PAIR_ABI.abi,
+      provider
+    );
+    // Get user balance with latest block
+    const latestBlock = await provider.getBlockNumber();
+    const userLPBalance = await pairContract.balanceOf(account, { blockTag: latestBlock });
+    if (userLPBalance > 0) {
+    // Get tokens
+    const token0Address = await pairContract.token0();
+    const token1Address = await pairContract.token1();
+
+    // Get token contract details
+    const token0Contract = new ethers.Contract(
+      token0Address,
+      [
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function decimals() view returns (uint8)",
+      ],
+      provider
+    );
+    const token1Contract = new ethers.Contract(
+      token1Address,
+      [
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function decimals() view returns (uint8)",
+      ],
+      provider
+    );
+
+    // Fetch token details in parallel
+    const [
+      token0Name,
+      token0Symbol,
+      token0Decimals,
+      token1Name,
+      token1Symbol,
+      token1Decimals,
+    ] = await Promise.all([
+      token0Contract.name(),
+      token0Contract.symbol(),
+      token0Contract.decimals(),
+      token1Contract.name(),
+      token1Contract.symbol(),
+      token1Contract.decimals(),
+    ]);
+    const token0Icon = COINS.get(chains.ChainId.TGP)?.find(
+      (coin: any) => coin.address === token0Address
+    )?.icon;
+    const token1Icon = COINS.get(chains.ChainId.TGP)?.find(
+      (coin: any) => coin.address === token1Address
+    )?.icon;
+
+    const token0: TOKEN = {
+      name: token0Name,
+      symbol: token0Symbol,
+      decimals: token0Decimals,
+      address: token0Address,
+      icon: token0Icon,
+    };
+    const token1: TOKEN = {
+      name: token1Name,
+      symbol: token1Symbol,
+      decimals: token1Decimals,
+      address: token1Address,
+      icon: token1Icon,
+    };
+
+    // Get reserves with latest block
+    const reserves = await pairContract.getReserves({ blockTag: latestBlock });
+    const [reserve0, reserve1] = [reserves[0], reserves[1]];
+
+    // Format reserves
+    const token0Reserve = Number(formatEther(reserve0)).toFixed(2);
+    const token1Reserve = Number(formatEther(reserve1)).toFixed(2);
+
+    // Get total supply with latest block
+    const totalSupply = await pairContract.totalSupply({ blockTag: latestBlock });
+
+    // Get token prices
+    const [price0, price1] = await Promise.all([
+      getTokenPrice(token0?.symbol ?? ""),
+      getTokenPrice(token1?.symbol ?? ""),
+    ]);
+
+    // Get TBL
+    const tvl = (
+      Number(token0Reserve) * price0 +
+      Number(token1Reserve) * price1
+    ).toFixed(2);
+
+    // Calculate user's share percentage
+    const userSharePercent = userLPBalance
+      .mul(ethers.constants.WeiPerEther)
+      .div(totalSupply);
+
+    // Calculate user's token shares
+    const token0Share = reserve0
+      .mul(userSharePercent)
+      .div(ethers.constants.WeiPerEther);
+    const token1Share = reserve1
+      .mul(userSharePercent)
+      .div(ethers.constants.WeiPerEther);
+
+    // Calculate liquidity (using both reserves)
+    const liquidity = ethers.BigNumber.from(
+      Math.floor(
+        Math.sqrt(
+          parseFloat(formatEther(reserve0)) *
+            parseFloat(formatEther(reserve1))
+        )
+      ).toString()
+    );
+
+    // Get volume (Note: You'll need to implement your own volume tracking as
+    // Uniswap V2 doesn't track volume directly)
+    //const volume = await getVolume24h(pairAddress, provider);
+
+    let pool: POOL = {
+      id: poolId,
+      pairAddress: pairAddress,
+      token0: token0 ?? {
+        name: "",
+        symbol: "",
+        decimals: 0,
+        address: "",
+      },
+      token1: token1 ?? {
+        name: "",
+        symbol: "",
+        decimals: 0,
+        address: "",
+      },
+      token0Reserve: token0Reserve,
+      token1Reserve: token1Reserve,
+      token0Share: Number(formatEther(token0Share)).toFixed(2),
+      token1Share: Number(formatEther(token1Share)).toFixed(2),
+      liquidity: Number(formatEther(liquidity)).toFixed(2),
+      lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
+      tvl: Number(tvl).toFixed(2),
+      };
+      return pool;
+    }
+    return null;
+  }
+);
+
 // Helper functions
 
 const calculateTokenomics = (params: {

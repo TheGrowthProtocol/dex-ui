@@ -12,6 +12,7 @@ import {
   setToken2,
   setAmount1,
   setAmount2,
+  resetLiquidityState,
 } from "../store/liquidity/liquiditySlice";
 import CoinNoIcon from "../Components/coinNoIcon";
 import { useWallet } from "../Hooks/useWallet";
@@ -136,7 +137,9 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
       const web3Provider = new ethers.providers.Web3Provider(provider); 
       await dispatch(addLiquidity(web3Provider)).unwrap();
       showSnackbar("Liquidity added successfully", "success");
-      //refresh pools data
+      dispatch(setAmount1(""));
+      dispatch(setAmount2(""));
+      dispatch(setToken2({address: "", symbol: "", icon: "", name: ""}));
       onClose();
     } catch (error) {
       console.log('error', error);

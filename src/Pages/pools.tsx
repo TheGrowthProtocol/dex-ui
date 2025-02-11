@@ -24,7 +24,7 @@ import ConnectWalletButton from "../Components/connectWalletButton";
 import { PoolsNoItems } from "../Components/poolsNoItems";
 import AddLiquidity from "./addLiquidity";
 import RemoveLiquidity from "./removeLiquidity";
-import { fetchMyPools, fetchPools } from "../store/pool/poolThunks";
+import { fetchMyPools, fetchPools, fetchSinglePool, fetchSingleUserPool } from "../store/pool/poolThunks";
 import { RootState, AppDispatch } from "../store/store";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -119,7 +119,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { isConnected: isWalletConnected } = useWallet();
-  const { pools, loading, myPools } = useSelector(
+  const { pools, myPools, selectedPool } = useSelector(
     (state: RootState) => state.pool
   );
   const [value, setValue] = useState(0);
@@ -155,35 +155,45 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     fetchPoolsData();
   }, [fetchPoolsData, isWalletConnected]);
 
-  // Start polling after liquidity changes
-  const startPolling = useCallback(() => {
-    setIsPolling(true);
-    let pollCount = 0;
-    const maxPolls = 1;
-    const pollInterval = 3000;
+  // Replace polling-related state and functions with specific pool update function
+  const updatePoolData = useCallback(async (poolId: string) => {
+    try {
+      if (!rpcProvider) return;
 
-    const poll = async () => {
-      if (pollCount < maxPolls) {
-        await fetchPoolsData();
-        pollCount++;
-        setTimeout(poll, pollInterval);
-      } else {
-        setIsPolling(false);
+      // Fetch single pool data
+      await dispatch(fetchSinglePool({ 
+        rpcProvider, 
+        poolId 
+      })).unwrap();
+
+      // If it's in myPools, update user's position too
+      if (isWalletConnected && provider && myPools.some(p => p.id === poolId)) {
+        const web3Provider = new ethers.providers.Web3Provider(provider);
+        await dispatch(fetchSingleUserPool({
+          provider: web3Provider,
+          poolId
+        })).unwrap();
       }
-    };
-
-    poll();
-  }, [fetchPoolsData]);
+    } catch (error) {
+      console.error('Error updating pool data:', error);
+    }
+  }, [dispatch, rpcProvider, provider, isWalletConnected, myPools]);
 
   // Update handlers to use polling
   const handleCloseAddLiquidityDialog = async () => {
     setIsAddLiquidityDialogOpen(false);
-    startPolling();
+    const selectedPoolId = selectedPool?.id;
+    if (selectedPoolId) {
+      await updatePoolData(selectedPoolId);
+    }
   };
 
   const handleCloseRemoveLiquidityDialog = async () => {
     setIsRemoveLiquidityDialogOpen(false);
-    startPolling();
+    const selectedPoolId = selectedPool?.id;
+    if (selectedPoolId) {
+      await updatePoolData(selectedPoolId);
+    }
   };
 
   const handleAddLiquidity = () => {

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { POOL, TOKEN, Tokenomics } from "../../interfaces";
-import { fetchMyPools, fetchPoolTokenomics, fetchShareBalances } from "./poolThunks";
+import { fetchPoolTokenomics, fetchShareBalances, fetchSinglePool, fetchSingleUserPool } from "./poolThunks";
 
 interface PoolState {
   pools: POOL[];
@@ -67,6 +67,22 @@ const poolSlice = createSlice({
     });
     builder.addCase(fetchPoolTokenomics.fulfilled, (state, action) => {
       state.poolTokenomics = action.payload;
+    });
+    builder.addCase(fetchSinglePool.fulfilled, (state, action) => {
+      const updatedPool = action.payload;
+      const poolIndex = state.pools.findIndex(p => p.id === updatedPool.id);
+      if (poolIndex !== -1) {
+        state.pools[poolIndex] = updatedPool;
+      }
+    });
+    builder.addCase(fetchSingleUserPool.fulfilled, (state, action) => {
+      const updatedPool = action.payload;
+      if (updatedPool) {
+        const poolIndex = state.myPools.findIndex(p => p.id === updatedPool.id);
+        if (poolIndex !== -1) {
+          state.myPools[poolIndex] = updatedPool;
+        }
+      }
     });
   },
 });
