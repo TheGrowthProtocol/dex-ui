@@ -270,7 +270,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   return (
     <Box className={`${classes.root} tabpanel-container`}>
       <Box className="tabpanel-content">
-        <StyledPoolTabContainer>
+        <StyledPoolTabContainer sx={{ flexDirection: isMobile ? "column" : "row" }}>
           <Tabs value={value} onChange={handleChange} className="pool-tabs">
             <Tab label="All Pools" {...a11yProps(0)} />
             <Tab label="My Pools" {...a11yProps(1)} />
@@ -280,6 +280,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
               color="primary"
               className={"gradient-button liquidity-add-button"}
               onClick={handleAddLiquidity}
+              style={{ marginTop: isMobile ? "16px" : "0px" }}
             >
               <div className="button-angled-clip">
                 <Typography className={"gradient-text"}>
@@ -344,6 +345,22 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                       <Grid container spacing={2} className="pool-card__stats">
                         <Grid item xs={4} className="pool-card__stat">
                           <Typography className="pool-card__stat-label">
+                            Token 1
+                          </Typography>
+                          <Typography className="pool-card__stat-value">
+                            {pool.token0Reserve}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4} className="pool-card__stat">
+                          <Typography className="pool-card__stat-label">
+                            Token 2
+                          </Typography>
+                          <Typography className="pool-card__stat-value">
+                            {pool.token1Reserve}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={4} className="pool-card__stat">
+                          <Typography className="pool-card__stat-label">
                             APR
                           </Typography>
                           <Typography className="pool-card__stat-value">
@@ -393,23 +410,36 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                       <Box className="pools-table__cell" sx={{ flex: "2" }}>
                         Pools
                       </Box>
+
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
+                      >
+                        Token 1
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "center" }}
+                      >
+                        Token 2
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "center" }}
                       >
                         APR
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
                       >
                         TVL
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
                       >
-                        Volume
+                        Volume 24h
                       </Box>
                       <Box
                         className="pools-table__cell"
@@ -452,21 +482,33 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--apr"
-                          sx={{ flex: "1", textAlign: "right" }}
+                          sx={{ flex: "1", textAlign: "center" }}
                         >
-                          {pool.apr}
+                          {pool.token0Reserve}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--apr"
+                          sx={{ flex: "1", textAlign: "center" }}
+                        >
+                          {pool.token1Reserve}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--apr"
+                          sx={{ flex: "1", textAlign: "center" }}
+                        >
+                          {pool.apr}%
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--tvl"
-                          sx={{ flex: "1", textAlign: "right" }}
+                          sx={{ flex: "1", textAlign: "center" }}
                         >
-                          {pool.tvl}
+                          ${pool.tvl}
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--volume"
-                          sx={{ flex: "1", textAlign: "right" }}
+                          sx={{ flex: "1", textAlign: "center" }}
                         >
-                          {pool.volume24h}
+                          ${pool.volume24h}
                         </Box>
                         {isWalletConnected && (
                           <Box
@@ -574,6 +616,22 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                               ${pool.token1Share}
                             </Typography>
                           </Grid>
+                          <Grid item xs={4} className="pool-card__stat">
+                            <Typography className="pool-card__stat-label">
+                              APR
+                            </Typography>
+                            <Typography className="pool-card__stat-value">
+                              {pool.apr}%
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4} className="pool-card__stat">
+                            <Typography className="pool-card__stat-label">
+                              TVL
+                            </Typography>
+                            <Typography className="pool-card__stat-value">
+                              ${pool.tvl}
+                            </Typography>
+                          </Grid>
                         </Grid>
                       </CardContent>
                     </Card>
@@ -606,25 +664,37 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
                       >
                         Liquidity
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
                       >
                         Token 1
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
                       >
                         Token 2
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "0.5", textAlign: "right" }}
+                        sx={{ flex: "1", textAlign: "center" }}
+                      >
+                        APR
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "1", textAlign: "center" }}
+                      >
+                        TVL
+                      </Box>
+                      <Box
+                        className="pools-table__cell"
+                        sx={{ flex: "0.5", textAlign: "center" }}
                       ></Box>
                     </Box>
                   </Box>
@@ -663,21 +733,33 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--apr"
-                          sx={{ flex: "1", textAlign: "right" }}
+                          sx={{ flex: "1", textAlign: "center" }}
                         >
                           ${formatNumber(pool.liquidity ?? "")}
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--tvl"
-                          sx={{ flex: "1", textAlign: "right" }}
+                          sx={{ flex: "1", textAlign: "center" }}
                         >
                           {pool.token0Share}
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--volume"
-                          sx={{ flex: "1", textAlign: "right" }}
+                          sx={{ flex: "1", textAlign: "center" }}
                         >
                           {pool.token1Share}
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--volume"
+                          sx={{ flex: "1", textAlign: "center" }}
+                        >
+                          {pool.apr}%
+                        </Box>
+                        <Box
+                          className="pools-table__cell pools-table__cell--tvl"
+                          sx={{ flex: "1", textAlign: "center" }}
+                        >
+                          ${pool.tvl}
                         </Box>
                         {isWalletConnected && (
                           <Box

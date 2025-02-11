@@ -295,6 +295,11 @@ export const fetchMyPools = createAsyncThunk(
             Number(token1Reserve) * price1
           ).toFixed(2);
 
+          const volume = await getVolume24h(pairAddress, provider);
+
+          // Calculate APR
+          const apr = calculateAPR(formatEther(volume), tvl.toString());
+
           // Calculate user's share percentage
           const userSharePercent = userLPBalance
             .mul(ethers.constants.WeiPerEther)
@@ -344,6 +349,7 @@ export const fetchMyPools = createAsyncThunk(
             liquidity: Number(formatEther(liquidity)).toFixed(2),
             lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
             tvl: Number(tvl).toFixed(2),
+            apr: apr.toString(),
             };
             pairs.push(pool);
           }
@@ -825,11 +831,16 @@ export const fetchSingleUserPool = createAsyncThunk(
       getTokenPrice(token1?.symbol ?? ""),
     ]);
 
+    const volume = await getVolume24h(pairAddress, provider);
+
     // Get TBL
     const tvl = (
       Number(token0Reserve) * price0 +
       Number(token1Reserve) * price1
     ).toFixed(2);
+
+    // Calculate APR
+    const apr = calculateAPR(formatEther(volume), tvl.toString());
 
     // Calculate user's share percentage
     const userSharePercent = userLPBalance
@@ -880,6 +891,7 @@ export const fetchSingleUserPool = createAsyncThunk(
       liquidity: Number(formatEther(liquidity)).toFixed(2),
       lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
       tvl: Number(tvl).toFixed(2),
+      apr: apr.toString(),
       };
       return pool;
     }
