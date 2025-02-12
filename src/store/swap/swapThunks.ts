@@ -32,27 +32,47 @@ export const swap = createAsyncThunk(
       const approvalTx = await token1Contract.approve(routerContract.address, amount1InWei); 
       await approvalTx.wait();
 
-      // Estimate gas
+      // Add slippage tolerance (e.g., 0.5%)
+      const slippageTolerance = 0.995; // 0.5% slippage
+      const minAmountOut = amount2InWei.mul(Math.floor(slippageTolerance * 1000)).div(1000);
+
+      // Check balance
+      const balance = await token1Contract.balanceOf(account);
+      if (balance.lt(amount1InWei)) {
+        throw new Error(`Insufficient ${token1.symbol} balance`);
+      }
+
+      // Estimate gas with proper parameters
       const gasEstimate = await routerContract.estimateGas.swapExactTokensForTokens(
         amount1InWei,
-        amount2InWei,
-        [token1.address, token2.address],
-        account,
-        Math.floor(Date.now() / 1000) + 60 * 20
-      );
-
-      // Perform the token swap
-      const swapTx = await routerContract.swapExactTokensForTokens(
-        amount1InWei,
-        amount2InWei,
+        minAmountOut,        // Use minimum amount with slippage instead of exact amount
         [token1.address, token2.address],
         account,
         Math.floor(Date.now() / 1000) + 60 * 20,
-        { gasLimit: gasEstimate }
+        { from: account }   
+      );
+
+      // Add 20% buffer to gas estimate
+      const gasLimit = gasEstimate.mul(120).div(100);
+
+      // Proceed with swap using the calculated gas limit
+      const swapTx = await routerContract.swapExactTokensForTokens(
+        amount1InWei,
+        minAmountOut,
+        [token1.address, token2.address],
+        account,
+        Math.floor(Date.now() / 1000) + 60 * 20,
+        { 
+          gasLimit,
+          from: account 
+        }
       );
       await swapTx.wait();
       dispatch(setLoading(false));
     } catch (error: any) {
+      if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
+        throw new Error("Transaction would fail. Please check your balance and allowance.");
+      }
       dispatch(setError(error.message));
       dispatch(setLoading(false));
       throw error;
