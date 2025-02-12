@@ -36,6 +36,16 @@ const StyledCoinFieldHeader = styled(Box)({
   flexDirection: "column",
 });
 
+const StyledInput = styled(Input)({
+  "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+    "-webkit-appearance": "none",
+    margin: 0
+  },
+  "& input[type=number]": {
+    "-moz-appearance": "textfield" // Firefox
+  }
+});
+
 const Coinfield: React.FC<COINFIELD> = ({
   title,
   setSelectedToken,
@@ -178,8 +188,8 @@ const Coinfield: React.FC<COINFIELD> = ({
               </Button>
             </Box>
           )}
-          <Input
-            type="text"
+          <StyledInput
+            type="number"
             placeholder="0.0"
             onChange={handleTokenAmountChange}
             value={value}

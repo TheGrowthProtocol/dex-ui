@@ -419,7 +419,7 @@ body {
 .pools-table__body {
   background: var(--background-color) !important;
   border-radius: var(--border-radius) !important;
-  padding: 16px !important;
+  padding: 16px 8px !important;
   margin-top: 16px !important;
 }
 .pools-table__body .pools-table__row {
@@ -430,6 +430,9 @@ body {
   padding-bottom: 8px !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
+}
+.pools-table__body .pools-table__row:first-child {
+  margin-top: 0px !important;
 }
 /* Coin Dialog */
 

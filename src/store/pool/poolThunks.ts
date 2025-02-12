@@ -349,6 +349,7 @@ export const fetchMyPools = createAsyncThunk(
             liquidity: Number(formatEther(liquidity)).toFixed(2),
             lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
             tvl: Number(tvl).toFixed(2),
+            volume24h: formatEther(volume),
             apr: apr.toString(),
             };
             pairs.push(pool);
@@ -890,6 +891,7 @@ export const fetchSingleUserPool = createAsyncThunk(
       token1Share: Number(formatEther(token1Share)).toFixed(2),
       liquidity: Number(formatEther(liquidity)).toFixed(2),
       lpBalance: Number(formatEther(userLPBalance)).toFixed(2),
+      volume24h: formatEther(volume),
       tvl: Number(tvl).toFixed(2),
       apr: apr.toString(),
       };
@@ -925,16 +927,16 @@ const calculateTokenomics = (params: {
   let tokenomics: Tokenomics = {};
   tokenomics.priceImpact = {
     title: "Price Impact",
-    value: priceImpact.toString(),
+    value: priceImpact.toFixed(2),
   };
   tokenomics.feeTier = { title: "Fee Tier", value: feeTier.toString() };
   tokenomics.token0perToken1 = {
     title: "Token 0 per Token 1",
-    value: token0perToken1.toString(),
+    value: token0perToken1.toFixed(2),
   };
   tokenomics.token1perToken0 = {
     title: "Token 1 per Token 0",
-    value: token1perToken0.toString(),
+    value: token1perToken0.toFixed(2),
   };
   tokenomics.token0 = { title: "Token 0", value: pool.token0.symbol };
   tokenomics.token1 = { title: "Token 1", value: pool.token1.symbol };
@@ -944,17 +946,17 @@ const calculateTokenomics = (params: {
   tokenomics.liquidity = { title: "Liquidity", value: pool.liquidity ?? "0" };
   tokenomics.currentRatio = {
     title: "Current Ratio",
-    value: currentRatio.toString(),
+    value: currentRatio.toFixed(2),
   };
-  tokenomics.newRatio = { title: "New Ratio", value: newRatio.toString() };
+  tokenomics.newRatio = { title: "New Ratio", value: newRatio.toFixed(2) };
   tokenomics.currentLPRate = { title: "Current LPRate", value: "0" };
   tokenomics.swapAmount1 = {
     title: "Swap Amount 1",
-    value: swapAmount1.toString(),
+    value: swapAmount1.toFixed(2),
   };
   tokenomics.swapAmount2 = {
     title: "Swap Amount 2",
-    value: swapAmount2.toString(),
+    value: swapAmount2.toFixed(2),
   };
   return tokenomics;
 };

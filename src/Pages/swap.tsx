@@ -12,7 +12,7 @@ import {
   setAmount1,
   setAmount2,
 } from "../store/swap/swapSlice";
-import { getAmount2, swap } from "../store/swap/swapThunks";
+import { getAmount1, getAmount2, swap } from "../store/swap/swapThunks";
 import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import { resetSelectedPool } from "../store/pool/poolSlice";
@@ -56,21 +56,55 @@ const Swap: React.FC<{}> = () => {
     }
   }, [token1, token2, dispatch, showSnackbar, fetchPool]);
 
-  useEffect(() => {
-    const setCoinfield2Amount = async () => {
-      try {
-        await dispatch(getAmount2()).unwrap();
-      } catch (error: any) {
-        dispatch(setAmount2(0));
-      }
-    };
-    if (amount1 >0 && token2.address !== "") {
+  const handleSetToken1 = (token: TOKEN) => {
+    dispatch(setToken1(token));
+    if(token.address !== token2.address && amount2 > 0) {
+      setCoinfield1Amount();
+    } else if(token.address === token2.address && amount1 > 0) {
       setCoinfield2Amount();
     } else {
-      setAmount2(0);
+      dispatch(setAmount1(0));
+      dispatch(setAmount2(0));
     }
-  }, [amount1, token2, dispatch]);
+  };
 
+  const handleSetToken2 = (token: TOKEN) => {
+    dispatch(setToken2(token));
+    if(token.address !== token1.address && amount1 > 0) {
+      setCoinfield2Amount();
+    } else if(token.address === token1.address && amount2 > 0) {
+      setCoinfield1Amount();
+    } else {
+      dispatch(setAmount1(0));
+      dispatch(setAmount2(0));
+    }
+  };
+
+  const setCoinfield2Amount = async () => {
+    try {
+      await dispatch(getAmount2()).unwrap();
+    } catch (error: any) {
+      dispatch(setAmount2(0));
+    }
+  };
+
+  const setCoinfield1Amount = async () => {
+    try {
+      await dispatch(getAmount1()).unwrap();
+    } catch (error: any) {
+      dispatch(setAmount1(0));
+    }
+  };
+
+  const handleSetAmount1 = async (amount: number) => {
+    dispatch(setAmount1(Number(amount)));
+    await setCoinfield2Amount();
+  };
+
+  const handleSetAmount2 = async (amount: number) => {
+    dispatch(setAmount2(Number(amount)));
+    await setCoinfield1Amount();
+  };
 
   const handleSwap = async () => {
     try {
@@ -81,10 +115,11 @@ const Swap: React.FC<{}> = () => {
     }
   };
 
-  const handleSwitch = () => {
+  const handleSwitch = async () => {
     dispatch(setToken1(token2));
     dispatch(setToken2(token1));
     dispatch(setAmount1(amount2));
+    dispatch(setAmount2(amount1));
   };
 
   return (
@@ -96,8 +131,8 @@ const Swap: React.FC<{}> = () => {
               <Coinfield
                 title="Sell"
                 value={amount1.toString()}
-                setAmount={(amount) => dispatch(setAmount1(Number(amount)))}
-                setSelectedToken={(token: TOKEN) => dispatch(setToken1(token))}
+                setAmount={(amount) => handleSetAmount1(Number(amount))}
+                setSelectedToken={(token: TOKEN) => handleSetToken1(token)}
                 selectedToken={token1}
               />
               <Box
@@ -117,8 +152,8 @@ const Swap: React.FC<{}> = () => {
               <Coinfield
                 title="Buy"
                 value={amount2.toString()}
-                setAmount={(amount) => dispatch(setAmount2(Number(amount)))}
-                setSelectedToken={(token: TOKEN) => dispatch(setToken2(token))}
+                setAmount={(amount) => handleSetAmount2(Number(amount))}
+                setSelectedToken={(token: TOKEN) => handleSetToken2(token)}
                 selectedToken={token2}
               />
             </div>
