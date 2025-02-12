@@ -112,8 +112,12 @@ const Swap: React.FC<{}> = () => {
     try {
       await dispatch(swap()).unwrap();
       showSnackbar("Swap successful!", "success");
+      dispatch(setAmount1(0));
+      dispatch(setAmount2(0));
     } catch (error: any) {
       showSnackbar(error.message, "error");
+      dispatch(setAmount1(0));
+      dispatch(setAmount2(0));
     }
   };
 
