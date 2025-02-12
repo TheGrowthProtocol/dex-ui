@@ -5,8 +5,8 @@ import { TOKEN, SwapState } from '../../interfaces';
 const initialState: SwapState = {
   token1: { name: '', symbol: '', address: '' },
   token2: { name: '', symbol: '', address: '' },
-  amount1: 0.0,
-  amount2: 0.0,
+  amount1: 0.00,
+  amount2: 0.00,
   loading: false,
   error: null,
 };

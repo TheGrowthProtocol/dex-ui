@@ -26,8 +26,8 @@ export const swap = createAsyncThunk(
       const { routerContract, account } = await setupContracts(signer);
       const token1Contract = new Contract(token1.address, ERC20.abi, signer);
       
-      const amount1InWei = ethers.utils.parseUnits(amount1.toString());
-      const amount2InWei = ethers.utils.parseUnits(amount2.toString());
+      const amount1InWei = ethers.utils.parseUnits(amount1.toString(), token1.decimals);
+      const amount2InWei = ethers.utils.parseUnits(amount2.toString(), token2.decimals);
       // Approve the token transfer
       const approvalTx = await token1Contract.approve(routerContract.address, amount1InWei); 
       await approvalTx.wait();
@@ -93,7 +93,7 @@ export const getAmount2 = createAsyncThunk(
         [token1.address, token2.address]
       );
       const amount_out = values_out[1] * 10 ** - token2Decimals;
-      dispatch(setAmount2(Number(amount_out.toFixed(2))));
+      dispatch(setAmount2(Number(amount_out.toFixed(2)))); 
       dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(error.message));
@@ -133,7 +133,7 @@ export const getAmount1 = createAsyncThunk(
       const token2Decimals = await getTokenDecimals(token2Contract);
       const values_in = await routerContract.getAmountsIn(
         ethers.utils.parseUnits(String(amount2), token2Decimals),
-        [token2.address, token1.address]
+        [token1.address, token2.address]
       );
       const amount_in = values_in[1] * 10 ** - token1Decimals;
       dispatch(setAmount1(Number(amount_in.toFixed(2))));

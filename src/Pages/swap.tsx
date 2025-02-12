@@ -58,9 +58,9 @@ const Swap: React.FC<{}> = () => {
 
   const handleSetToken1 = (token: TOKEN) => {
     dispatch(setToken1(token));
-    if(token.address !== token2.address && amount2 > 0) {
+    if(token.address !== token2.address && Number(amount2) > 0) {
       setCoinfield1Amount();
-    } else if(token.address === token2.address && amount1 > 0) {
+    } else if(token.address === token2.address && Number(amount1) > 0) {
       setCoinfield2Amount();
     } else {
       dispatch(setAmount1(0));
@@ -70,9 +70,9 @@ const Swap: React.FC<{}> = () => {
 
   const handleSetToken2 = (token: TOKEN) => {
     dispatch(setToken2(token));
-    if(token.address !== token1.address && amount1 > 0) {
+    if(token.address !== token1.address && Number(amount1) > 0) {
       setCoinfield2Amount();
-    } else if(token.address === token1.address && amount2 > 0) {
+    } else if(token.address === token1.address && Number(amount2) > 0) {
       setCoinfield1Amount();
     } else {
       dispatch(setAmount1(0));
@@ -96,13 +96,15 @@ const Swap: React.FC<{}> = () => {
     }
   };
 
-  const handleSetAmount1 = async (amount: number) => {
-    dispatch(setAmount1(Number(amount)));
+  const handleSetAmount1 = async (amount: string) => {
+    const formattedAmount = Number(amount).toFixed(2);
+    dispatch(setAmount1(Number(formattedAmount)));
     await setCoinfield2Amount();
   };
 
-  const handleSetAmount2 = async (amount: number) => {
-    dispatch(setAmount2(Number(amount)));
+  const handleSetAmount2 = async (amount: string) => {
+    const formattedAmount = Number(amount).toFixed(2);
+    dispatch(setAmount2(Number(formattedAmount)));
     await setCoinfield1Amount();
   };
 
@@ -131,9 +133,10 @@ const Swap: React.FC<{}> = () => {
               <Coinfield
                 title="Sell"
                 value={amount1.toString()}
-                setAmount={(amount) => handleSetAmount1(Number(amount))}
+                setAmount={(amount) => handleSetAmount1(amount)}
                 setSelectedToken={(token: TOKEN) => handleSetToken1(token)}
                 selectedToken={token1}
+                isDisabledAmountField={false}
               />
               <Box
                 sx={{
@@ -152,9 +155,10 @@ const Swap: React.FC<{}> = () => {
               <Coinfield
                 title="Buy"
                 value={amount2.toString()}
-                setAmount={(amount) => handleSetAmount2(Number(amount))}
+                setAmount={(amount) => handleSetAmount2(amount)}
                 setSelectedToken={(token: TOKEN) => handleSetToken2(token)}
                 selectedToken={token2}
+                isDisabledAmountField={true}
               />
             </div>
           </Box>

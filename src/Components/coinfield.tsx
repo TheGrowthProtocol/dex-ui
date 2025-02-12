@@ -45,6 +45,9 @@ const StyledInput = styled(Input)({
     "-moz-appearance": "textfield" // Firefox
   }
 });
+const StyledCoinFieldButton = styled(Button)({
+  minWidth: "fit-content !important",  
+});
 
 const Coinfield: React.FC<COINFIELD> = ({
   title,
@@ -52,6 +55,7 @@ const Coinfield: React.FC<COINFIELD> = ({
   setAmount,
   value,
   selectedToken,
+  isDisabledAmountField
 }) => {
   const [openTokenDialog, setOpenTokenDialog] = useState(false);
   const [balance, setBalance] = useState("0.00"); // State to store the balance
@@ -179,22 +183,23 @@ const Coinfield: React.FC<COINFIELD> = ({
                 alignItems: "center",
               }}
             >
-              <Button
+              <StyledCoinFieldButton
                 variant="text"
                 onClick={handleMaxButtonClick}
                 className="coin-field-max-button"
+                disabled={isDisabledAmountField}
               >
                 Max
-              </Button>
+              </StyledCoinFieldButton>
             </Box>
           )}
           <StyledInput
             type="number"
-            placeholder="0.0"
+            placeholder="0.00"
             onChange={handleTokenAmountChange}
             value={value}
             className="coin-field-input"
-            disabled={!selectedToken.symbol} // Disable the input if no token is selected
+            disabled={!selectedToken.symbol || isDisabledAmountField} // Disable the input if no token is selected
           />
           <Typography
             variant="subtitle1"

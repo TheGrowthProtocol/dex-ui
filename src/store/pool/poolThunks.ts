@@ -464,11 +464,11 @@ export const removeLpToken = createAsyncThunk(
       const token0Decimals = selectedPool.token0.decimals;
       const token1Decimals = selectedPool.token1.decimals;
       const token0ShareAmount = ethers.utils.parseUnits(
-        token0Share ?? "0",
+        Math.floor(Number(token0Share ?? "0")).toString(),
         token0Decimals
       );
       const token1ShareAmount = ethers.utils.parseUnits(
-        token1Share ?? "0",
+        Math.floor(Number(token1Share ?? "0")).toString(),
         token1Decimals
       );
       const time = Math.floor(Date.now() / 1000) + 200000;

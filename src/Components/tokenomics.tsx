@@ -23,13 +23,13 @@ export const Tokenomics: React.FC<TokenomicsProps> = ({type, selectedPool}) => {
 
     useEffect(() => {
         if (selectedPool) {
-            const amount1 = type === "swap" ? swapAmount1 : Number(liquidityAmount1);
-            const amount2 = type === "swap" ? swapAmount2 : Number(liquidityAmount2);
+            const amount1 = type === "swap" ? Number(swapAmount1) : Number(liquidityAmount1);
+            const amount2 = type === "swap" ? Number(swapAmount2) : Number(liquidityAmount2);
             
                 dispatch(fetchPoolTokenomics({
                     pool: selectedPool, 
-                    swapAmount1: amount1, 
-                    swapAmount2: amount2
+                    swapAmount1: Number(amount1), 
+                    swapAmount2: Number(amount2)
                 }));
         } else {
             dispatch(resetPoolTokenomics());

@@ -30,6 +30,7 @@ export interface COINFIELD {
     setAmount: (amount: string) => void;
     value: string;
     selectedToken: TOKEN;
+    isDisabledAmountField: boolean;
 }
 
 export interface COINDIALOG {
