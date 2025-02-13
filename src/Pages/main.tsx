@@ -25,15 +25,18 @@ interface TabPanelProps {
 
 const StyledTabHeader = styled(Tab)(({ theme }) => ({
   textTransform: "none",
-  fontWeight: "bold",
-  background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
-  backgroundClip: "text",
-  color: "transparent !important",
+  fontWeight: 500,
+  color: "var(--secondary-color) !important",
   fontSize: "16px !important",
   textAlign: "center",
+  lineHeight: "20px !important",
+  letterSpacing: "0% !important",
 
   "&.Mui-selected": {
     fontSize: "20px !important",
+    background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+    backgroundClip: "text",
+    color: "transparent !important",
   }
 }));
 

@@ -11,6 +11,9 @@ import Header from "./Components/header";
 import Main from "./Pages/main";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: "'Lexend', sans-serif",
+  },
   palette: {
     primary: {
       main: "#DDCDA4",
