@@ -148,7 +148,6 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     useState(false);
   const [isRemoveLiquidityDialogOpen, setIsRemoveLiquidityDialogOpen] =
     useState(false);
-  const [isPolling, setIsPolling] = useState(false);
 
   const { provider } = useProviderContext(); 
 

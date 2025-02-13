@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, Button, Grid, Typography } from "@material-ui/core";
+import { Box, Button, Grid, styled, Typography } from "@material-ui/core";
 import Coinfield from "../Components/coinfield";
 import { TOKEN } from "../interfaces";
 import ConnectWalletButton from "../Components/connectWalletButton";
@@ -17,6 +17,14 @@ import { Tokenomics } from "../Components/tokenomics";
 import { fetchPoolByTokenAddresses } from "../store/pool/poolThunks";
 import { resetSelectedPool } from "../store/pool/poolSlice";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
+import { useProviderContext } from "../Contexts/providerContext";
+import { ethers } from "ethers";
+
+const StyledSwapButton = styled(Button)(({ theme }) => ({
+  "&:disabled": {
+    opacity: 0.5,
+  },
+}));
 
 
 const Swap: React.FC<{}> = () => {
@@ -30,6 +38,7 @@ const Swap: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
   const { selectedPool } = useSelector((state: RootState) => state.pool);
+  const { provider } = useProviderContext();
 
   const fetchPool = useCallback(async () => {
     try {
@@ -82,16 +91,26 @@ const Swap: React.FC<{}> = () => {
 
   const setCoinfield2Amount = async () => {
     try {
-      await dispatch(getAmount2()).unwrap();
+      if (!provider) {
+        throw new Error("Provider not found");
+      }
+      const web3Provider = new ethers.providers.Web3Provider(provider);
+      await dispatch(getAmount2(web3Provider)).unwrap();
     } catch (error: any) {
+      console.error(error);
       dispatch(setAmount2(0));
     }
   };
 
   const setCoinfield1Amount = async () => {
     try {
-      await dispatch(getAmount1()).unwrap();
+      if (!provider) {
+        throw new Error("Provider not found");
+      }
+      const web3Provider = new ethers.providers.Web3Provider(provider);
+      await dispatch(getAmount1(web3Provider)).unwrap();
     } catch (error: any) {
+      console.error(error);
       dispatch(setAmount1(0));
     }
   };
@@ -110,7 +129,11 @@ const Swap: React.FC<{}> = () => {
 
   const handleSwap = async () => {
     try {
-      await dispatch(swap()).unwrap();
+      if (!provider) {
+        throw new Error("Provider not found");
+      }
+      const web3Provider = new ethers.providers.Web3Provider(provider);
+      await dispatch(swap(web3Provider)).unwrap();
       showSnackbar("Swap successful!", "success");
       dispatch(setAmount1(0));
       dispatch(setAmount2(0));
@@ -176,18 +199,19 @@ const Swap: React.FC<{}> = () => {
           className="swap-button-container"
         >
           {isWalletConnected && (
-            <Button
+            <StyledSwapButton
               variant="contained"
               color="primary"
               onClick={handleSwap}
               className="gradient-button swap-button"
+              disabled={amount1 === 0 || amount2 === 0}
             >
               <div className="button-angled-clip">
                 <Typography className={"gradient-text"}>
                   {loading ? "Swapping..." : "Swap Tokens"}
                 </Typography>
               </div>
-            </Button>
+            </StyledSwapButton>
           )}
           {!isWalletConnected && <ConnectWalletButton />}
         </Box>

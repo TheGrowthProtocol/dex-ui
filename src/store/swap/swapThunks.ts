@@ -9,19 +9,15 @@ import WCERES from "../../build/WCERES.json";
 
 export const swap = createAsyncThunk(
   "swap/swap",
-  async (_, { getState, dispatch }) => {
+  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
     const state = getState() as RootState;
     const { token1, token2, amount1, amount2 } = state.swap;
 
     try {
       dispatch(setLoading(true));
-      if (!window.ethereum) {
-        throw new Error("MetaMask is not installed!");
-      }
       if (!token1.address || !token2.address) {
         throw new Error("Missing required parameters for swap!");
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const { routerContract, account } = await setupContracts(signer);
       const token1Contract = new Contract(token1.address, ERC20.abi, signer);
@@ -71,7 +67,10 @@ export const swap = createAsyncThunk(
       dispatch(setLoading(false));
     } catch (error: any) {
       if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
-        throw new Error("Transaction would fail. Please check your balance and allowance.");
+        error.message = "Transaction would fail. Please check your balance and allowance.";
+      }
+      if (error.code === 'ACTION_REJECTED') {
+        error.message = "Transaction rejected by user.";
       }
       dispatch(setError(error.message));
       dispatch(setLoading(false));
@@ -82,19 +81,14 @@ export const swap = createAsyncThunk(
 
 export const getAmount2 = createAsyncThunk(
   "swap/getAmount2",
-  async (_, { getState, dispatch }) => {
+  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
     const state = getState() as RootState;
     const { token1, token2, amount1 } = state.swap;
 
     try {
-      dispatch(setLoading(true));
-      if (!window.ethereum) {
-        throw new Error("MetaMask is not installed!");
-      }
       if (!token1.address || !token2.address) {
         throw new Error("Missing required parameters for swap!");
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const network = await provider.getNetwork();
       const routerAddress = chains.routerAddress.get(network.chainId);
@@ -114,10 +108,8 @@ export const getAmount2 = createAsyncThunk(
       );
       const amount_out = values_out[1] * 10 ** - token2Decimals;
       dispatch(setAmount2(Number(amount_out.toFixed(2)))); 
-      dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(error.message));
-      dispatch(setLoading(false));
       throw error;
     }
   }
@@ -125,19 +117,14 @@ export const getAmount2 = createAsyncThunk(
 
 export const getAmount1 = createAsyncThunk(
   "swap/getAmount1",
-  async (_, { getState, dispatch }) => {
+  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
     const state = getState() as RootState;
     const { token1, token2, amount2 } = state.swap;
 
     try {
-      dispatch(setLoading(true));
-      if (!window.ethereum) {
-        throw new Error("MetaMask is not installed!");
-      }
       if (!token1.address || !token2.address) {
         throw new Error("Missing required parameters for swap!");
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const network = await provider.getNetwork();
       const routerAddress = chains.routerAddress.get(network.chainId);
@@ -157,10 +144,8 @@ export const getAmount1 = createAsyncThunk(
       );
       const amount_in = values_in[1] * 10 ** - token1Decimals;
       dispatch(setAmount1(Number(amount_in.toFixed(2))));
-      dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(error.message));
-      dispatch(setLoading(false));
       throw error;
     }
   }
