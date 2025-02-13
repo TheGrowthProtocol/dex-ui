@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, Grid, styled } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import { TOKEN } from "../interfaces";
+import { POOL, TOKEN } from "../interfaces";
 import Coindialog from "../Components/coindialog";
 import TokenInputField from "../Components/TokenInputField";
 import { addLiquidity } from "../store/liquidity/liquidityThunks";
@@ -39,7 +39,7 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
     (state: RootState) => state.liquidity
   );
   const { tokens } = useSelector((state: RootState) => state.tokens as { tokens: TOKEN[] });
-  const { selectedPool } = useSelector((state: RootState) => state.pool);
+  const { selectedPool  } = useSelector((state: RootState) => state.pool);
   const { isConnected: isWalletConnected } = useWallet();
   const { provider } = useProviderContext(); 
 
@@ -49,12 +49,6 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
     }
   }, [dispatch, tokens]);
 
-  useEffect(() => {
-    if (selectedPool) {
-      dispatch(setToken1(selectedPool.token0));
-      dispatch(setToken2(selectedPool.token1));
-    }
-  }, [dispatch, selectedPool]);
 
   useEffect(() => { 
       if (token1.address!=="" && token2.address!=="") {

@@ -9,8 +9,7 @@
 body {
   background-color: #f4f4f4;
   color: var(--primary-color);
-  font-family: "Lexend";
-
+  font-family: "Lexend", sans-serif;
   font-size: 15px;
   font-weight: normal;
 

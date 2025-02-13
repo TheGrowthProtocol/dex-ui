@@ -33,7 +33,8 @@ import { useWallet } from "../Hooks/useWallet";
 import { ethers } from "ethers";
 import { setSelectedPool } from "../store/pool/poolSlice";
 import { useProviderContext } from "../Contexts/providerContext";
-
+import { POOL } from "../interfaces";
+import { setToken1, setToken2 } from "../store/liquidity/liquiditySlice";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -148,7 +149,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     useState(false);
   const [isRemoveLiquidityDialogOpen, setIsRemoveLiquidityDialogOpen] =
     useState(false);
-
+  
   const { provider } = useProviderContext(); 
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -174,6 +175,13 @@ const PoolsList: React.FC<PoolsListProps> = () => {
   useEffect(() => {
     fetchPoolsData();
   }, [fetchPoolsData, isWalletConnected]);
+
+  useEffect(() => {
+    if (selectedPool) {
+      dispatch(setToken1(selectedPool.token0));
+      dispatch(setToken2(selectedPool.token1));
+    }
+  }, [selectedPool]);
 
   // Replace polling-related state and functions with specific pool update function
   const updatePoolData = useCallback(async (poolId: string) => {
@@ -216,12 +224,18 @@ const PoolsList: React.FC<PoolsListProps> = () => {
     }
   };
 
-  const handleAddLiquidity = () => {
+  const handleAddLiquidity = (pool?: POOL) => { 
     setIsAddLiquidityDialogOpen(true);
+    if (pool) {
+      dispatch(setSelectedPool(pool));
+    }
   };
 
-  const handleRemoveLiquidity = () => {
+  const handleRemoveLiquidity = (pool?: POOL) => {
     setIsRemoveLiquidityDialogOpen(true);
+    if (pool) {
+      dispatch(setSelectedPool(pool));
+    }
   };
 
   const renderAddLiquidityDialog = () => {
@@ -242,9 +256,11 @@ const PoolsList: React.FC<PoolsListProps> = () => {
             </IconButton>
           </StyledDialogHeader>
         <DialogContent>
-            <AddLiquidity onClose={async () => {
-              await handleCloseAddLiquidityDialog();
-            }}/>
+            <AddLiquidity 
+              onClose={async () => {
+                await handleCloseAddLiquidityDialog();
+              }}
+            />
         </DialogContent>
         </StyledDialogContainer>
       </StyledDialog>
@@ -299,7 +315,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
               variant="contained"
               color="primary"
               className={"gradient-button liquidity-add-button"}
-              onClick={handleAddLiquidity}
+              onClick={() => handleAddLiquidity()}
               style={{ marginTop: isMobile ? "16px" : "0px" }}
             >
               <div className="button-angled-clip">
@@ -344,8 +360,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           <Box className="pool-card__menu">
                             <CustomizedMenus menuItems={[
                               { label: "Add Liquidity", onClick: () => {
-                                  dispatch(setSelectedPool(pool));
-                                  handleAddLiquidity();
+                                  //dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity(pool);
                                 },
                               },
                             ]}
@@ -458,7 +474,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                   </Box>
 
                   <Box className="pools-table__body">
-                    {pools.map((pool) => (
+                    {pools.map((pool: POOL) => (
                       <StyledpoolsTableRow
                         key={pool.id}
                         className="pools-table__row"
@@ -521,8 +537,8 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           >
                             <CustomizedMenus menuItems={[
                               { label: "Add Liquidity", onClick: () => {
-                                  dispatch(setSelectedPool(pool));
-                                  handleAddLiquidity();
+                                  //dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity(pool);
                                 },
                               },
                             ]} />
@@ -545,7 +561,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                 />
               ) : (
                 <Box>
-                  {myPools.map((pool) => (
+                  {myPools.map((pool: POOL) => (
                     <Card key={pool.id} className="pool-card">
                       <CardContent className="pool-card__content">
                         {/* Pool Pair */}
@@ -570,13 +586,13 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           <Box className="pool-card__menu">
                             <CustomizedMenus menuItems={[
                               { label: "Add Liquidity", onClick: () => {
-                                  dispatch(setSelectedPool(pool));
-                                  handleAddLiquidity();
+                                  //dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity(pool);
                                 },
                               },
                               { label: "Remove Liquidity", onClick: () => {
-                                  dispatch(setSelectedPool(pool));
-                                  handleRemoveLiquidity();
+                                  //dispatch(setSelectedPool(pool));
+                                  handleRemoveLiquidity(pool);
                                 },
                               },
                             ]} />
@@ -692,7 +708,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                   </Box>
 
                   <Box className="pools-table__body">
-                    {myPools.map((pool) => (
+                    {myPools.map((pool: POOL ) => (
                       <StyledpoolsTableRow
                         key={pool.id}
                         className="pools-table__row"
@@ -755,13 +771,13 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           >
                             <CustomizedMenus menuItems={[
                               { label: "Add Liquidity", onClick: () => {
-                                  dispatch(setSelectedPool(pool));
-                                  handleAddLiquidity();
+                                  //dispatch(setSelectedPool(pool));
+                                  handleAddLiquidity(pool);
                                 },
                               },
                               { label: "Remove Liquidity", onClick: () => {
-                                  dispatch(setSelectedPool(pool));
-                                  handleRemoveLiquidity();
+                                  //dispatch(setSelectedPool(pool));
+                                  handleRemoveLiquidity(pool);
                                 },
                               },
                             ]} />
@@ -803,13 +819,6 @@ const PoolsList: React.FC<PoolsListProps> = () => {
       {renderRemoveLiquidityDialog()}
     </Box>
   );
-};
-
-// Helper functions
-const formatNumber = (value: string): string => {
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-  }).format(parseFloat(value));
 };
 
 export default PoolsList;

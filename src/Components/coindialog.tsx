@@ -39,12 +39,11 @@ const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
   padding: "0 !important",
 }));
 
-
 const Coindialog: React.FC<COINDIALOG> = ({
-  tokens,
-  handleClose,
   isOpen,
+  handleClose,
   onTokenSelect,
+  tokens,
 }) => {
   const [tokenAddress, setTokenAddress] = useState<string>("");
 
