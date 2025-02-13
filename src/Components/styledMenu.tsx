@@ -64,6 +64,10 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  padding: 0,
+}));
+
 const CustomizedMenus = ({ menuItems }: { menuItems: MenuItemProps[] }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -76,7 +80,7 @@ const CustomizedMenus = ({ menuItems }: { menuItems: MenuItemProps[] }) => {
 
   return (
     <div>
-      <IconButton
+      <StyledIconButton
         color="primary"
         id="demo-customized-button"
         aria-controls={open ? "demo-customized-menu" : undefined}
@@ -85,7 +89,7 @@ const CustomizedMenus = ({ menuItems }: { menuItems: MenuItemProps[] }) => {
         onClick={handleClick}
       >
         <MoreVertIcon />
-      </IconButton>
+      </StyledIconButton>
       <StyledMenu
         id="demo-customized-menu"
         MenuListProps={{

@@ -86,6 +86,27 @@ const StyledPoolTabContainer = styled(Box)(({ theme }) => ({
   marginBottom: "16px"
 }));
 
+const StyledAPRText = styled(Typography)(({ theme }) => ({
+  background: "linear-gradient(90deg, #926128 0%, #B99A45 25%, #E3D6B4 50%, #B99A45 79%, #916027 100%)",
+  backgroundClip: "text",
+  color: "transparent !important",
+}));
+
+const StyledpoolsTableRow = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: "32px",
+  padding: "0 24px",
+}));
+
+const StyledpoolCardHeader = styled(Box)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "16px",
+}));
+
 const CustomTabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
 
@@ -302,14 +323,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                   <Card key={pool.id} className="pool-card">
                     <CardContent className="pool-card__content">
                       {/* Pool Pair */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
-                        className="pool-card__header"
-                      >
+                      <StyledpoolCardHeader>
                         <Box
                           sx={{ display: "flex", flexDirection: "row" }}
                           className="pool-card__pair"
@@ -339,7 +353,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           />
                           </Box>
                         )}
-                      </Box>
+                      </StyledpoolCardHeader>
 
                       {/* Stats Grid */}
                       <Grid container spacing={2} className="pool-card__stats">
@@ -347,23 +361,23 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           <Typography className="pool-card__stat-label">
                             APR
                           </Typography>
-                          <Typography className="pool-card__stat-value">
+                          <StyledAPRText className="pool-card__stat-value" variant="body2">
                             {pool.apr}%
-                          </Typography>
+                          </StyledAPRText>
                         </Grid>
                         <Grid item xs={4} className="pool-card__stat">
                           <Typography className="pool-card__stat-label">
                             TVL
                           </Typography>
-                          <Typography className="pool-card__stat-value">
+                          <Typography className="pool-card__stat-value" variant="body2">
                             ${pool.tvl}
                           </Typography>
                         </Grid>
                         <Grid item xs={4} className="pool-card__stat">
                           <Typography className="pool-card__stat-label">
-                            Volume 24h
+                            Volume
                           </Typography>
-                          <Typography className="pool-card__stat-value">
+                          <Typography className="pool-card__stat-value" variant="body2">
                             ${pool.volume24h}
                           </Typography>
                         </Grid>
@@ -371,7 +385,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           <Typography className="pool-card__stat-label">
                             Token 1
                           </Typography>
-                          <Typography className="pool-card__stat-value">
+                          <Typography className="pool-card__stat-value" variant="body2">
                             ${pool.token0Reserve}
                           </Typography>
                         </Grid>
@@ -379,7 +393,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                           <Typography className="pool-card__stat-label">
                             Token 2
                           </Typography>
-                          <Typography className="pool-card__stat-value">
+                          <Typography className="pool-card__stat-value" variant="body2">
                             ${pool.token1Reserve}
                           </Typography>
                         </Grid>
@@ -399,66 +413,58 @@ const PoolsList: React.FC<PoolsListProps> = () => {
               <TableContainer className="pools-table">
                 <Box className="pools-table__container">
                   <Box className="pools-table__header">
-                    <Box
+                    <StyledpoolsTableRow
                       className="pools-table__row"
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
                     >
-                      <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                      <Box className="pools-table__cell" sx={{ flex: "3" }}>
                         Pools
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         APR
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}} 
                       >
                         TVL
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
-                        Volume 24h
+                        Volume
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         Token 1
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         Token 2
                       </Box>
-                      <Box
-                        className="pools-table__cell"
-                        sx={{ flex: "0.5", textAlign: "right" }}
-                      ></Box>
-                    </Box>
+                      { isWalletConnected && (
+                        <Box
+                          className="pools-table__cell"
+                          sx={{ flex: "0.5"}}
+                        ></Box>
+                      )}
+                    </StyledpoolsTableRow>
                   </Box>
 
                   <Box className="pools-table__body">
                     {pools.map((pool) => (
-                      <Box
+                      <StyledpoolsTableRow
                         key={pool.id}
                         className="pools-table__row"
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
                       >
-                        <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                        <Box className="pools-table__cell" sx={{ flex: "3" }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -472,7 +478,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                               coin2Image={pool.token1.icon}
                             />
                             <Typography
-                              variant="body1"
+                              variant="body2"
                               className="gradient-text pools-table__symbols"
                             >
                               {pool.token0.symbol}/{pool.token1.symbol}
@@ -481,38 +487,38 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--apr"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          {pool.apr}%
+                          <StyledAPRText variant="body2">{pool.apr}%</StyledAPRText>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--tvl"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.tvl}
+                          <Typography variant="body2">${pool.tvl}</Typography>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--volume"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.volume24h}
+                          <Typography variant="body2">${pool.volume24h}</Typography>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--apr"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.token0Reserve}
+                          <Typography variant="body2">${pool.token0Reserve}</Typography>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--apr"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.token1Reserve}
+                          <Typography variant="body2">${pool.token1Reserve}</Typography>
                         </Box>
                         {isWalletConnected && (
                           <Box
                             className="pools-table__cell pools-table__cell--menu"
-                            sx={{ flex: "0.5", textAlign: "right" }}
+                            sx={{ flex: "0.5"}}
                           >
                             <CustomizedMenus menuItems={[
                               { label: "Add Liquidity", onClick: () => {
@@ -523,7 +529,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             ]} />
                           </Box>
                         )}
-                      </Box>
+                      </StyledpoolsTableRow>
                     ))}
                   </Box>
                 </Box>
@@ -544,14 +550,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                     <Card key={pool.id} className="pool-card">
                       <CardContent className="pool-card__content">
                         {/* Pool Pair */}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                          }}
-                          className="pool-card__header"
-                        >
+                        <StyledpoolCardHeader>
                           <Box
                             sx={{ display: "flex", flexDirection: "row" }}
                             className="pool-card__pair"
@@ -583,7 +582,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                               },
                             ]} />
                           </Box>
-                        </Box>
+                        </StyledpoolCardHeader>
 
                         {/* Stats Grid */}
                         <Grid
@@ -595,23 +594,23 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             <Typography className="pool-card__stat-label">
                               APR
                             </Typography>
-                            <Typography className="pool-card__stat-value">
+                            <StyledAPRText className="pool-card__stat-value" variant="body2">
                               {pool.apr}%
-                            </Typography>
+                            </StyledAPRText>
                           </Grid>
                           <Grid item xs={4} className="pool-card__stat">
                             <Typography className="pool-card__stat-label">
                               TVL
                             </Typography>
-                            <Typography className="pool-card__stat-value">
+                            <Typography className="pool-card__stat-value" variant="body2">
                               ${pool.tvl}
                             </Typography>
                           </Grid>
                           <Grid item xs={4} className="pool-card__stat">
                             <Typography className="pool-card__stat-label">
-                              Volume 24h
+                              Volume
                             </Typography>
-                            <Typography className="pool-card__stat-value">
+                            <Typography className="pool-card__stat-value" variant="body2">
                               ${pool.volume24h}
                             </Typography>
                           </Grid>
@@ -619,7 +618,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             <Typography className="pool-card__stat-label">
                               Token 1
                             </Typography>
-                            <Typography className="pool-card__stat-value">
+                            <Typography className="pool-card__stat-value" variant="body2">
                               ${pool.token0Share}
                             </Typography>
                           </Grid>
@@ -627,7 +626,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             <Typography className="pool-card__stat-label">
                               Token 2
                             </Typography>
-                            <Typography className="pool-card__stat-value">
+                            <Typography className="pool-card__stat-value" variant="body2">
                               ${pool.token1Share}
                             </Typography>
                           </Grid>
@@ -650,66 +649,56 @@ const PoolsList: React.FC<PoolsListProps> = () => {
               <TableContainer className="pools-table">
                 <Box className="pools-table__container">
                   <Box className="pools-table__header">
-                    <Box
+                    <StyledpoolsTableRow
                       className="pools-table__row"
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
                     >
-                      <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                      <Box className="pools-table__cell" sx={{ flex: "3" }}>
                         Pools
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         APR
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         TVL
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
-                        Volume 24h
+                        Volume
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         Token 1
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "1", textAlign: "center" }}
+                        sx={{ flex: "1"}}
                       >
                         Token 2
                       </Box>
                       <Box
                         className="pools-table__cell"
-                        sx={{ flex: "0.5", textAlign: "center" }}
+                        sx={{ flex: "0.5"}}
                       ></Box>
-                    </Box>
+                    </StyledpoolsTableRow>
                   </Box>
 
                   <Box className="pools-table__body">
                     {myPools.map((pool) => (
-                      <Box
+                      <StyledpoolsTableRow
                         key={pool.id}
                         className="pools-table__row"
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
                       >
-                        <Box className="pools-table__cell" sx={{ flex: "2" }}>
+                        <Box className="pools-table__cell" sx={{ flex: "3" }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -723,7 +712,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                               coin2Image={pool.token1.icon}
                             />
                             <Typography
-                              variant="body1"
+                              variant="body2"
                               className="gradient-text pools-table__symbols"
                             >
                               {pool.token0.symbol}/{pool.token1.symbol}
@@ -732,38 +721,38 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--volume"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          {pool.apr}%
+                          <StyledAPRText variant="body2">{pool.apr}%</StyledAPRText>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--tvl"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.tvl}
+                          <Typography variant="body2">${pool.tvl}</Typography>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--apr"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.volume24h}
+                          <Typography variant="body2">${pool.volume24h}</Typography>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--tvl"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.token0Share}
+                          <Typography variant="body2">${pool.token0Share}</Typography>
                         </Box>
                         <Box
                           className="pools-table__cell pools-table__cell--volume"
-                          sx={{ flex: "1", textAlign: "center" }}
+                          sx={{ flex: "1"}}
                         >
-                          ${pool.token1Share}
+                          <Typography variant="body2">${pool.token1Share}</Typography>
                         </Box>
                         {isWalletConnected && (
                           <Box
                             className="pools-table__cell pools-table__cell--menu"
-                            sx={{ flex: "0.5", textAlign: "right" }}
+                            sx={{ flex: "0.5"}}
                           >
                             <CustomizedMenus menuItems={[
                               { label: "Add Liquidity", onClick: () => {
@@ -779,7 +768,7 @@ const PoolsList: React.FC<PoolsListProps> = () => {
                             ]} />
                           </Box>
                         )}
-                      </Box>
+                      </StyledpoolsTableRow>
                     ))}
                   </Box>
                 </Box>
