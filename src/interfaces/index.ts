@@ -1,7 +1,7 @@
 export interface TOKEN {
     name: string;
     symbol: string;
-    decimals?: number;
+    decimals: number;
     address: string;
     icon?: string;
 }

@@ -139,7 +139,7 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
       showSnackbar("Liquidity added successfully", "success");
       dispatch(setAmount1(""));
       dispatch(setAmount2(""));
-      dispatch(setToken2({address: "", symbol: "", icon: "", name: ""}));
+      dispatch(setToken2({address: "", symbol: "", icon: "", name: "", decimals: 0}));
       onClose();
     } catch (error) {
       console.log('error', error);

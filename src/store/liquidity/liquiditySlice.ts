@@ -3,8 +3,8 @@ import { TOKEN, LiquidityState } from '../../interfaces';
 
 
 const initialState: LiquidityState = {
-  token1: { name: '', symbol: '', address: '' },
-  token2: { name: '', symbol: '', address: '' },
+  token1: { name: '', symbol: '', address: '', decimals: 0 },
+  token2: { name: '', symbol: '', address: '', decimals: 0 },
   amount1: '0',
   amount2: '0',
   amount1Min: '0',

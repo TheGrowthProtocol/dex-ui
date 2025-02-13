@@ -19,6 +19,7 @@ import { resetSelectedPool } from "../store/pool/poolSlice";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
 import { useProviderContext } from "../Contexts/providerContext";
 import { ethers } from "ethers";
+import { useNetwork } from "../Hooks/useNetwork";
 
 const StyledSwapButton = styled(Button)(({ theme }) => ({
   "&:disabled": {
@@ -38,6 +39,7 @@ const Swap: React.FC<{}> = () => {
   const dispatch = useDispatch<AppDispatch>();
   const tokens = useSelector((state: RootState) => state.tokens.tokens);
   const { selectedPool } = useSelector((state: RootState) => state.pool);
+  const { rpcProvider, isConnected: isNetworkConnected } = useNetwork();
   const { provider } = useProviderContext();
 
   const fetchPool = useCallback(async () => {
@@ -91,11 +93,7 @@ const Swap: React.FC<{}> = () => {
 
   const setCoinfield2Amount = async () => {
     try {
-      if (!provider) {
-        throw new Error("Provider not found");
-      }
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      await dispatch(getAmount2(web3Provider)).unwrap();
+      await dispatch(getAmount2(rpcProvider)).unwrap();
     } catch (error: any) {
       console.error(error);
       dispatch(setAmount2(0));
@@ -104,11 +102,7 @@ const Swap: React.FC<{}> = () => {
 
   const setCoinfield1Amount = async () => {
     try {
-      if (!provider) {
-        throw new Error("Provider not found");
-      }
-      const web3Provider = new ethers.providers.Web3Provider(provider);
-      await dispatch(getAmount1(web3Provider)).unwrap();
+      await dispatch(getAmount1(rpcProvider)).unwrap();
     } catch (error: any) {
       console.error(error);
       dispatch(setAmount1(0));
@@ -118,13 +112,17 @@ const Swap: React.FC<{}> = () => {
   const handleSetAmount1 = async (amount: string) => {
     const formattedAmount = Number(amount).toFixed(2);
     dispatch(setAmount1(Number(formattedAmount)));
-    await setCoinfield2Amount();
+    if( token1.address !== token2.address && token2.address !== "") {
+      await setCoinfield2Amount();
+    }
   };
 
   const handleSetAmount2 = async (amount: string) => {
     const formattedAmount = Number(amount).toFixed(2);
     dispatch(setAmount2(Number(formattedAmount)));
-    await setCoinfield1Amount();
+    if( token1.address !== token2.address && token1.address !== "") {
+      await setCoinfield1Amount();
+    }
   };
 
   const handleSwap = async () => {

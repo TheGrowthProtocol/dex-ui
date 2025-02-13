@@ -81,7 +81,7 @@ export const swap = createAsyncThunk(
 
 export const getAmount2 = createAsyncThunk(
   "swap/getAmount2",
-  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
+  async (provider: ethers.providers.JsonRpcProvider, { getState, dispatch }) => {
     const state = getState() as RootState;
     const { token1, token2, amount1 } = state.swap;
 
@@ -89,24 +89,18 @@ export const getAmount2 = createAsyncThunk(
       if (!token1.address || !token2.address) {
         throw new Error("Missing required parameters for swap!");
       }
-      const signer = provider.getSigner();
       const network = await provider.getNetwork();
       const routerAddress = chains.routerAddress.get(network.chainId);
       const routerContract = new Contract(
         routerAddress,
         UniswapV2Router02.abi,
-        signer
+        provider
       );
-      const token1Contract = new Contract(token1.address, token1.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
-      const token1Decimals = await getTokenDecimals(token1Contract);
-
-      const token2Contract = new Contract(token2.address, token2.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
-      const token2Decimals = await getTokenDecimals(token2Contract);
       const values_out = await routerContract.getAmountsOut(
-        ethers.utils.parseUnits(String(amount1), token1Decimals),
+        ethers.utils.parseUnits(String(amount1), token1.decimals),
         [token1.address, token2.address]
       );
-      const amount_out = values_out[1] * 10 ** - token2Decimals;
+      const amount_out = values_out[1] * 10 ** - token2.decimals;
       dispatch(setAmount2(Number(amount_out.toFixed(2)))); 
     } catch (error: any) {
       dispatch(setError(error.message));
@@ -117,7 +111,7 @@ export const getAmount2 = createAsyncThunk(
 
 export const getAmount1 = createAsyncThunk(
   "swap/getAmount1",
-  async (provider: ethers.providers.Web3Provider, { getState, dispatch }) => {
+  async (provider: ethers.providers.JsonRpcProvider, { getState, dispatch }) => {
     const state = getState() as RootState;
     const { token1, token2, amount2 } = state.swap;
 
@@ -125,24 +119,18 @@ export const getAmount1 = createAsyncThunk(
       if (!token1.address || !token2.address) {
         throw new Error("Missing required parameters for swap!");
       }
-      const signer = provider.getSigner();
       const network = await provider.getNetwork();
       const routerAddress = chains.routerAddress.get(network.chainId);
       const routerContract = new Contract(
         routerAddress,
         UniswapV2Router02.abi,
-        signer
+        provider
       );
-      const token1Contract = new Contract(token1.address, token1.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
-      const token1Decimals = await getTokenDecimals(token1Contract);
-
-      const token2Contract = new Contract(token2.address, token2.name === "CERES" ? WCERES.abi : ERC20.abi, signer);
-      const token2Decimals = await getTokenDecimals(token2Contract);
       const values_in = await routerContract.getAmountsIn(
-        ethers.utils.parseUnits(String(amount2), token2Decimals),
+        ethers.utils.parseUnits(String(amount2), token2.decimals),
         [token1.address, token2.address]
       );
-      const amount_in = values_in[1] * 10 ** - token1Decimals;
+      const amount_in = values_in[1] * 10 ** - token1.decimals;
       dispatch(setAmount1(Number(amount_in.toFixed(2))));
     } catch (error: any) {
       dispatch(setError(error.message));
@@ -163,13 +151,4 @@ const setupContracts = async (signer: ethers.Signer) => {
   const account = await signer.getAddress();
 
   return { routerContract, account };
-};
-
-const getTokenDecimals = async (tokenContract: Contract) => {
-  try {
-    return await tokenContract.decimals();
-  } catch (error) {
-    console.warn("No decimals function for token, defaulting to 0:", error);
-    return 0;
-  }
 };
