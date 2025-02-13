@@ -99,6 +99,8 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
   // Function to handle selecting a token and its address
   const handleToken2Select = (token: TOKEN) => {
     dispatch(setToken2(token));
+    dispatch(setAmount2(""));
+    dispatch(setAmount1(""));
     setOpenToken2Dialog(false);
   };
 
