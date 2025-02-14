@@ -19,10 +19,26 @@ export const addLiquidity = createAsyncThunk(
       if (!window.ethereum) {
         throw new Error('MetaMask is not installed!');
       }
+
       const signer = provider.getSigner();
-      
       const { routerContract, account } = await setupContracts(signer);
       const tokenDetails = await prepareTokenDetails(token1, token2, amount1, amount2, amount1Min, amount2Min, signer);
+      // Add balance checks
+      const [balance1, balance2] = await Promise.all([
+        token1.address === await routerContract.WCERES() 
+          ? provider.getBalance(await signer.getAddress())
+          : tokenDetails.token1Contract.balanceOf(await signer.getAddress()),
+        token2.address === await routerContract.WCERES()
+          ? provider.getBalance(await signer.getAddress())
+          : tokenDetails.token2Contract.balanceOf(await signer.getAddress())
+      ]);
+
+      if (balance1.lt(tokenDetails.amountIn1)) {
+        throw new Error(`Insufficient ${token1.symbol} balance`);
+      }
+      if (balance2.lt(tokenDetails.amountIn2)) {
+        throw new Error(`Insufficient ${token2.symbol} balance`);
+      }
       
       await approveTokens(tokenDetails.token1Contract, tokenDetails.token2Contract, routerContract, tokenDetails.amountIn1, tokenDetails.amountIn2);
       
@@ -152,10 +168,45 @@ const executeLiquidityTransaction = async (routerContract: Contract, params: Liq
     amountIn1: ethers.BigNumber,
     amountIn2: ethers.BigNumber
   ) => {
-    await Promise.all([
-      token1Contract.approve(routerContract.address, amountIn1),
-      token2Contract.approve(routerContract.address, amountIn2)
-    ]);
+    try {
+      // Check current allowances first
+      const [allowance1, allowance2] = await Promise.all([
+        token1Contract.allowance(await token1Contract.signer.getAddress(), routerContract.address),
+        token2Contract.allowance(await token2Contract.signer.getAddress(), routerContract.address)
+      ]);
+
+      const approvalPromises = [];
+
+      // Only approve if needed
+      if (allowance1.lt(amountIn1)) {
+        approvalPromises.push(
+          token1Contract.approve(routerContract.address, amountIn1)
+            .then((tx: any) => tx.wait()) // Wait for transaction confirmation
+        );
+      }
+
+      if (allowance2.lt(amountIn2)) {
+        approvalPromises.push(
+          token2Contract.approve(routerContract.address, amountIn2)
+            .then((tx: any) => tx.wait()) // Wait for transaction confirmation
+        );
+      }
+
+      // Wait for all necessary approvals
+      if (approvalPromises.length > 0) {
+        await Promise.all(approvalPromises);
+      }
+    } catch (error: any) {
+      // Improve error handling
+      if (error.code === -32603) {
+        throw new Error("Transaction failed. Please check your wallet and try again.");
+      } else if (error.message?.includes("user rejected")) {
+        throw new Error("Transaction was rejected by user.");
+      } else {
+        console.error("Approval error:", error);
+        throw new Error("Failed to approve tokens. Please try again.");
+      }
+    }
   };
 
   /**

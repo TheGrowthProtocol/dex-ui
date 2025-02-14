@@ -130,6 +130,21 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
         showSnackbar("Please connect your wallet", "error");
         return;
       }
+
+      if (!amount1 || !amount2 || 
+          Number(amount1) <= 0 || 
+          Number(amount2) <= 0) {
+        showSnackbar("Please enter valid amounts greater than 0", "error");
+        return;
+      }
+
+      const MIN_AMOUNT = "0.000001"; 
+      if (Number(amount1) < Number(MIN_AMOUNT) || 
+          Number(amount2) < Number(MIN_AMOUNT)) {
+        showSnackbar(`Amount must be at least ${MIN_AMOUNT}`, "error");
+        return;
+      }
+
       const web3Provider = new ethers.providers.Web3Provider(provider); 
       await dispatch(addLiquidity(web3Provider)).unwrap();
       showSnackbar("Liquidity added successfully", "success");
@@ -137,9 +152,14 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
       dispatch(setAmount2(""));
       dispatch(setToken2({address: "", symbol: "", icon: "", name: "", decimals: 0}));
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
-      showSnackbar("Error adding liquidity", "error");
+      // Improve error handling with more specific messages
+      if (error.message?.includes("INSUFFICIENT_INPUT_AMOUNT")) {
+        showSnackbar("Input amount is too small", "error");
+      } else {
+        showSnackbar("Error adding liquidity", "error");
+      }
     }
   };
 
@@ -260,13 +280,6 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
           {!isWalletConnected && <ConnectWalletButton />}
         </StyledAddLiquidityButtonContainer>
       </Grid>
-      {/*<Grid item xs={12} md={12} lg={12}>
-        <Tokenomics 
-        isConnected={isWalletConnected}
-        type="pool"
-        selectedPool={selectedPool}
-        />
-      </Grid>*/}
     </Grid>
   );
 };
