@@ -11,6 +11,9 @@ import "@fontsource/lexend/600.css";
 import "@fontsource/lexend/700.css";
 import "@fontsource/lexend/800.css";
 import "@fontsource/lexend/900.css";
+// Supports weights 100-900
+import '@fontsource-variable/exo';
+
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";

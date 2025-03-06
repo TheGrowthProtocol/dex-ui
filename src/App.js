@@ -12,7 +12,7 @@ import Main from "./Pages/main";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "'Lexend', sans-serif",
+    fontFamily: "'Exo Variable', sans-serif",
   },
   palette: {
     primary: {
