@@ -21,6 +21,8 @@ UniswapV2Router02 deployed to: 0xA8F1013B5c23813999Dc909dc529B79EdaD033Ae
 #### To install the dependencies
 ```bash
 npm install --legacy-peer-deps
+or
+npm install --force
 ```
 #### To start the app
 ```bash
@@ -31,11 +33,21 @@ npm run start
 ```bash
 npm run build
 ```
+#### To post build the app
+```bash
+by default it will update the meta tags in the index.html file automatically.
+if you want to update the meta tags in the index.html file manually, you can run the following command:
+npm run postbuild
+```
 
 #### set the env variables
 ```bash
 create .env file in root folder and set the following variables:
-
+REACT_APP_TITLE=<app_title>
+REACT_APP_DESCRIPTION=<app_description>
+REACT_APP_KEYWORDS=<app_keywords>
+REACT_APP_OG_IMAGE=<app_og_image>
+REACT_APP_URL=<app_url>
 REACT_APP_CHAIN_ID=<chain_id>
 REACT_APP_RPC_URL=<rpc_url>
 REACT_APP_NETWORK_NAME=<network_name>
