@@ -29,7 +29,7 @@ import { setRemoveLpTokenBalance } from "../store/pool/poolSlice";
 import { ethers } from "ethers";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
 import { useProviderContext } from "../Contexts/providerContext";
-
+import ReactGA from 'react-ga4'
 
 const StyledSelect = styled(Select)(({ theme}) => ({
   width: "100%",
@@ -130,6 +130,13 @@ const RemoveLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
         await dispatch(removeLpToken({ provider: web3Provider })).unwrap();
         showSnackbar("Liquidity removed successfully", "success");
         onClose();
+        if(process.env.REACT_APP_ENV === "development") {
+          return;
+        }
+        ReactGA.event({
+          category: 'Remove Liquidity', 
+          action: "Removed Liquidity",
+        });
       } catch (error) {
         showSnackbar("Error removing liquidity", "error");
       }

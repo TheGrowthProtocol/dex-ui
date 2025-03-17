@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { SnackbarProvider } from "./Contexts/snackbarContext";
 import { ProviderContextProvider } from "./Contexts/providerContext";
 import { createTheme, ThemeProvider } from "@material-ui/core";
+import ReactGA from 'react-ga4'
+import { useLocation } from "react-router-dom";
+
 
 /**
  * Import Header
@@ -34,7 +37,19 @@ const theme = createTheme({
   },
 });
 
+ReactGA.initialize('G-KV98335QBH');
+
 const App = () => {
+
+  const location = useLocation();
+  useEffect(() => {
+    // Send pageview with a custom path
+    if(process.env.REACT_APP_ENV === "development") {
+      return;
+    }
+    ReactGA.send({ hitType: "pageview", page: location.pathname });
+  }, [location]);
+
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider>

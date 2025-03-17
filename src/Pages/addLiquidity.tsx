@@ -22,7 +22,7 @@ import CoinIcon from "../Components/coinIcon";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
 import { useProviderContext } from "../Contexts/providerContext";
 import { ethers } from "ethers";
-
+import ReactGA from 'react-ga4'
 const StyledAddLiquidityButtonContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
@@ -148,10 +148,18 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
       const web3Provider = new ethers.providers.Web3Provider(provider); 
       await dispatch(addLiquidity(web3Provider)).unwrap();
       showSnackbar("Liquidity added successfully", "success");
+      
       dispatch(setAmount1(""));
       dispatch(setAmount2(""));
       dispatch(setToken2({address: "", symbol: "", icon: "", name: "", decimals: 0}));
       onClose();
+      if(process.env.REACT_APP_ENV === "development") {
+        return;
+      }
+      ReactGA.event({
+        category: 'Add Liquidity',
+        action: "Added Liquidity",
+      });
     } catch (error: any) {
       console.log('error', error);
       // Improve error handling with more specific messages

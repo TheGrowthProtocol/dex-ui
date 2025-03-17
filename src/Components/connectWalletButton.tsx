@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useSnackbarContext } from "../Contexts/snackbarContext";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-
+import ReactGA from 'react-ga4'
 const StyledAccountBalanceWalletIcon = styled(AccountBalanceWalletIcon)(({ theme }) => ({
   marginRight: "4px",
   border: `1px solid ${theme.palette.primary.main}`,
@@ -55,6 +55,13 @@ const ConnectWalletButton: React.FC<{}> = () => {
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
+    if(process.env.REACT_APP_ENV === "development") {
+      return;
+    }
+    ReactGA.event({
+      category: 'Connect Wallet',
+      action: "Clicked Connect Wallet",
+    });
   };
 
   const handleCloseModal = () => {

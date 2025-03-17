@@ -20,7 +20,7 @@ import { useSnackbarContext } from "../Contexts/snackbarContext";
 import { useProviderContext } from "../Contexts/providerContext";
 import { ethers } from "ethers";
 import { useNetwork } from "../Hooks/useNetwork";
-
+import ReactGA from 'react-ga4'
 const StyledSwapButton = styled(Button)(({ theme }) => ({
   "&:disabled": {
     opacity: 0.5,
@@ -135,6 +135,15 @@ const Swap: React.FC<{}> = () => {
       showSnackbar("Swap successful!", "success");
       dispatch(setAmount1(0));
       dispatch(setAmount2(0));
+      if(process.env.REACT_APP_ENV === "development") {
+        return;
+      }
+      ReactGA.event({
+        category: 'Swap',
+        action: 'Swap Tokens',
+        label: `${token1.symbol} to ${token2.symbol}`,
+        value: Number(amount1)
+      });
     } catch (error: any) {
       showSnackbar(error.message, "error");
       dispatch(setAmount1(0));
