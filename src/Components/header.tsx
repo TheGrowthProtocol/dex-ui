@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Box, useTheme } from "@material-ui/core";
-import logo from "../assets/logo.svg";
+import logo2 from "../assets/logo.png";
 import ConnectWalletButton from "./connectWalletButton";
 
 const Header: React.FC<{}> = () => {
@@ -19,7 +19,7 @@ const Header: React.FC<{}> = () => {
           justifyContent={{ xs: "center", md: "flex-start" }}
           alignItems="center"
         >
-          <img src={logo} alt="TGP DEX Logo" style={{ height: "50px" }} />
+          <img src={logo2} alt="TGP DEX Logo" style={{ height: "50px" }} />
         </Box>
       </Grid>
       <Grid item xs={12} sm={12} md={8} lg={8}>
