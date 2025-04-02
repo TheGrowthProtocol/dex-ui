@@ -33,15 +33,15 @@ const getIconFromAssets = (iconName) => {
 
 const TGPCoins = [
   {
-    name: "TOKEN1",
-    abbr: "TK1", 
-    address: "0x58AC2e9d0CCEcd67686883aE81704608F5Ee5d81",
+    name: "PLUTO",
+    abbr: "PLUTO", 
+    address: "0xD02fE9A15F22522907B1394b3D13c8b2E3B9fc8B",
     icon: getIconFromAssets("pluto.png"),
   },
   {
-    name: "TOKEN2",
-    abbr: "TK2",
-    address: "0x7E0F9B0fa9E72D9234C56ed50Ed1A639679A3bF1",
+    name: "ERIS",
+    abbr: "ERIS",
+    address: "0x5966daD9DA2D8e70788D7BC5214AE74b8Cde9007",
     icon: getIconFromAssets("eris.png"),
   },
   {
