@@ -191,7 +191,7 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
                   {token1.icon && <CoinIcon icon={token1.icon} />}
                   {!token1.icon && <CoinNoIcon />}
                   <Typography className={"gradient-text token-symbol"}>
-                    {token1.symbol === 'WCERS' ? 'CERES' : token1.symbol || "Select Token"}
+                    {token1.symbol || "Select Token"}
                   </Typography>
                 </Button>
                 <Coindialog
@@ -212,7 +212,7 @@ const AddLiquidity: React.FC<{onClose: () => void}> = ({onClose}) => {
                   {token2.icon && <CoinIcon icon={token2.icon} />}
                   {!token2.icon && <CoinNoIcon />}
                   <Typography className={"token-symbol gradient-text"}>
-                    {token2.symbol === 'WCERS' ? 'CERES' : token2.symbol || "Select Token"}
+                    {token2.symbol || "Select Token"}
                   </Typography>
                 </Button>
                 <Coindialog

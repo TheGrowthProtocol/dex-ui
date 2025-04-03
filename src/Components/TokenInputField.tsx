@@ -161,7 +161,7 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
             {selectedToken.icon && <CoinIcon icon={selectedToken.icon} />}
             {!selectedToken.icon && <CoinNoIcon />}
             <Typography className="token-symbol gradient-text">
-              {selectedToken.symbol === 'WCERS' ? 'CERES' : selectedToken.symbol}
+              {selectedToken.symbol}
             </Typography>
           </Box>
         )}
@@ -171,7 +171,7 @@ const TokenInputField: React.FC<TokenInputFieldProps> = ({
               {balance}
             </StyledTokenInputFieldBalance>
             <StyledTokenInputFieldTokenSymbol>
-              {selectedToken.symbol === 'WCERS' ? 'CERES' : selectedToken.symbol}
+              {selectedToken.symbol}
             </StyledTokenInputFieldTokenSymbol>
           </StyledTokenInputFieldBalanceContainer>
         )}
