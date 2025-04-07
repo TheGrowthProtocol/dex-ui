@@ -20,6 +20,8 @@ export const swap = createAsyncThunk(
       }
       const signer = provider.getSigner();
       const { routerContract, account } = await setupContracts(signer);
+      const wceresAddress = await routerContract.WCERES();
+
       const token1Contract = new Contract(token1.address, ERC20.abi, signer);
       
       const amount1InWei = ethers.utils.parseUnits(amount1.toString(), token1.decimals);
@@ -33,37 +35,92 @@ export const swap = createAsyncThunk(
       const minAmountOut = amount2InWei.mul(Math.floor(slippageTolerance * 1000)).div(1000);
 
       // Check balance
-      const balance = await token1Contract.balanceOf(account);
-      if (balance.lt(amount1InWei)) {
-        throw new Error(`Insufficient ${token1.symbol} balance`);
-      }
-
-      // Estimate gas with proper parameters
-      const gasEstimate = await routerContract.estimateGas.swapExactTokensForTokens(
-        amount1InWei,
-        minAmountOut,        // Use minimum amount with slippage instead of exact amount
-        [token1.address, token2.address],
-        account,
-        Math.floor(Date.now() / 1000) + 60 * 20,
-        { from: account }   
-      );
-
-      // Add 20% buffer to gas estimate
-      const gasLimit = gasEstimate.mul(120).div(100);
-
-      // Proceed with swap using the calculated gas limit
-      const swapTx = await routerContract.swapExactTokensForTokens(
-        amount1InWei,
-        minAmountOut,
-        [token1.address, token2.address],
-        account,
-        Math.floor(Date.now() / 1000) + 60 * 20,
-        { 
-          gasLimit,
-          from: account 
+      if(token1.address !== wceresAddress) {
+        const balance = await token1Contract.balanceOf(account);
+        if (balance.lt(amount1InWei)) {
+          throw new Error(`Insufficient ${token1.symbol} balance`);
         }
-      );
-      await swapTx.wait();
+      }
+      
+      if(token2.address === wceresAddress) {
+        /*const gasEstimate = await routerContract.estimateGas.swapExactTokensForCERES(
+          amount1InWei,
+          minAmountOut,        // Use minimum amount with slippage instead of exact amount
+          [token1.address, token2.address],
+          account,
+          //Math.floor(Date.now() / 1000) + 60 * 20,
+          //{ from: account }   
+        );*/
+        // Add 20% buffer to gas estimate
+        //const gasLimit = gasEstimate.mul(120).div(100);
+
+        // Proceed with swap using the calculated gas limit
+        const swapTx = await routerContract.swapExactTokensForCERES(
+          amount1InWei,
+          minAmountOut,
+          [token1.address, token2.address],
+          account,
+          Math.floor(Date.now() / 1000) + 60 * 20,
+          /*{ 
+            gasLimit,
+            from: account 
+          }*/
+        );
+        await swapTx.wait();
+      }
+      else if(token1.address === wceresAddress) {
+        /*const gasEstimate = await routerContract.estimateGas.swapExactCERESForTokens(
+          minAmountOut,        // Use minimum amount with slippage instead of exact amount
+          [token1.address, token2.address],
+          account,
+          Math.floor(Date.now() / 1000) + 60 * 20,
+          { value: amount1InWei }
+          //{ from: account }   
+        );*/
+        // Add 20% buffer to gas estimate
+        //const gasLimit = gasEstimate.mul(120).div(100);
+
+        // Proceed with swap using the calculated gas limit
+        const swapTx = await routerContract.swapExactCERESForTokens(
+          minAmountOut,
+          [token1.address, token2.address],
+          account,
+          Math.floor(Date.now() / 1000) + 60 * 20,
+          { value: amount1InWei }
+          /*{ 
+            gasLimit,
+            from: account 
+          }*/
+        );
+        await swapTx.wait();
+      } else {
+          // Estimate gas with proper parameters
+          const gasEstimate = await routerContract.estimateGas.swapExactTokensForTokens(
+            amount1InWei,
+            minAmountOut,        // Use minimum amount with slippage instead of exact amount
+            [token1.address, token2.address],
+            account,
+            Math.floor(Date.now() / 1000) + 60 * 20,
+            { from: account }   
+          );
+
+          // Add 20% buffer to gas estimate
+          const gasLimit = gasEstimate.mul(120).div(100);
+
+          // Proceed with swap using the calculated gas limit
+          const swapTx = await routerContract.swapExactTokensForTokens(
+            amount1InWei,
+            minAmountOut,
+            [token1.address, token2.address],
+            account,
+            Math.floor(Date.now() / 1000) + 60 * 20,
+            { 
+              gasLimit,
+              from: account 
+            }
+          );
+          await swapTx.wait();
+        }
       dispatch(setLoading(false));
     } catch (error: any) {
       if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
