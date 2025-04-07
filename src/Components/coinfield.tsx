@@ -96,7 +96,8 @@ const Coinfield: React.FC<COINFIELD> = ({
         const web3Provider = new ethers.providers.Web3Provider(provider);
         const signer = web3Provider.getSigner();
         const address = await signer.getAddress();
-        if(selectedTokenObj.symbol === "CERES") {
+        console.log(selectedTokenObj.symbol);
+        if(selectedTokenObj.symbol === "WCERES") {
           const balance = await web3Provider.getBalance(address);
           const formattedBalance = Number(
             ethers.utils.formatEther(balance)

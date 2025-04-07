@@ -35,19 +35,19 @@ const TGPCoins = [
   {
     name: "PLUTO",
     abbr: "PLUTO", 
-    address: "0xD02fE9A15F22522907B1394b3D13c8b2E3B9fc8B",
+    address: "0xaD6b92f47070069FD1ef4C5FAF1fc3A7753737b1",
     icon: getIconFromAssets("pluto.png"),
   },
   {
     name: "ERIS",
     abbr: "ERIS",
-    address: "0x5966daD9DA2D8e70788D7BC5214AE74b8Cde9007",
+    address: "0xF733EfD5440C2Fb8592dB020C19f1C0Fda1cdb14",
     icon: getIconFromAssets("eris.png"),
   },
   {
     name: "WCERES",
     abbr: "WCERES",
-    address: "0x932583C39d2bf79009eE0E9b16196BD31953b7a9",
+    address: "0x2Ae4Bd028aF542d11ADE8816343BF943fcd30ad1",
     icon: getIconFromAssets("ceres.png"),
   },
 ]
